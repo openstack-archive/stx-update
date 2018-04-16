@@ -101,9 +101,9 @@ do
             continue
         fi
 
-        if [[ $INCLUDE_PYTHON_FILES == "no" && $pname =~ \.py[co]?$ ]]
+        if [[ $INCLUDE_PYTHON_FILES == "no" && $pname =~ \.py[co]$ ]]
         then
-            # Skip python .py or .pyc file
+            # Skip python .pyo or .pyc file
             continue
         fi
 
@@ -135,7 +135,15 @@ do
             continue
         fi
 
-        echo $psum $pname | sha256sum --check --status
+        let -i sumlen=$(echo -n $psum | wc -c)
+        if [ $sumlen = 64 ]
+        then
+            sumcmd=sha256sum
+        else
+            sumcmd=md5sum
+        fi
+
+        echo $psum $pname | $sumcmd --check --status
         if [ $? -ne 0 ]
         then
             echo "Mismatch: $pname ($pkg)"
