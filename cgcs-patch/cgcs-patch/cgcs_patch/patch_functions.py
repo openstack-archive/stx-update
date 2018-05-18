@@ -20,7 +20,7 @@ import tempfile
 import xml.etree.ElementTree as ElementTree
 from xml.dom import minidom
 
-from cgcs_patch.patch_verify import verify_files
+from cgcs_patch.patch_verify import verify_files, cert_type_all
 from cgcs_patch.patch_signing import sign_files
 from cgcs_patch.exceptions import MetadataFail, PatchFail, PatchValidationFailure, PatchMismatchFailure
 
@@ -802,8 +802,8 @@ class PatchFile:
         print "Patch is %s" % patchfile
 
     @staticmethod
-    def write_patch(patchfile):
-        # SAL: Write the patch file. Assumes we are in a directory containing metadata.tar, and software.tar 
+    def write_patch(patchfile, cert_type=None):
+        # Write the patch file. Assumes we are in a directory containing metadata.tar, and software.tar.
 
         # Generate the metadata tarfile
         tar = tarfile.open("metadata.tar", "w")
@@ -820,8 +820,13 @@ class PatchFile:
         sigfile.close()
 
         # Generate the detached signature
-        sign_files(['metadata.tar', 'software.tar'],
-            detached_signature_file)
+        #
+        # Note: if cert_type requests a formal signature, but the signing key
+        #    is not found, we'll instead sign with the 'dev' key and
+        #    need_resign_with_formal is set to True.
+        need_resign_with_formal = sign_files(['metadata.tar', 'software.tar'],
+            detached_signature_file,
+            cert_type=cert_type)
 
         # Create the patch
         tar = tarfile.open(patchfile, "w:gz")
@@ -831,12 +836,27 @@ class PatchFile:
         tar.add(detached_signature_file)
         tar.close()
 
+        if need_resign_with_formal:
+            try:
+                # Try to ensure "sign_patch_formal.sh" will be in our PATH
+                if 'MY_REPO' in os.environ:
+                    os.environ['PATH'] += os.pathsep + os.environ['MY_REPO'] + "/build-tools"
+                if 'MY_PATCH_REPO' in os.environ:
+                    os.environ['PATH'] += os.pathsep + os.environ['MY_PATCH_REPO'] + "/build-tools"
+
+                # Note: This can fail if the user is not authorized to sign with the formal key.
+                subprocess.check_call(["sign_patch_formal.sh", patchfile])
+            except subprocess.CalledProcessError as e:
+                print "Failed to sign official patch. Call to sign_patch_formal.sh process returned non-zero exit status %i" % e.returncode
+                raise SystemExit(e.returncode)
+
     @staticmethod
-    def read_patch(path, metadata_only=False):
+    def read_patch(path, metadata_only=False, cert_type=None):
         # We want to enable signature checking by default
+        # Note: cert_type=None is required if we are to enforce 'no dev patches on a formal load' rule.
         verify_signature = True
 
-        # SAL: Open the patch file and extract the contents to the current dir
+        # Open the patch file and extract the contents to the current dir
         tar = tarfile.open(path, "r:gz")
         tar.extract("metadata.tar")
         tar.extract("software.tar")
@@ -880,17 +900,21 @@ class PatchFile:
                 filenames=["metadata.tar", "software.tar"]
                 sig_valid = verify_files(
                     filenames,
-                    detached_signature_file)
+                    detached_signature_file,
+                    cert_type=cert_type)
                 if sig_valid is True:
                     msg = "Signature verified, patch has been signed"
-                    LOG.info(msg)
+                    if cert_type is None:
+                        LOG.info(msg)
                 else:
                     msg = "Signature check failed"
-                    LOG.error(msg)
+                    if cert_type is None:
+                        LOG.error(msg)
                     raise PatchValidationFailure(msg)
             else:
                 msg = "Patch has not been signed"
-                LOG.error(msg)
+                if cert_type is None:
+                    LOG.error(msg)
                 raise PatchValidationFailure(msg)
 
         tar = tarfile.open("metadata.tar")
@@ -917,17 +941,40 @@ class PatchFile:
         r = {}
 
         try:
-            PatchFile.read_patch(abs_patch, metadata_only=True)
+            if field is None or field == "cert":
+                # Need to determine the cert_type
+                for cert_type_str in cert_type_all:
+                    try:
+                        PatchFile.read_patch(abs_patch, metadata_only=True, cert_type=[cert_type_str])
+                    except PatchValidationFailure as e:
+                        pass;
+                    else:
+                        # Successfully opened the file for reading, and we have discovered the cert_type
+                        r["cert"] = cert_type_str
+                        break;
+
+            if "cert" not in r:
+                # If cert is unknown, then file is not yet open for reading.
+                # Try to open it for reading now, using all available keys.
+                # We can't omit cert_type, or pass None, because that will trigger the code
+                # path used by installed product, in which dev keys are not accepted unless
+                # a magic file exists.
+                PatchFile.read_patch(abs_patch, metadata_only=True, cert_type=cert_type_all)
+
             thispatch = PatchData()
             patch_id = thispatch.parse_metadata("metadata.xml")
-            r["id"] = patch_id
+
+            if field is None or field == "id":
+                r["id"] = patch_id
+
             if field is None:
-                for f in ["status", "unremovable", "summary",
+                for f in ["status", "sw_version", "unremovable", "summary",
                           "description", "install_instructions",
                           "warnings", "reboot_required"]:
                     r[f] = thispatch.query_line(patch_id, f)
             else:
-                r[field] = thispatch.query_line(patch_id, field)
+                if field not in [ 'id', 'cert' ]:
+                    r[field] = thispatch.query_line(patch_id, field)
 
         except PatchValidationFailure as e:
             msg = "Patch validation failed during extraction"
@@ -951,7 +998,7 @@ class PatchFile:
     def modify_patch(patch,
                      key,
                      value):
-
+        rc = False
         abs_patch = os.path.abspath(patch)
         new_abs_patch = "%s.new" % abs_patch
 
@@ -965,10 +1012,15 @@ class PatchFile:
         os.chdir(tmpdir)
 
         try:
-            PatchFile.read_patch(abs_patch, metadata_only=True)
+            cert_type = None
+            meta_data = PatchFile.query_patch(abs_patch)
+            if 'cert' in meta_data:
+                cert_type = meta_data['cert']
+            PatchFile.read_patch(abs_patch, metadata_only=True, cert_type=cert_type)
             PatchData.modify_metadata_text("metadata.xml", key, value)
-            PatchFile.write_patch(new_abs_patch)
-            os.rename(new_abs_patch, abs_patch) 
+            PatchFile.write_patch(new_abs_patch, cert_type=cert_type)
+            os.rename(new_abs_patch, abs_patch)
+            rc = True
 
         except PatchValidationFailure as e:
             raise e
@@ -978,11 +1030,15 @@ class PatchFile:
             msg = "Failed during patch extraction"
             LOG.exception(msg)
             raise PatchValidationFailure(msg)
+        except Exception as e:
+            template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+            message = template.format(type(e).__name__, e.args)
+            print message
         finally:
             # Change back to original working dir
             os.chdir(orig_wd)
             shutil.rmtree(tmpdir)
-            return
+            return rc
 
     @staticmethod
     def extract_patch(patch,

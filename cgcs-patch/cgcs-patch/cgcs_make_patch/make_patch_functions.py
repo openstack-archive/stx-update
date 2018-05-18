@@ -1571,7 +1571,8 @@ def modify_patch():
     try:
         temp_rpm_db_dir = "%s/%s" % (workdir, ".rpmdb")
         if patch_path is not None:
-            PatchFile.modify_patch(patch_path, "status", new_status)
+            rc = PatchFile.modify_patch(patch_path, "status", new_status)
+            assert(rc == True)
             print "Patch '%s' has been modified to status '%s'" % (patch_path, new_status)
         else:
             if sw_version is None or patch_id is None:
@@ -1586,7 +1587,8 @@ def modify_patch():
             print "patch_id = %s" % patch_id
             print "patch_file_name = %s" % patch_file_name
             print "patch_path = %s" % patch_path
-            PatchFile.modify_patch(patch_path, "status", new_status)
+            rc = PatchFile.modify_patch(patch_path, "status", new_status)
+            assert(rc == True)
             os.chdir(pl._std_patch_git_path(".."))
             issue_cmd("git add %s" % patch_path)
             issue_cmd("git commit -m \"Modify status of patch '%s' to '%s'\"" % (patch_id, new_status))
@@ -1699,9 +1701,6 @@ def modify_patch():
     finally:
         shutil.rmtree(workdir)
         
-    # PatchRecipeData
-    # prd.metadata['STATUS'] = new_status
-
 
 def query_patch_usage():
     msg = "query_patch [ --sw_version <version> --id <patch_id> | --file <patch_path.patch> ] [ --field <field_name> ]"
@@ -1759,7 +1758,14 @@ def query_patch():
         temp_rpm_db_dir = "%s/%s" % (workdir, ".rpmdb")
         if patch_path is not None:
             answer = PatchFile.query_patch(patch_path, field=field)
-            print str(answer)
+            field_order=['id', 'sw_version', 'status', 'cert', 'reboot_required', 'unremovable', 'summary', 'description', 'install_instructions', 'warnings']
+            for k in field_order:
+                if k in answer.keys():
+                    print "%s: '%s'" % (k, answer[k])
+            # Print any remaining fields, any order
+            for k in answer.keys():
+                if k not in field_order:
+                    print "%s: '%s'" % (k, answer[k])
         else:
             if sw_version is None or patch_id is None:
                 print "--sw_version and --id are required"

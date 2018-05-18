@@ -23,6 +23,11 @@ default_blocksize=1*1024*1024
 dev_certificate_marker='/etc/pki/wrs/dev_certificate_enable.bin'
 LOG = logging.getLogger('main_logger')
 
+cert_type_dev_str='dev'
+cert_type_formal_str='formal'
+cert_type_dev=[cert_type_dev_str]
+cert_type_formal=[cert_type_formal_str]
+cert_type_all=[cert_type_dev_str, cert_type_formal_str]
 
 def verify_hash(data_hash, signature_bytes, certificate_list):
     """
@@ -49,11 +54,43 @@ def verify_hash(data_hash, signature_bytes, certificate_list):
         # since we want to generate detached sigs that a customer can validate
         # OpenSSL
         verifier = PKCS1_PSS.new(pub_key)
-        verified = verifier.verify(data_hash, signature_bytes)
+        try:
+            verified = verifier.verify(data_hash, signature_bytes)
+        except ValueError as e:
+            verified = False
+            pass
+
         if not verified:
             verifier = PKCS1_v1_5.new(pub_key)
-            verified = verifier.verify(data_hash, signature_bytes)
+            try:
+                verified = verifier.verify(data_hash, signature_bytes)
+            except ValueError as e:
+                verified = False
+                pass
     return verified
+
+
+def get_public_certificates_by_type(cert_type=cert_type_all):
+    """
+    Builds a list of accepted certificates which can be used to validate
+    further things.  This list may contain multiple certificates depending on
+    the configuration of the system and the value of cert_type.  
+
+    :param cert_type: A list of strings, certificate types to include in list
+        'formal' - include formal certificate if available
+        'dev'    - include developer certificate if available
+    :return: A list of certificates in PEM format
+    """
+
+    cert_list = []
+
+    if cert_type_formal_str in cert_type:
+        cert_list.append(formal_certificate)
+
+    if cert_type_dev_str in cert_type:
+        cert_list.append(dev_certificate)
+
+    return cert_list
 
 
 def get_public_certificates():
@@ -117,13 +154,14 @@ def read_RSA_key(key_data):
     return key
 
 
-def verify_files(filenames, signature_file):
+def verify_files(filenames, signature_file, cert_type=None):
     """
     Verify data files against a detached signature.
     :param filenames: A list of files containing the data which was signed
     :param public_key_file: A file containing the public key or certificate
                             corresponding to the key which signed the data
     :param signature_file: The name of the file containing the signature
+    :param cert_type: Only use specified certififcate type to verify (dev/formal)
     :return: True if the signature was verified, False otherwise
     """
 
@@ -142,6 +180,9 @@ def verify_files(filenames, signature_file):
         signature_bytes = sig_file.read()
 
     # Verify the signature
-    certificate_list = get_public_certificates()
+    if cert_type is None:
+        certificate_list = get_public_certificates()
+    else:
+        certificate_list = get_public_certificates_by_type(cert_type=cert_type)
     return verify_hash(data_hash, signature_bytes, certificate_list)
 
