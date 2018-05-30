@@ -1,0 +1,16 @@
+[Unit]
+Description=TIS Patching Agent
+After=syslog.target network.target sw-patch.service
+Before=pmon.service
+
+[Service]
+Type=forking
+User=root
+ExecStart=/etc/init.d/sw-patch-agent start
+ExecStop=/etc/init.d/sw-patch-agent stop
+ExecReload=/etc/init.d/sw-patch-agent restart
+PIDFile=/var/run/sw-patch-agent.pid
+
+[Install]
+WantedBy=multi-user.target
+

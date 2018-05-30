@@ -1,0 +1,98 @@
+#!/bin/bash
+
+# Real upstream repo
+# UPSTREAM="git://vxgit.wrs.com/git/cgcs-root"
+# Testing upstream repo
+UPSTREAM="git://vxgit.wrs.com/git/users/cgcs/cgcs-root"
+
+JENKINS_HOST=yow-cgts4-lx.wrs.com
+
+# TAG=GCGS_14.10_PATCH_0001
+# JOB=playground
+USAGE=0
+
+
+if [ x"$1" = x ] ; then
+    echo "ERROR: You must specify a PATCH_ID"
+    USAGE=1
+fi
+PATCH_ID=$1
+
+if [ x"$2" = x ] ; then
+    echo "ERROR: You must specify a job directory"
+    USAGE=1
+fi
+JOB=$2
+
+if [ $USAGE -ne 0 ] ; then
+    echo "USAGE: make_patching_tag <patch_id> <repo_dir>"
+    echo "USAGE: make_patching_tag CGCS_14.10_PATCH_0001 testpatch"
+    exit 1
+fi
+
+TAG="v$PATCH_ID"
+MY_LOCAL_DISK=/localdisk/designer/$USER/$JOB
+MY_REPO=$MY_LOCAL_DISK
+
+if [[ "$JOB" = /* ]]
+then
+    MY_LOCAL_DISK=$JOB
+    MY_REPO=$JOB
+fi
+
+
+echo "TAG=$TAG"
+echo "JOB=$JOB"
+echo "MY_LOCAL_DISK=$MY_LOCAL_DISK"
+echo "MY_REPO=$MY_REPO"
+
+# Get latest tools
+if [ ! -d bin ] ; then
+    echo "clone bin"
+    git clone git://git.wrs.com/git/bin
+else
+    echo "pull bin"
+    cd bin
+    git pull
+    cd $MY_LOCAL_DISK
+fi
+
+
+export PATH=$MY_REPO/build-tools/branching:$PATH
+
+
+MY_REPO=$MY_REPO/cgcs-root
+cd $MY_REPO
+if [ $? -ne 0 ] ; then
+    echo "ERROR: failed to change to directory '$MY_REPO'"
+    exit 1
+fi
+
+### wrgit pull
+if [ $? -ne 0 ] ; then
+    echo "ERROR: wrgit pull failed"
+    exit 1
+fi
+
+# create patching tag
+create_tags.sh $TAG .
+if [ $? -ne 0 ] ; then
+    echo "ERROR: failed to create tag '$TAG'"
+    exit 1
+fi
+
+if [ "$USER" = "jenkins" ] ; then
+    sh /localdisk/designer/slittle1/proxy/push_tags.sh $TAG
+    if [ $? -ne 0 ] ; then
+        echo "ERROR: failed to push branch '$TAG' to '$UPSTREAM'"
+        exit 1
+    fi
+else
+    push_tags.sh $TAG
+    if [ $? -ne 0 ] ; then
+        echo "ERROR: failed to push branch '$TAG' to '$UPSTREAM'"
+        exit 1
+    fi
+fi
+
+

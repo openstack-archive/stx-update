@@ -1,0 +1,32 @@
+
+<br>
+<table border="2" style="width:300px">
+    <tr>
+        <th>Hostname</th>
+        <th>IP</th>
+        <th>Patch Patch?</th>
+        <th>Requires Reboot</th>
+        <th>Time since last ack</th>
+    </tr>
+
+    % for agent in data:
+        ${agentrow(agent)}
+    % endfor
+</table>
+
+<br><br>
+<a href="/patch/query">Show all</a><br>
+<a href="/patch/query?show=applied">Show applied</a><br>
+<a href="/patch/query?show=available">Show available</a><br>
+
+
+<%def name="agentrow(agent)">
+    <tr>
+        <td>${agent["ip"]}</td>
+        <td>${agent["hostname"]}</td>
+        <td>${agent["patch_current"]}</td>
+        <td>${agent["requires_reboot"]}</td>
+        <td>${agent["secs_since_ack"]}</td>
+    </tr>
+</%def>
+

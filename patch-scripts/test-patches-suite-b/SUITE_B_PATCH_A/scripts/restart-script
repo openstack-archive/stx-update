@@ -1,0 +1,56 @@
+#!/bin/bash
+#
+# Copyright (c) 2016 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+#
+# This script provides an example in-service patching restart for all neutron processes
+#
+
+#
+# The patching subsystem provides a patch-functions bash source file
+# with useful function and variable definitions.
+#
+. /etc/patching/patch-functions
+
+#
+# We can now check to see what type of node we're on, if it's locked, etc,
+# and act accordingly
+#
+
+#
+# Declare an overall script return code
+#
+declare -i GLOBAL_RC=$PATCH_STATUS_OK
+
+# NOTE: The following restart example code could be implemented in scripts
+# owned by the various domains, with a single high-level call in the patch-script.
+# This would be the preferred method, in fact, to ensure the patch-scripts
+# themselves are simple and clean.
+#
+
+# MTCE
+bash -x /usr/local/sbin/patch-restart-mtce \
+    mtcalarmd mtclogd \
+    hbsAgent hbsClient \
+    mtcAgent mtcClient \
+    pmond rmond fsmond hwmond hostwd \
+    guestServer guestAgent
+if [ $? -ne 0 ] ; then
+    loginfo "Mtce patching restart failed"
+    GLOBAL_RC=$PATCH_STATUS_FAILED
+fi
+
+# SYSINV
+processes_to_restart="sysinv-conductor sysinv-api sysinv-agent"
+bash -x /usr/local/sbin/patch-restart-processes ${processes_to_restart}
+if [ $? != 0 ] ; then
+    loginfo "patching restart failed"
+    loginfo "... process-restart ${processes_to_restart}"
+    GLOBAL_RC=$PATCH_STATUS_FAILED
+fi
+
+
+exit $GLOBAL_RC

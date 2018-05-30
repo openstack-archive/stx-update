@@ -1,0 +1,60 @@
+#!/bin/bash
+#
+# Copyright (c) 2016 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+. /etc/patching/patch-functions
+
+declare SCRIPTS=$(find $PATCH_SCRIPTDIR -type f -executable | sort)
+declare -i NUM_SCRIPTS=$(echo "$SCRIPTS" | wc -l)
+
+if [ $NUM_SCRIPTS -eq 0 ]
+then
+    loginfo "No in-service patch scripts found."
+    exit 0
+fi
+
+loginfo "Running $NUM_SCRIPTS in-service patch scripts"
+
+declare SCRIPTLOG=/var/log/patching-insvc.log
+cat <<EOF >>$SCRIPTLOG
+############################################################
+`date "+%FT%T.%3N"`: Running $NUM_SCRIPTS in-service patch scripts:
+
+$SCRIPTS
+
+############################################################
+EOF
+
+declare -i FAILURES=0
+for cmd in $SCRIPTS
+do
+    cat <<EOF >>$SCRIPTLOG
+############################################################
+`date "+%FT%T.%3N"`: Running $cmd
+
+EOF
+
+    bash -x $cmd >>$SCRIPTLOG 2>&1
+    rc=$?
+    if [ $rc -ne $PATCH_STATUS_OK ]
+    then
+        let -i FAILURES++
+    fi
+    cat <<EOF >>$SCRIPTLOG
+`date "+%FT%T.%3N"`: Completed running $cmd (rc=$rc)
+############################################################
+
+EOF
+done
+
+cat <<EOF >>$SCRIPTLOG
+
+`date "+%FT%T.%3N"`: Completed running scripts with $FAILURES failures
+############################################################
+EOF
+
+exit $FAILURES
+

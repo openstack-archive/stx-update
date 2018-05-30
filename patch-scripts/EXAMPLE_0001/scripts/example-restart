@@ -1,0 +1,128 @@
+#!/bin/bash
+#
+# Copyright (c) 2016 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+#
+# This script provides an example in-service patching restart
+#
+
+#
+# The patching subsystem provides a patch-functions bash source file
+# with useful function and variable definitions.
+#
+. /etc/patching/patch-functions
+
+#
+# We can now check to see what type of node we're on, if it's locked, etc,
+# and act accordingly
+#
+
+#
+# Declare an overall script return code
+#
+declare -i GLOBAL_RC=$PATCH_STATUS_OK
+
+# NOTE: The following restart example code could be implemented in scripts
+# owned by the various domains, with a single high-level call in the patch-script.
+# This would be the preferred method, in fact, to ensure the patch-scripts
+# themselves are simple and clean.
+#
+
+#
+# First up, we'll handle restarting the sysinv-agent, which runs on all nodes
+#
+if [ ! -f $PATCH_FLAGDIR/sysinv-agent.restarted ]
+then
+    # The sysinv-agent has not yet been restarted in this patch operation
+    systemctl status sysinv-agent.service
+    if [ $? -eq 0 ]
+    then
+        # The daemon is running, so restart it
+        loginfo "$0: Restarting sysinv-agent"
+        pmon-restart sysinv-agent
+        touch $PATCH_FLAGDIR/sysinv-agent.restarted
+
+        # Wait up to 15 seconds for service to recover
+        let -i UNTIL=$SECONDS+15
+        while [ $UNTIL -ge $SECONDS ]
+        do
+            # Check to make sure it's running
+            systemctl status sysinv-agent.service
+            if [ $? -eq 0 ]
+            then
+                break
+            fi
+
+            # Not running... Let's wait a couple of seconds and check again
+            sleep 2
+        done
+
+        systemctl status sysinv-agent.service
+        if [ $? -ne 0 ]
+        then
+            # Still not running! Clear the flag and mark the RC as failed
+            rm -f $PATCH_FLAGDIR/sysinv-agent.restarted
+            GLOBAL_RC=$PATCH_STATUS_FAILED
+            loginfo "$0: Failed to restart sysinv-agent"
+        fi
+    fi
+fi
+
+#
+# Next, handle restarting horizon.
+# TODO: There will be some SM enhancements coming to provide
+# utilities we can use to facilitate in-service patching.
+# For now, we'll do this a slightly uglier fashion
+#
+if is_controller
+then
+    # Horizon only runs on the controller
+
+    if [ ! -f $PATCH_FLAGDIR/horizon.restarted ]
+    then
+        # Check SM to see if Horizon is running
+        sm-query service horizon | grep -q 'enabled-active'
+        if [ $? -eq 0 ]
+        then
+            loginfo "$0: Restarting horizon"
+
+            # Ask SM to restart Horizon
+            sm-restart service horizon
+            touch $PATCH_FLAGDIR/horizon.restarted
+
+            # Wait up to 30 seconds for service to recover
+            let -i UNTIL=$SECONDS+30
+            while [ $UNTIL -ge $SECONDS ]
+            do
+                # Check to see if it's running
+                sm-query service horizon | grep -q 'enabled-active'
+                if [ $? -eq 0 ]
+                then
+                    break
+                fi
+
+                # Still not running? Let's wait 5 seconds and check again
+                sleep 5
+            done
+
+            sm-query service horizon | grep -q 'enabled-active'
+            if [ $? -ne 0 ]
+            then
+                # Still not running! Clear the flag and mark the RC as failed
+                loginfo "$0: Failed to restart horizon"
+                rm -f $PATCH_FLAGDIR/horizon.restarted
+                GLOBAL_RC=$PATCH_STATUS_FAILED
+                sm-query service horizon
+            fi
+        fi
+    fi
+fi
+
+#
+# Exit the script with the overall return code
+#
+exit $GLOBAL_RC
+

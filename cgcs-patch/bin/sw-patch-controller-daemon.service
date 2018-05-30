@@ -1,0 +1,16 @@
+[Unit]
+Description=TIS Patching Controller Daemon
+After=syslog.target network.target sw-patch.service sw-patch-controller.service
+Before=pmon.service
+
+[Service]
+Type=forking
+User=root
+ExecStart=/etc/init.d/sw-patch-controller-daemon start
+ExecStop=/etc/init.d/sw-patch-controller-daemon stop
+ExecReload=/etc/init.d/sw-patch-controller-daemon restart
+PIDFile=/var/run/sw-patch-controller-daemon.pid
+
+[Install]
+WantedBy=multi-user.target
+

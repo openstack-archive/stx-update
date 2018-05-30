@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# Copyright (c) 2016 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+. /etc/patching/patch-functions
+
+#
+# Triggering a restart of the patching daemons is done by
+# creating a flag file and letting the daemon handle the restart.
+#
+loginfo "Requesting restart of patch-agent"
+
+restart_patch_agent_flag="/run/patching/.restart.patch-agent"
+touch $restart_patch_agent_flag
+
+exit 0
+

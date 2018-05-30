@@ -1,0 +1,2 @@
+COPY_LIST="scripts/*"
+TIS_PATCH_VER=0

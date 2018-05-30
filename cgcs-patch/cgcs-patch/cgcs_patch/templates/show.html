@@ -1,0 +1,83 @@
+
+<br>
+% if not metadata is UNDEFINED and len(metadata) > 0:
+    % for patch_id in sorted(metadata.keys()):
+        ${showpatch(patch_id)}
+    % endfor
+% endif
+
+% if not info is UNDEFINED and len(info) > 0:
+<p>${info}</p>
+% endif
+
+% if not warning is UNDEFINED and len(warning) > 0:
+<p>Warning:<br>${warning}</p>
+% endif
+
+% if not error is UNDEFINED and len(error) > 0:
+<p>Error:<br>${error}</p>
+% endif
+
+<br><br>
+<a href="/patch/query">Show all</a><br>
+<a href="/patch/query?show=applied">Show applied</a><br>
+<a href="/patch/query?show=available">Show available</a><br>
+<a href="/patch/query_hosts">Query Hosts</a><br>
+
+<br><br>
+<form action="/patch/upload" method="POST" enctype="multipart/form-data">
+  <input type="file" name="file"/>
+  <button type="submit">Upload Patch</button>
+</form>
+
+<%def name="showpatch(patch_id)">
+    <%
+        p = metadata[patch_id]
+    %>
+    <h2>${patch_id}</h2>
+    <table border="2">
+    % if p["repostate"] != "":
+        <tr><td valign="top">Repo State:</td><td valign="top">${p["repostate"]}</td></tr>
+    % endif
+    % if p["patchstate"] != "":
+        <tr><td valign="top">Patch State:</td><td valign="top">${p["patchstate"]}</td></tr>
+    % endif
+    % if p["status"] != "":
+        <tr><td valign="top">Status:</td><td valign="top">${p["status"]}</td></tr>
+    % endif
+    % if p["unremovable"] != "":
+        <tr><td valign="top">Unremovable:</td><td valign="top">${p["unremovable"]}</td></tr>
+    % endif
+    % if p["reboot_required"] != "":
+        <tr><td valign="top">Reboot-Required:</td><td valign="top">${p["reboot_required"]}</td></tr>
+    % endif
+    % if p["summary"] != "":
+        <tr><td valign="top">Summary:</td><td valign="top">${p["summary"]}</td></tr>
+    % endif
+    % if p["description"] != "":
+        <tr><td valign="top">Description:</td><td valign="top">${p["description"]}</td></tr>
+    % endif
+    % if p["install_instructions"] != "":
+        <tr><td valign="top">Install Instructions:</td><td valign="top">${p["install_instructions"]}</td></tr>
+    % endif
+    % if p["warnings"] != "":
+        <tr><td valign="top">Warnings:</td><td valign="top">${p["warnings"]}</td></tr>
+    % endif
+    % if "requires" in p and len(p["requires"]) > 0:
+        <tr><td valign="top">Requires:</td><td valign="top">
+        % for req in sorted(p["requires"]):
+            ${req}<br>
+        % endfor
+        </td></tr>
+    % endif
+    % if not contents is UNDEFINED and patch_id in contents:
+        <tr><td valign="top">Contents:</td><td valign="top">
+        % for pkg in sorted(contents[patch_id]):
+            ${pkg}<br>
+        % endfor
+        </td></tr>
+    % endif
+    
+    </table>
+</%def>
+

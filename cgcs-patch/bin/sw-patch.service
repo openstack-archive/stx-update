@@ -1,0 +1,16 @@
+[Unit]
+Description=TIS Patching
+After=syslog.target network.target
+Before=sw-patch-agent.service
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/etc/init.d/sw-patch start
+RemainAfterExit=yes
+StandardOutput=syslog+console
+StandardError=syslog+console
+
+[Install]
+WantedBy=multi-user.target
+

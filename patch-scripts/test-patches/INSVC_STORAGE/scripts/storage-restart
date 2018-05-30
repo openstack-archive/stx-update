@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Copyright (c) 2016 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+#
+# This script provides an example in-service patching restart
+#
+
+#
+# The patching subsystem provides a patch-functions bash source file
+# with useful function and variable definitions.
+#
+. /etc/patching/patch-functions
+
+# TODO: Add restart of something only on storage node?
+
+#
+# Exit the script with the overall return code
+#
+exit $GLOBAL_RC
+
