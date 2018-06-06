@@ -43,7 +43,7 @@ PUPPET_CONF_PATH = '/etc/puppet'
 def _load():
     global SW_VERSION, nodetype, subfunctions
     # Read the build.info file
-    build_info='/etc/build.info'
+    build_info = '/etc/build.info'
 
     if not os.path.isfile(build_info):
         # Assume that we are in a test environment. Dirty, dirty, dirty...
@@ -140,7 +140,8 @@ def _load():
 
         global distributed_cloud_role
         if config.has_option('platform_conf', 'distributed_cloud_role'):
-            distributed_cloud_role = config.get('platform_conf', 'distributed_cloud_role')
+            distributed_cloud_role = config.get('platform_conf',
+                                                'distributed_cloud_role')
 
         global security_feature
         if config.has_option('platform_conf', 'security_feature'):
@@ -168,6 +169,15 @@ PUPPET_PATH = PLATFORM_PATH + "/puppet/" + SW_VERSION + "/"
 CGCS_PATH = "/opt/cgcs"
 KEYRING_PATH = PLATFORM_PATH + "/.keyring/" + SW_VERSION
 
+# Controller configuration flags
+
+# Set after the first application of controller manifests
+INITIAL_CONTROLLER_CONFIG_COMPLETE = os.path.join(
+    PLATFORM_CONF_PATH, ".initial_controller_config_complete")
+# Set after each application of controller manifests
+VOLATILE_CONTROLLER_CONFIG_COMPLETE = os.path.join(
+    VOLATILE_PATH, ".controller_config_complete")
+
 # Compute configuration flags
 
 # Set after initial application of node manifest
@@ -182,6 +192,15 @@ VOLATILE_COMPUTE_CONFIG_COMPLETE = os.path.join(
 # Set to prevent starting compute services (used in combined node upgrade)
 VOLATILE_DISABLE_COMPUTE_SERVICES = os.path.join(
     VOLATILE_PATH, ".disable_compute_services")
+
+# Storage configuration flags
+
+# Set after the first application of storage manifests
+INITIAL_STORAGE_CONFIG_COMPLETE = os.path.join(
+    PLATFORM_CONF_PATH, ".initial_storage_config_complete")
+# Set after each application of storage manifests
+VOLATILE_STORAGE_CONFIG_COMPLETE = os.path.join(
+    VOLATILE_PATH, ".storage_config_complete")
 
 # Upgrade flags
 
