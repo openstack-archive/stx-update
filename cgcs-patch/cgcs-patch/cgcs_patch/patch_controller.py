@@ -1014,10 +1014,10 @@ class PatchController(PatchService):
 
         # Now verify the state of the required patches
         req_verification = True
-        for req_patch, patch_list in required_patches.iteritems():
+        for req_patch, iter_patch_list in required_patches.iteritems():
             if req_patch not in self.patch_data.metadata \
                     or self.patch_data.metadata[req_patch]["repostate"] == constants.AVAILABLE:
-                msg = "%s is required by: %s" % (req_patch, ", ".join(sorted(patch_list)))
+                msg = "%s is required by: %s" % (req_patch, ", ".join(sorted(iter_patch_list)))
                 msg_error += msg + "\n"
                 LOG.info(msg)
                 req_verification = False
@@ -1202,8 +1202,8 @@ class PatchController(PatchService):
                 required_patches[req_patch].append(patch_iter)
 
         if len(required_patches) > 0:
-            for req_patch, patch_list in required_patches.iteritems():
-                msg = "%s is required by: %s" % (req_patch, ", ".join(sorted(patch_list)))
+            for req_patch, iter_patch_list in required_patches.iteritems():
+                msg = "%s is required by: %s" % (req_patch, ", ".join(sorted(iter_patch_list)))
                 msg_error += msg + "\n"
                 LOG.info(msg)
 
@@ -1549,8 +1549,8 @@ class PatchController(PatchService):
 
         for patch_id in patch_ids:
             if patch_id in required_patches:
-                patch_list = required_patches[patch_id]
-                msg_info += "%s is required by: %s\n" % (patch_id, ", ".join(sorted(patch_list)))
+                iter_patch_list = required_patches[patch_id]
+                msg_info += "%s is required by: %s\n" % (patch_id, ", ".join(sorted(iter_patch_list)))
             else:
                 msg_info += "%s is not required by any patches.\n" % patch_id
 
