@@ -1,0 +1,16 @@
+tsconfig
+cgcs-patch
+patch-alarm
+requests-toolbelt
+patch-scripts/EXAMPLE_0001
+patch-scripts/EXAMPLE_0002
+patch-scripts/EXAMPLE_0003
+patch-scripts/EXAMPLE_RR
+patch-scripts/EXAMPLE_MTCE
+patch-scripts/EXAMPLE_NEUTRON
+patch-scripts/EXAMPLE_AODH
+patch-scripts/EXAMPLE_HEAT
+patch-scripts/EXAMPLE_VIM
+patch-scripts/EXAMPLE_NOVA
+patch-scripts/EXAMPLE_SYSINV
+patch-scripts/EXAMPLE_SERVICE
