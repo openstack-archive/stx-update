@@ -1,9 +1,13 @@
 #!/bin/bash
 
-CGCSPATCH_DIR=$MY_REPO/addons/wr-cgcs/layers/cgcs/middleware/patching/recipes-common/cgcs-patch
+pushd `dirname $0` > /dev/null
+SCRIPTPATH=`pwd`
+popd > /dev/null
+
+CGCSPATCH_DIR=$SCRIPTPATH/../../stx-update/cgcs-patch
 
 # Source release-info
-. $MY_REPO/addons/wr-cgcs/layers/cgcs/middleware/recipes-common/build-info/release-info.inc
+. $SCRIPTPATH/../../middleware/recipes-common/build-info/release-info.inc
 export PLATFORM_RELEASE
 
 # Set environment variables for python
