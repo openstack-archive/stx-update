@@ -881,7 +881,7 @@ class RecipeData:
             my_repo = os.environ['MY_PATCH_REPO']
 
         if my_repo is not None:
-            altpath = "%s/addons/wr-cgcs/layers/cgcs/extras.ND/scripts/source_collect_package" % my_repo
+            altpath = "%s/stx/extras.ND/scripts/source_collect_package" % my_repo
             if os.path.isfile(altpath):
                 path = altpath
 
@@ -1484,7 +1484,7 @@ def set_capture_source_path():
         my_repo = os.environ['MY_PATCH_REPO']
 
     if my_repo is not None:
-        old_path = "%s/addons/wr-cgcs/layers/cgcs/extras.ND/scripts/source_collect_package" % my_repo
+        old_path = "%s/stx/extras.ND/scripts/source_collect_package" % my_repo
         if os.path.isfile(old_path):
             rc = issue_cmd_rc("mkdir -p %s" % new_dir)
             rc = issue_cmd_rc("\cp -f %s %s" % (old_path, new_path))
