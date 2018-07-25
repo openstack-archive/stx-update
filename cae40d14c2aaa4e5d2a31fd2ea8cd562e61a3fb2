@@ -1,0 +1,10 @@
+Code-Review+2: Don Penney <don.penney@windriver.com>
+Code-Review+2: Saul Wold <sgw@linux.intel.com>
+Code-Review+2: Scott Little <scott.little@windriver.com>
+Workflow+1: Dean Troyer <dtroyer@gmail.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Wed, 25 Jul 2018 18:34:01 +0000
+Reviewed-on: https://review.openstack.org/584495
+Project: openstack/stx-update
+Branch: refs/heads/master
