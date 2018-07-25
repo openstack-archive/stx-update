@@ -1,0 +1,8 @@
+Code-Review+2: David Sullivan <david.sullivan@windriver.com>
+Workflow+1: Dean Troyer <dtroyer@gmail.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Wed, 25 Jul 2018 21:38:55 +0000
+Reviewed-on: https://review.openstack.org/584494
+Project: openstack/stx-update
+Branch: refs/heads/master
