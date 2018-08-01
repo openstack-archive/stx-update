@@ -14,3 +14,4 @@ patch-scripts/EXAMPLE_VIM
 patch-scripts/EXAMPLE_NOVA
 patch-scripts/EXAMPLE_SYSINV
 patch-scripts/EXAMPLE_SERVICE
+enable-dev-patch
