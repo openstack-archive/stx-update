@@ -35,11 +35,11 @@ LOCAL_PATCH_DATA_DIR = "export/patch_data"
 ORDER_FILE = "patch_order"
 ARCH_DEFAULT = "x86_64"
 
-METADATA_TAGS = [ 'ID', 'SW_VERSION', 'SUMMARY', 'DESCRIPTION',
-                  'INSTALL_INSTRUCTIONS', 'WARNINGS', 'STATUS',
-                  'UNREMOVABLE', 'REBOOT_REQUIRED' ]
-RMP_EXCLUDES = [ '-dev-', '-dbg-', '-doc-' ]
-BUILD_TYPES = [ 'std', 'rt' ]
+METADATA_TAGS = ['ID', 'SW_VERSION', 'SUMMARY', 'DESCRIPTION',
+                 'INSTALL_INSTRUCTIONS', 'WARNINGS', 'STATUS',
+                 'UNREMOVABLE', 'REBOOT_REQUIRED']
+RMP_EXCLUDES = ['-dev-', '-dbg-', '-doc-']
+BUILD_TYPES = ['std', 'rt']
 
 
 SAME = 0
@@ -74,7 +74,7 @@ capture_source_flag = False
 capture_rpms_flag = False
 
 capture_source_path = None
-    
+
 logfile = "/var/log/patching.log"
 
 LOG = logging.getLogger(__name__)
@@ -96,21 +96,22 @@ def configure_logging(logtofile=True, level=logging.DEBUG):
     else:
         logging.basicConfig(level=level)
 
+
 def rev_lt(num1, num2):
-    n1w=num1.split('.')
-    n2w=num2.split('.')
+    n1w = num1.split('.')
+    n2w = num2.split('.')
     while True:
         try:
-            n1=int(n1w.pop(0))
-        except: 
+            n1 = int(n1w.pop(0))
+        except:
             return True
         try:
-            n2=int(n2w.pop(0))
-        except: 
+            n2 = int(n2w.pop(0))
+        except:
             return False
-        if n1<n2:
+        if n1 < n2:
             return True
-        if n1>n2:
+        if n1 > n2:
             return False
 
 
@@ -126,6 +127,7 @@ def add_text_tag_to_xml(parent, name, text):
     tag.text = text
     return tag
 
+
 def handle_exception(exc_type, exc_value, exc_traceback):
     """
     Exception handler to log any uncaught exceptions
@@ -133,6 +135,7 @@ def handle_exception(exc_type, exc_value, exc_traceback):
     LOG.error("Uncaught exception",
               exc_info=(exc_type, exc_value, exc_traceback))
     sys.__excepthook__(exc_type, exc_value, exc_traceback)
+
 
 def write_xml_file(top, fname):
     # Generate the file, in a readable format if possible
@@ -147,6 +150,7 @@ def write_xml_file(top, fname):
     else:
         outfile.write(minidom.parseString(rough_xml).toprettyxml(indent="  "))
 
+
 class PatchRecipeError(Exception):
     """Base class for patch recipe exceptions."""
 
@@ -156,25 +160,31 @@ class PatchRecipeError(Exception):
     def __str__(self):
         return self.message or ""
 
+
 class PatchRecipeXMLFail(PatchRecipeError):
     """Problem parsing XML of patch recipe."""
     pass
+
 
 class PatchBuildFail(PatchRecipeError):
     """Problem Compiling the patch."""
     pass
 
+
 class PatchPackagingFail(PatchRecipeError):
     """Problem assembling the patch."""
     pass
+
 
 class PatchPackagingMiss(PatchRecipeError):
     """Problem assembling the patch - might be correctable."""
     pass
 
+
 class PatchRequirementFail(PatchRecipeError):
     """Missing Requirement."""
     pass
+
 
 class PatchRecipeCmdFail(PatchRecipeError):
     """Shell command Failure."""
@@ -241,7 +251,7 @@ class PatchList:
             if patch == patch_id:
                 return self.patch_data[patch]
         return None
-   
+
     def _validate_patch_order(self):
         fix_local_order = False
         remote_order = []
@@ -266,7 +276,7 @@ class PatchList:
                 break
         if fix_local_order:
             print "_validate_patch_order: fix patch order"
-            f = open(self._std_local_path(self.order_file),'w')
+            f = open(self._std_local_path(self.order_file), 'w')
             for patch_id in validated_order:
                 f.write("%s\n" % patch_id)
                 print "_validate_patch_order:     %s" % patch_id
@@ -282,7 +292,7 @@ class PatchList:
         os.chdir(workdir)
         issue_cmd("mkdir -p %s" % self._std_remote_copy_path(""))
         os.chdir(self._std_remote_copy_path(""))
-        
+
         if not os.path.isdir(self.patch_git):
             issue_cmd("git clone ssh://%s@vxgit.wrs.com:7999/cgcs/%s.git" % (os.environ['USER'], self.patch_git))
             os.chdir(self.patch_git)
@@ -327,7 +337,7 @@ class PatchList:
         for patch_id in self.patches_to_deliver:
             os.chdir(workdir)
             patch = "%s.patch" % patch_id
-	    print "signing patch '%s'" % self._std_local_path(patch)
+            print "signing patch '%s'" % self._std_local_path(patch)
 
             try:
                 subprocess.check_call(["sign_patch_formal.sh", self._std_local_path(patch)])
@@ -376,7 +386,6 @@ class PatchList:
                 print "local patch_id = '%s'" % patch_id
                 xml_path = self._std_local_path(self._std_xml_patch_recipe_name(patch_id))
                 self.add(xml_path, built=True, fix=False)
-
 
     def get_implicit_requires(self, patch_id, recipies):
         list = []
@@ -513,7 +522,6 @@ class PatchList:
 
         prd.gen_xml(fname=self._std_local_path(self._std_xml_patch_recipe_name(prd.patch_id)))
 
-
     def build_patches(self):
         global capture_source_flag
         # While unbuild patches exist
@@ -527,7 +535,7 @@ class PatchList:
                 if rc:
                     # This patch is ready to build, build it now
                     print "Ready to build patch %s." % patch_id
-                    rc = prd.build_patch()   
+                    rc = prd.build_patch()
                     if rc:
                         # append new built patch to order file
                         issue_cmd("sed -i '/^%s$/d' %s" % (patch_id, self._std_local_path(self.order_file)))
@@ -544,8 +552,8 @@ class PatchList:
                         if capture_source_flag:
                             prd.capture_source()
 
-                        # It is important to break here.  
-                        # We just edited the patches_to_build which an enclosing for loop is iterating over.  
+                        # It is important to break here.
+                        # We just edited the patches_to_build which an enclosing for loop is iterating over.
                         # without the break, the result is skipping patches and/or building patches out of order.
                         break
                     else:
@@ -635,7 +643,6 @@ class PackageData:
                 raise PatchRecipeXMLFail(msg)
                 sys.exit(2)
 
-
     def gen_xml(self, e_package):
         for personality in self.personalities:
             add_text_tag_to_xml(e_package, 'PERSONALITY', personality)
@@ -670,17 +677,17 @@ class PackageData:
                         file_path = "%s/%s" % (rpm_dir, file)
                         if os.path.isfile(file_path):
                             print "cleaning match %s\n" % file
-                            rpm_name_cmd = [ "rpm", "-qp", "--dbpath", temp_rpm_db_dir, "--queryformat", "%{NAME}", "%s" % file_path ]
+                            rpm_name_cmd = ["rpm", "-qp", "--dbpath", temp_rpm_db_dir, "--queryformat", "%{NAME}", "%s" % file_path]
                             rpm_name = issue_cmd_w_stdout(rpm_name_cmd)
                             if rpm_name == self.name:
-                                rpm_release_cmd = [ "rpm", "-qp", "--dbpath", temp_rpm_db_dir, "--queryformat", "%{RELEASE}", "%s" % file_path ]
+                                rpm_release_cmd = ["rpm", "-qp", "--dbpath", temp_rpm_db_dir, "--queryformat", "%{RELEASE}", "%s" % file_path]
                                 rpm_release = issue_cmd_w_stdout(rpm_release_cmd)
                                 print "cleaning release %s" % rpm_release
                                 rm_cmd = "rm -f %s/%s-*-%s.%s.rpm" % (rpm_dir, self.name, rpm_release, arch)
                                 issue_cmd(rm_cmd)
 
     def clean(self, prebuilt=False):
-        print "package clean" 
+        print "package clean"
         self._clean_rpms(prebuilt=prebuilt)
 
     def _add_rpms(self, pf, arch=ARCH_DEFAULT, fatal=True, prebuilt=False):
@@ -738,7 +745,7 @@ class PackageData:
                     #         break
 
                     if not reject:
-                        rpm_name_cmd = [ "rpm", "-qp", "--dbpath", temp_rpm_db_dir, "--queryformat", "%{NAME}", "%s/%s" % (rpm_dir, file) ]
+                        rpm_name_cmd = ["rpm", "-qp", "--dbpath", temp_rpm_db_dir, "--queryformat", "%{NAME}", "%s/%s" % (rpm_dir, file)]
                         rpm_name = issue_cmd_w_stdout(rpm_name_cmd)
                         if rpm_name != self.name:
                             print "reject file '%s' due to rpm_name '%s'" % (file, rpm_name)
@@ -784,6 +791,7 @@ class PackageData:
                     raise PatchPackagingFail(msg)
                     sys.exit(2)
 
+
 class RecipeData:
     """
     Recipe data
@@ -791,7 +799,7 @@ class RecipeData:
     def __init__(self, e):
         self.name = None
         self.prebuilt = False
-        self.packages = collections.OrderedDict() # map package name to PackageData
+        self.packages = collections.OrderedDict()  # map package name to PackageData
         self._parse_recipe(e)
 
     def __str__(self):
@@ -863,7 +871,7 @@ class RecipeData:
             self.packages[package].gen_xml(e_package)
 
     def clean(self):
-        print "recipe clean" 
+        print "recipe clean"
         if not self.prebuilt:
             for package in self.packages:
                 self.packages[package].clean(prebuilt=self.prebuilt)
@@ -890,7 +898,7 @@ class RecipeData:
 
         if os.path.isfile(path):
             rc = issue_cmd_rc("%s %s %s >> %s/%s.log" % (path, self.name, extra_arg, os.environ['DEST'], os.environ['PREFIX']))
-        
+
     def build_patch(self, pf, fatal=True):
         for package in self.packages:
             self.packages[package].build_patch(pf, fatal=fatal, prebuilt=self.prebuilt)
@@ -902,6 +910,7 @@ class RecipeData:
     def is_prebuilt(self):
         print "=========== is_prebuilt prebuilt=%s for %s =============" % (self.prebuilt, self.name)
         return self.prebuilt
+
 
 class PatchRecipeData:
     """
@@ -950,7 +959,6 @@ class PatchRecipeData:
             if rc2 >= rc:
                 rc = rc2
         return rc
-
 
     def set_implicit_requires(self, patch_list):
         self.auto_requires = patch_list.get_implicit_requires(self.patch_id, self.recipies.keys())
@@ -1100,8 +1108,8 @@ class PatchRecipeData:
 
     def recursive_print(self, e, depth=0):
         for child in e:
-            print "%sTag: %s, attr: %s, text: %s" % (" "*depth, child.tag, child.attrib, child.text and child.text.strip() or "")
-            self.recursive_print(child.getchildren(), depth+1)
+            print "%sTag: %s, attr: %s, text: %s" % (" " * depth, child.tag, child.attrib, child.text and child.text.strip() or "")
+            self.recursive_print(child.getchildren(), depth + 1)
         # for child in e.iter('BUILD'):
         #     print "Tag: %s, attr: %s" % (child.tag, child.attrib)
 
@@ -1162,7 +1170,7 @@ class PatchRecipeData:
         write_xml_file(e_top, fname)
 
     def __str__(self):
-        return "[ patch_id: %s, context:  %s, metadata: %s, requires: %s, recipies: %s ]" % (str(self.patch_id), str(self.build_context), str(self.metadata), str(self.requires), str(self.recipies,keys()))
+        return "[ patch_id: %s, context:  %s, metadata: %s, requires: %s, recipies: %s ]" % (str(self.patch_id), str(self.build_context), str(self.metadata), str(self.requires), str(self.recipies, keys()))
 
     def myprint(self, indent=""):
         print "patch_id: %s" % str(self.patch_id)
@@ -1205,7 +1213,7 @@ class PatchRecipeData:
 
         if self.build_context is not None:
             # Before checkout, make sure there are no untracked temporary files
-            # left by a previous build that may prevent the checkout... 
+            # left by a previous build that may prevent the checkout...
             # e.g. horizon's pbr-2015.1.0-py2.7.egg directory is a build artifact
             issue_cmd("for d in $(find . -type d -name .git | xargs --max-args=1 dirname); do (cd $d; echo $d; git clean -df; git reset --hard; git ls-files --others --exclude-standard | xargs --no-run-if-empty rm; if [ ! -f .subgits ]; then if [ -f .gitignore ]; then git ls-files --others --ignored --exclude-from=.gitignore  | xargs --no-run-if-empty rm; fi; fi); done")
             issue_cmd("wrgit checkout %s" % self.build_context)
@@ -1229,7 +1237,6 @@ class PatchRecipeData:
 
         return True
 
-
     def _get_prev_patch_id(self, patch_id):
         patch_order_file = self.pl._std_local_path(self.pl.order_file)
         prev_patch_id = None
@@ -1240,7 +1247,7 @@ class PatchRecipeData:
                     return prev_patch_id
                 prev_patch_id = this_patch_id
         return prev_patch_id
-                
+
     def _get_rpm_db_path(self, patch_id):
         rpm_db = self.pl._std_local_path("%s.rpm_db" % patch_id)
         return rpm_db
@@ -1257,7 +1264,7 @@ class PatchRecipeData:
                 issue_cmd("rpm -qp --dbpath %s --queryformat '%s %%{NAME} %%{RELEASE}\n' %s/*rpm >> %s 2> /dev/null" % (temp_rpm_db_dir, subdir, rpm_sub_dir, rpm_db))
 
     def _read_rpm_db(self, patch_id):
-        release_map={}
+        release_map = {}
         rpm_db_dir = "export/patch_data"
         rpm_db = self._get_rpm_db_path(patch_id)
         with open(rpm_db) as f:
@@ -1276,7 +1283,7 @@ class PatchRecipeData:
             delim = "_"
             words = self.patch_id.split(delim)
             l = len(words[-1])
-            words[-1] = '0'*l
+            words[-1] = '0' * l
             prev_patch_id = delim.join(words)
         prev_release_map = self._read_rpm_db(prev_patch_id)
         release_map = self._read_rpm_db(self.patch_id)
@@ -1290,7 +1297,7 @@ class PatchRecipeData:
         os.environ['DEST'] = "%s/export/patch_source/%s" % (os.environ['MY_PATCH_WORKSPACE'], self.patch_id)
         issue_cmd("mkdir -p %s" % os.environ['DEST'])
         for recipe in self.recipies.keys():
-            print "capture source of recipe %s" % recipe 
+            print "capture source of recipe %s" % recipe
             self.recipies[recipe].capture_source()
 
     def build_patch(self, local_path="."):
@@ -1305,8 +1312,8 @@ class PatchRecipeData:
             recipe_str += recipe + " "
             if not self.recipies[recipe].is_prebuilt():
                 build_recipe_str += recipe + " "
-        print "recipe_str = %s" % recipe_str 
-        print "build_recipe_str = %s" % build_recipe_str 
+        print "recipe_str = %s" % recipe_str
+        print "build_recipe_str = %s" % build_recipe_str
         if recipe_str == "":
             msg = "No recipies for patch %s" % self.patch_id
             LOG.exception(msg)
@@ -1326,15 +1333,15 @@ class PatchRecipeData:
         if not pre_compiled_flag:
             # compile patch
             os.chdir(workdir)
-            print "pre clean" 
+            print "pre clean"
             if build_recipe_str == "":
                 print " ... nothing to clean"
             else:
                 issue_cmd("build-pkgs  --no-build-info --clean %s" % build_recipe_str)
                 for recipe in self.recipies.keys():
-                    print "pre clean recipe %s" % recipe 
+                    print "pre clean recipe %s" % recipe
                     self.recipies[recipe].clean()
-            print "Build" 
+            print "Build"
             if build_recipe_str == "":
                 print " ... nothing to build"
             else:
@@ -1377,7 +1384,7 @@ class PatchRecipeData:
             if not pre_compiled_flag:
                 self.recipies[recipe].build_patch(pf, fatal=True)
             else:
-                try: 
+                try:
                     self.recipies[recipe].build_patch(pf, fatal=False)
                 except PatchPackagingMiss:
                     print "Warning: attempting rebuild of recipe %s" % self.recipies[recipe].name
@@ -1385,20 +1392,21 @@ class PatchRecipeData:
                         issue_cmd("build-pkgs --no-build-info --careful %s" % self.recipies[recipe].name)
                     self.recipies[recipe].build_patch(pf, fatal=True)
 
-
-        local_path=self.pl._std_local_path("")
+        local_path = self.pl._std_local_path("")
         print "=== local_path = %s ===" % local_path
         pf.gen_patch(outdir=local_path)
 
         return True
 
+
 def _tag_build_context():
     os.chdir(srcdir)
     issue_cmd("for e in . `wrgit all-core-gits` ; do (cd $e ; git tag v%s) done" % self.patch_id)
 
+
 def read_build_info():
     try:
-        build_info_find_cmd = [ "find", "std/rpmbuild/RPMS/", "-name", "build-info-[0-9]*.x86_64.rpm" ]
+        build_info_find_cmd = ["find", "std/rpmbuild/RPMS/", "-name", "build-info-[0-9]*.x86_64.rpm"]
         build_info_path = issue_cmd_w_stdout(build_info_find_cmd)
         if build_info_path == "":
             issue_cmd("build-pkgs --no-descendants build-info")
@@ -1411,7 +1419,7 @@ def read_build_info():
                     continue
                 if len(line) == 0:
                     continue
-    
+
                 name, var = line.partition("=")[::2]
                 name = name.strip()
                 var = var.strip()
@@ -1422,9 +1430,11 @@ def read_build_info():
         return False
     return True
 
+
 def patch_id_to_tag(patch_id):
     tag = "v%s" % patch_id
     return tag
+
 
 def validate_tag(tag):
     try:
@@ -1437,6 +1447,7 @@ def validate_tag(tag):
         return False
     return True
 
+
 def issue_cmd_w_stdout(cmd):
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out = p.communicate()[0]
@@ -1447,7 +1458,7 @@ def issue_cmd_w_stdout(cmd):
         print msg
         raise PatchRecipeCmdFail(msg)
     return out
-    
+
 
 def issue_cmd(cmd):
     print "CMD: %s" % cmd
@@ -1458,6 +1469,7 @@ def issue_cmd(cmd):
         print msg
         raise PatchRecipeCmdFail(msg)
 
+
 def issue_cmd_no_raise(cmd):
     print "CMD: %s" % cmd
     rc = subprocess.call(cmd, shell=True)
@@ -1466,10 +1478,12 @@ def issue_cmd_no_raise(cmd):
         LOG.exception(msg)
         print msg
 
+
 def issue_cmd_rc(cmd):
     print "CMD: %s" % cmd
     rc = subprocess.call(cmd, shell=True)
     return rc
+
 
 def set_capture_source_path():
     global capture_source_path
@@ -1491,6 +1505,7 @@ def set_capture_source_path():
             if rc == 0:
                 capture_source_path = new_path
 
+
 def capture_rpms():
     for build_type in BUILD_TYPES:
         src_rpm_dir = "%s/%s/%s" % (workdir, build_type, RPM_DIR)
@@ -1499,11 +1514,13 @@ def capture_rpms():
             issue_cmd("mkdir -p %s" % dest_rpm_dir)
             issue_cmd("rsync -avu %s/*.rpm %s" % (src_rpm_dir, dest_rpm_dir))
 
+
 def modify_patch_usage():
     msg = "modify_patch [ --obsolete | --released | --development ] [ --sw_version <version> --id <patch_id> | --file <patch_path.patch> ]"
     LOG.exception(msg)
     print msg
     sys.exit(1)
+
 
 def modify_patch():
     global workdir
@@ -1523,11 +1540,10 @@ def modify_patch():
                                          'sw_version=',
                                          'id=',
                                          'file=',
-                                        ])
+                                         ])
     except getopt.GetoptError as e:
         print str(e)
         modify_patch_usage()
-        
 
     patch_path = None
     cwd = os.getcwd()
@@ -1572,7 +1588,7 @@ def modify_patch():
         temp_rpm_db_dir = "%s/%s" % (workdir, ".rpmdb")
         if patch_path is not None:
             rc = PatchFile.modify_patch(patch_path, "status", new_status)
-            assert(rc == True)
+            assert(rc)
             print "Patch '%s' has been modified to status '%s'" % (patch_path, new_status)
         else:
             if sw_version is None or patch_id is None:
@@ -1588,7 +1604,7 @@ def modify_patch():
             print "patch_file_name = %s" % patch_file_name
             print "patch_path = %s" % patch_path
             rc = PatchFile.modify_patch(patch_path, "status", new_status)
-            assert(rc == True)
+            assert(rc)
             os.chdir(pl._std_patch_git_path(".."))
             issue_cmd("git add %s" % patch_path)
             issue_cmd("git commit -m \"Modify status of patch '%s' to '%s'\"" % (patch_id, new_status))
@@ -1652,7 +1668,7 @@ def modify_patch():
                     human_release = "Titanium Cloud 4"
                     windshare_folder = "Titanium-Cloud-4"
 
-                if sw_version == "18.03" || sw_version == "18.03"
+                if sw_version == "18.03" or sw_version == "18.03":
                     local_dest = "/folk/cgts/rel-ops/%s/patches/" % sw_version
                     deliver_dest = "/folk/prj-wrlinux/release/tis/tis-5/update/ti%s-%s/Titanium-Cloud-5/patches" % (ts, munged_patch_id)
                     human_release = "Titanium Cloud 5"
@@ -1700,7 +1716,7 @@ def modify_patch():
         print "Failed to modify patch!"
     finally:
         shutil.rmtree(workdir)
-        
+
 
 def query_patch_usage():
     msg = "query_patch [ --sw_version <version> --id <patch_id> | --file <patch_path.patch> ] [ --field <field_name> ]"
@@ -1710,6 +1726,7 @@ def query_patch_usage():
     LOG.exception(msg)
     print msg
     sys.exit(1)
+
 
 def query_patch():
     global workdir
@@ -1727,11 +1744,10 @@ def query_patch():
                                          'id=',
                                          'file=',
                                          'field=',
-                                        ])
+                                         ])
     except getopt.GetoptError as e:
         print str(e)
         query_patch_usage()
-
 
     patch_path = None
     cwd = os.getcwd()
@@ -1758,7 +1774,7 @@ def query_patch():
         temp_rpm_db_dir = "%s/%s" % (workdir, ".rpmdb")
         if patch_path is not None:
             answer = PatchFile.query_patch(patch_path, field=field)
-            field_order=['id', 'sw_version', 'status', 'cert', 'reboot_required', 'unremovable', 'summary', 'description', 'install_instructions', 'warnings']
+            field_order = ['id', 'sw_version', 'status', 'cert', 'reboot_required', 'unremovable', 'summary', 'description', 'install_instructions', 'warnings']
             for k in field_order:
                 if k in answer.keys():
                     print "%s: '%s'" % (k, answer[k])
@@ -1794,6 +1810,7 @@ def make_patch_usage():
     print msg
     sys.exit(1)
 
+
 def make_patch():
     global workdir
     global temp_rpm_db_dir
@@ -1825,7 +1842,7 @@ def make_patch():
                                          'srcdir=',
                                          'branch=',
                                          'sw_version=',
-                                        ])
+                                         ])
     except getopt.GetoptError as e:
         print str(e)
         make_patch_usage()
@@ -1894,14 +1911,14 @@ def make_patch():
         # TODO if branch is not None or workdir is not None or srcdir is not None:
         # TODO     print "If --formal is specified, then srcdir, workdir and branch are automatci and must not be specified"
         # TODO     make_patch_usage()
-        
+
     if pre_compiled_flag and formal_flag:
         print "invalid options: --formal and --pre-compiled can't be used together."
         make_patch_usage()
 
     if workdir is not None:
         if not os.path.isdir(workdir):
-            print "invalid directory: workdir = '%s'" % workdir 
+            print "invalid directory: workdir = '%s'" % workdir
             make_patch_usage()
 
     temp_rpm_db_dir = "%s/%s" % (workdir, ".rpmdb")
@@ -1915,7 +1932,6 @@ def make_patch():
         if not os.path.isfile(patch):
             print "invalid patch file path: '%s'" % patch
             make_patch_usage()
-
 
     if 'MY_REPO' in os.environ:
         MY_REPO = os.path.normpath(os.path.join(cwd, os.path.expanduser(os.environ['MY_REPO'])))
@@ -1952,7 +1968,7 @@ def make_patch():
     else:
         print "ERROR: environment variable 'MY_BUILD_CFG' is not defined"
         sys.exit(1)
-    
+
     if 'MY_BUILD_DIR' in os.environ:
         MY_BUILD_DIR = os.path.normpath(os.path.join(cwd, os.path.expanduser(os.environ['MY_BUILD_DIR'])))
     else:
@@ -1989,6 +2005,5 @@ def make_patch():
 
         # sign formal patch
         pl.sign_official_patches()
-	# deliver to git repo
+        # deliver to git repo
         pl.deliver_official_patch()
-

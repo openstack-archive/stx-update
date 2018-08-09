@@ -146,7 +146,7 @@ class PatchService:
 
     def audit_socket(self):
         # Ensure multicast address is still allocated
-        cmd = "ip maddr show %s | awk 'BEGIN { ORS=\"\" }; {if ($2 == \"%s\") print $2}'" % \
+        cmd = "ip maddr show %s | awk 'BEGIN {ORS=\"\"}; {if ($2 == \"%s\") print $2}'" % \
               (cfg.get_mgmt_iface(), self.mcast_addr)
         try:
             result = subprocess.check_output(cmd, shell=True)
@@ -163,4 +163,3 @@ class PatchService:
             LOG.info("Unable to setup sockets. Waiting to retry")
             time.sleep(5)
         LOG.info("Multicast address reconfigured")
-

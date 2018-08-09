@@ -20,21 +20,17 @@ PATCHING_DIR=/opt/patching
 
 logfile=/var/log/patching.log
 
-function LOG()
-{
+function LOG {
     logger "$NAME: $*"
     echo "`date "+%FT%T.%3N"`: $NAME: $*" >> $logfile
 }
 
-function LOG_TO_FILE()
-{
+function LOG_TO_FILE {
     echo "`date "+%FT%T.%3N"`: $NAME: $*" >> $logfile
 }
 
-function create_groups()
-{
-    if [ -f $GROUPS_FILE ]
-    then
+function create_groups {
+    if [ -f $GROUPS_FILE ]; then
         return 0
     fi
 
@@ -45,11 +41,9 @@ function create_groups()
 EOF
 }
 
-function do_setup()
-{
+function do_setup {
     # Does the repo exist?
-    if [ ! -d $REPO_DIR ]
-    then
+    if [ ! -d $REPO_DIR ]; then
         LOG "Creating repo"
         mkdir -p $REPO_DIR
 
@@ -59,8 +53,7 @@ function do_setup()
         createrepo -g $GROUPS_FILE $REPO_DIR >> $logfile 2>&1
     fi
 
-    if [ ! -d $PATCHING_DIR ]
-    then
+    if [ ! -d $PATCHING_DIR ]; then
         LOG "Creating $PATCHING_DIR"
         mkdir -p $PATCHING_DIR
     fi
@@ -68,8 +61,7 @@ function do_setup()
     # If we can ping the active controller, sync the repos
     LOG_TO_FILE "ping -c 1 -w 1 controller"
     ping -c 1 -w 1 controller >> $logfile 2>&1 || ping6 -c 1 -w 1 controller >> $logfile 2>&1
-    if [ $? -ne 0 ]
-    then
+    if [ $? -ne 0 ]; then
         LOG "Cannot ping controller. Nothing to do"
         return 0
     fi

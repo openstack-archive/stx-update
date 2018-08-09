@@ -26,6 +26,7 @@ platform_conf_mtime = 0
 patching_conf_mtime = 0
 patching_conf = '/etc/patching/patching.conf'
 
+
 def read_config():
     global patching_conf_mtime
     global patching_conf
@@ -122,5 +123,3 @@ def get_mgmt_iface():
         logging.exception("Failed to read management_interface from config")
         return None
     return mgmt_if
-
-

@@ -30,6 +30,7 @@ from sysinv.openstack.common import policy
 _POLICY_PATH = None
 _POLICY_CACHE = {}
 
+
 def reset():
     global _POLICY_PATH
     global _POLICY_CACHE

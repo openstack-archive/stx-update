@@ -410,7 +410,7 @@ class PatchData:
         else:
             outfile.write(minidom.parseString(rough_xml).toprettyxml(indent="  "))
         outfile.close()
-        os.rename(new_filename, filename) 
+        os.rename(new_filename, filename)
 
     def parse_metadata(self,
                        filename,
@@ -773,16 +773,16 @@ class PatchFile:
         for rpmfile in self.rpmlist.keys():
             shutil.copy(rpmfile, tmpdir)
 
-	# add file signatures to RPMs
-	try:
-	    subprocess.check_call(["sign-rpms", "-d", tmpdir])
-	except subprocess.CalledProcessError as e:
-	    print "Failed to to add file signatures to RPMs. Call to sign-rpms process returned non-zero exit status %i" % e.returncode
+        # add file signatures to RPMs
+        try:
+            subprocess.check_call(["sign-rpms", "-d", tmpdir])
+        except subprocess.CalledProcessError as e:
+            print "Failed to to add file signatures to RPMs. Call to sign-rpms process returned non-zero exit status %i" % e.returncode
             os.chdir(orig_wd)
-	    shutil.rmtree(tmpdir)
-	    raise SystemExit(e.returncode)
+            shutil.rmtree(tmpdir)
+            raise SystemExit(e.returncode)
 
-	# generate tar file
+        # generate tar file
         tar = tarfile.open("software.tar", "w")
         for rpmfile in self.rpmlist.keys():
             tar.add(os.path.basename(rpmfile))
@@ -824,7 +824,8 @@ class PatchFile:
         # Note: if cert_type requests a formal signature, but the signing key
         #    is not found, we'll instead sign with the 'dev' key and
         #    need_resign_with_formal is set to True.
-        need_resign_with_formal = sign_files(['metadata.tar', 'software.tar'],
+        need_resign_with_formal = sign_files(
+            ['metadata.tar', 'software.tar'],
             detached_signature_file,
             cert_type=cert_type)
 
@@ -897,7 +898,7 @@ class PatchFile:
         if verify_signature:
             # If there should be a detached signature, verify it
             if os.path.exists(detached_signature_file):
-                filenames=["metadata.tar", "software.tar"]
+                filenames = ["metadata.tar", "software.tar"]
                 sig_valid = verify_files(
                     filenames,
                     detached_signature_file,
@@ -947,11 +948,11 @@ class PatchFile:
                     try:
                         PatchFile.read_patch(abs_patch, metadata_only=True, cert_type=[cert_type_str])
                     except PatchValidationFailure as e:
-                        pass;
+                        pass
                     else:
                         # Successfully opened the file for reading, and we have discovered the cert_type
                         r["cert"] = cert_type_str
-                        break;
+                        break
 
             if "cert" not in r:
                 # If cert is unknown, then file is not yet open for reading.
@@ -973,7 +974,7 @@ class PatchFile:
                           "warnings", "reboot_required"]:
                     r[f] = thispatch.query_line(patch_id, f)
             else:
-                if field not in [ 'id', 'cert' ]:
+                if field not in ['id', 'cert']:
                     r[field] = thispatch.query_line(patch_id, field)
 
         except PatchValidationFailure as e:
@@ -1185,7 +1186,7 @@ def patch_build():
                                          'all-nodes='])
     except getopt.GetoptError:
         print "Usage: %s [ <args> ] ... <rpm list>" \
-                  % os.path.basename(sys.argv[0])
+            % os.path.basename(sys.argv[0])
         print "Options:"
         print "\t--id <id>               Patch ID"
         print "\t--release <version>     Platform release version"

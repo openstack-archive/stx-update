@@ -27,7 +27,7 @@ dev_certificate = b"""-----BEGIN CERTIFICATE-----
     Ss6CHAMK42aZ/+MWQlZEzNK49PtomGMjn5SuoK8u
     -----END CERTIFICATE-----"""
 
-formal_certificate=b"""-----BEGIN CERTIFICATE-----
+formal_certificate = b"""-----BEGIN CERTIFICATE-----
     MIIDezCCAmOgAwIBAgICEAMwDQYJKoZIhvcNAQELBQAwQjELMAkGA1UEBhMCQ0Ex
     EDAOBgNVBAgMB09udGFyaW8xITAfBgNVBAoMGFdpbmQgUml2ZXIgU3lzdGVtcywg
     SW5jLjAeFw0xNzA4MTgxNDM1MTJaFw0yNzA4MTYxNDM1MTJaMEIxCzAJBgNVBAYT

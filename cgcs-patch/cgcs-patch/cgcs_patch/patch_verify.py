@@ -18,16 +18,17 @@ from binascii import a2b_base64
 from cgcs_patch.certificates import dev_certificate, formal_certificate
 
 # To save memory, read and hash 1M of files at a time
-default_blocksize=1*1024*1024
+default_blocksize = 1 * 1024 * 1024
 
-dev_certificate_marker='/etc/pki/wrs/dev_certificate_enable.bin'
+dev_certificate_marker = '/etc/pki/wrs/dev_certificate_enable.bin'
 LOG = logging.getLogger('main_logger')
 
-cert_type_dev_str='dev'
-cert_type_formal_str='formal'
-cert_type_dev=[cert_type_dev_str]
-cert_type_formal=[cert_type_formal_str]
-cert_type_all=[cert_type_dev_str, cert_type_formal_str]
+cert_type_dev_str = 'dev'
+cert_type_formal_str = 'formal'
+cert_type_dev = [cert_type_dev_str]
+cert_type_formal = [cert_type_formal_str]
+cert_type_all = [cert_type_dev_str, cert_type_formal_str]
+
 
 def verify_hash(data_hash, signature_bytes, certificate_list):
     """
@@ -74,7 +75,7 @@ def get_public_certificates_by_type(cert_type=cert_type_all):
     """
     Builds a list of accepted certificates which can be used to validate
     further things.  This list may contain multiple certificates depending on
-    the configuration of the system and the value of cert_type.  
+    the configuration of the system and the value of cert_type.
 
     :param cert_type: A list of strings, certificate types to include in list
         'formal' - include formal certificate if available
@@ -137,7 +138,7 @@ def read_RSA_key(key_data):
         # the key object
         #
         # We need to strip the BEGIN and END lines from PEM first
-        x509lines = key_data.replace(' ','').split()
+        x509lines = key_data.replace(' ', '').split()
         x509text = ''.join(x509lines[1:-1])
         x509data = DerSequence()
         x509data.decode(a2b_base64(x509text))
@@ -166,14 +167,14 @@ def verify_files(filenames, signature_file, cert_type=None):
     """
 
     # Hash the data across all files
-    blocksize=default_blocksize
+    blocksize = default_blocksize
     data_hash = SHA256.new()
     for filename in filenames:
         with open(filename, 'rb') as infile:
-            data=infile.read(blocksize)
+            data = infile.read(blocksize)
             while len(data) > 0:
                 data_hash.update(data)
-                data=infile.read(blocksize)
+                data = infile.read(blocksize)
 
     # Get the signature
     with open(signature_file, 'rb') as sig_file:
@@ -185,4 +186,3 @@ def verify_files(filenames, signature_file, cert_type=None):
     else:
         certificate_list = get_public_certificates_by_type(cert_type=cert_type)
     return verify_hash(data_hash, signature_bytes, certificate_list)
-

@@ -21,7 +21,7 @@ DESC="sw-patch-controller-daemon"
 DAEMON="/usr/sbin/sw-patch-controller-daemon"
 PIDFILE="/var/run/sw-patch-controller-daemon.pid"
 
-start() 
+start()
 {
     if [ -e $PIDFILE ]; then
         PIDDIR=/proc/$(cat $PIDFILE)
@@ -46,7 +46,7 @@ start()
     fi
 }
 
-stop() 
+stop()
 {
     echo -n "Stopping $DESC..."
     start-stop-daemon --stop --quiet --pidfile $PIDFILE

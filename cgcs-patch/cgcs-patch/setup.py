@@ -8,13 +8,13 @@
 
 import setuptools
 
-setuptools.setup(name='cgcs_patch',
+setuptools.setup(
+    name='cgcs_patch',
     version='1.0',
     description='CGCS Patch',
     packages=setuptools.find_packages(),
-    package_data = {
+    package_data={
         # Include templates
         '': ['templates/*'],
     }
 )
-

@@ -17,9 +17,9 @@ import ConfigParser
 
 auth_opts = [
     cfg.StrOpt('auth_strategy',
-        default='keystone',
-        help='Method to use for auth: noauth or keystone.'),
-    ]
+               default='keystone',
+               help='Method to use for auth: noauth or keystone.'),
+]
 
 CONF = cfg.CONF
 CONF.register_opts(auth_opts)
@@ -58,7 +58,7 @@ def setup_app(pecan_config=None, extra_hooks=None):
         debug=False,
         force_canonical=getattr(pecan_config.app, 'force_canonical', True),
         hooks=app_hooks,
-        guess_content_type_from_ext=False, # Avoid mime-type lookup
+        guess_content_type_from_ext=False,  # Avoid mime-type lookup
     )
 
     if pecan_config.app.enable_acl:

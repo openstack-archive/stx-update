@@ -14,15 +14,15 @@ from binascii import a2b_base64
 from cgcs_patch.patch_verify import read_RSA_key, cert_type_formal_str, cert_type_dev_str
 
 # To save memory, read and hash 1M of files at a time
-default_blocksize=1*1024*1024
+default_blocksize = 1 * 1024 * 1024
 
 # When we sign patches, look for private keys in the following paths
 #
 # The (currently hardcoded) path on the signing server will be replaced
 # by the capability to specify filename from calling function.
-private_key_files={cert_type_formal_str: '/signing/keys/formal-private-key.pem',
-                   cert_type_dev_str:    os.path.expandvars('$MY_REPO/build-tools/signing/dev-private-key.pem')
-                   }
+private_key_files = {cert_type_formal_str: '/signing/keys/formal-private-key.pem',
+                     cert_type_dev_str: os.path.expandvars('$MY_REPO/build-tools/signing/dev-private-key.pem')
+                     }
 
 
 def sign_files(filenames, signature_file, private_key=None, cert_type=None):
@@ -39,21 +39,21 @@ def sign_files(filenames, signature_file, private_key=None, cert_type=None):
     """
 
     # Hash the data across all files
-    blocksize=default_blocksize
+    blocksize = default_blocksize
     data_hash = SHA256.new()
     for filename in filenames:
         with open(filename, 'rb') as infile:
-            data=infile.read(blocksize)
+            data = infile.read(blocksize)
             while len(data) > 0:
                 data_hash.update(data)
-                data=infile.read(blocksize)
+                data = infile.read(blocksize)
 
     # Find a private key to use, if not already provided
     need_resign_with_formal = False
     if private_key is None:
         if cert_type is not None:
             # A Specific key is asked for
-            assert (cert_type in private_key_files.keys()),"cert_type=%s is not a known cert type" % cert_type
+            assert (cert_type in private_key_files.keys()), "cert_type=%s is not a known cert type" % cert_type
             dict_key = cert_type
             filename = private_key_files[dict_key]
             # print 'cert_type given: Checking to see if ' + filename + ' exists\n'
@@ -75,7 +75,7 @@ def sign_files(filenames, signature_file, private_key=None, cert_type=None):
                     # print 'Getting private key from ' + filename + '\n'
                     private_key = read_RSA_key(open(filename, 'rb').read())
 
-    assert (private_key is not None),"Could not find signing key"
+    assert (private_key is not None), "Could not find signing key"
 
     # Encrypt the hash (sign the data) with the key we find
     signer = PKCS1_PSS.new(private_key)

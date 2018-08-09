@@ -11,10 +11,11 @@ import getopt
 import sys
 
 
-opts = ['sw_version=', 'prefix=' ]
+opts = ['sw_version=', 'prefix=']
 
 server = 'yow-cgts2-lx.wrs.com'
 port = 8888
+
 
 def request_patch_id(sw_version="1.01", prefix="CGCS"):
     raw_parms = {}
@@ -26,6 +27,7 @@ def request_patch_id(sw_version="1.01", prefix="CGCS"):
     params = urllib.urlencode(raw_parms)
     response = urllib2.urlopen(url, params).read()
     return response
+
 
 def main():
     optlist, remainder = getopt.getopt(sys.argv[1:], '', opts)

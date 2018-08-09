@@ -46,18 +46,18 @@ run_insvc_patch_scripts_cmd = "/usr/sbin/run-patch-scripts"
 pa = None
 
 # Smart commands
-smart_cmd = [ "/usr/bin/smart" ]
-smart_quiet = smart_cmd + [ "--quiet" ]
-smart_update = smart_quiet + [ "update" ]
-smart_newer = smart_quiet + [ "newer" ]
-smart_orphans = smart_quiet + [ "query", "--orphans", "--show-format", "$name\n" ]
-smart_query = smart_quiet + [ "query" ]
-smart_query_repos = smart_quiet + [ "query", "--channel=base", "--channel=updates" ]
-smart_install_cmd = smart_cmd + [ "install", "--yes", "--explain" ]
-smart_remove_cmd = smart_cmd + [ "remove", "--yes", "--explain" ]
-smart_query_installed = smart_quiet + [ "query", "--installed", "--show-format", "$name $version\n" ]
-smart_query_base = smart_quiet + [ "query", "--channel=base", "--show-format", "$name $version\n" ]
-smart_query_updates = smart_quiet + [ "query", "--channel=updates", "--show-format", "$name $version\n" ]
+smart_cmd = ["/usr/bin/smart"]
+smart_quiet = smart_cmd + ["--quiet"]
+smart_update = smart_quiet + ["update"]
+smart_newer = smart_quiet + ["newer"]
+smart_orphans = smart_quiet + ["query", "--orphans", "--show-format", "$name\n"]
+smart_query = smart_quiet + ["query"]
+smart_query_repos = smart_quiet + ["query", "--channel=base", "--channel=updates"]
+smart_install_cmd = smart_cmd + ["install", "--yes", "--explain"]
+smart_remove_cmd = smart_cmd + ["remove", "--yes", "--explain"]
+smart_query_installed = smart_quiet + ["query", "--installed", "--show-format", "$name $version\n"]
+smart_query_base = smart_quiet + ["query", "--channel=base", "--show-format", "$name $version\n"]
+smart_query_updates = smart_quiet + ["query", "--channel=updates", "--show-format", "$name $version\n"]
 
 
 def setflag(fname):
@@ -334,7 +334,7 @@ class PatchAgent(PatchService):
         # Get the current channel config
         try:
             output = subprocess.check_output(smart_cmd +
-                                             [ "channel", "--yaml" ],
+                                             ["channel", "--yaml"],
                                              stderr=subprocess.STDOUT)
             config = yaml.load(output)
         except subprocess.CalledProcessError as e:
@@ -345,18 +345,18 @@ class PatchAgent(PatchService):
             LOG.exception("Failed to query channels")
             return False
 
-        expected = [ { 'channel': 'rpmdb',
-                       'type':    'rpm-sys',
-                       'name':    'RPM Database',
-                       'baseurl': None },
-                     { 'channel': 'base',
-                       'type':    'rpm-md',
-                       'name':    'Base',
-                       'baseurl': "http://controller/feed/rel-%s" % SW_VERSION},
-                     { 'channel': 'updates',
-                       'type':    'rpm-md',
-                       'name':    'Patches',
-                       'baseurl': "http://controller/updates/rel-%s" % SW_VERSION} ]
+        expected = [{'channel': 'rpmdb',
+                     'type': 'rpm-sys',
+                     'name': 'RPM Database',
+                     'baseurl': None},
+                    {'channel': 'base',
+                     'type': 'rpm-md',
+                     'name': 'Base',
+                     'baseurl': "http://controller/feed/rel-%s" % SW_VERSION},
+                    {'channel': 'updates',
+                     'type': 'rpm-md',
+                     'name': 'Patches',
+                     'baseurl': "http://controller/updates/rel-%s" % SW_VERSION}]
 
         updated = False
 
@@ -367,7 +367,7 @@ class PatchAgent(PatchService):
             ch_baseurl = item['baseurl']
 
             add_channel = False
-            
+
             if channel in config:
                 # Verify existing channel config
                 if (config[channel].get('type') != ch_type or
@@ -378,8 +378,8 @@ class PatchAgent(PatchService):
                     LOG.warning("Invalid smart config found for %s" % channel)
                     try:
                         output = subprocess.check_output(smart_cmd +
-                                                         [ "channel", "--yes",
-                                                           "--remove", channel ],
+                                                         ["channel", "--yes",
+                                                          "--remove", channel],
                                                          stderr=subprocess.STDOUT)
                     except subprocess.CalledProcessError as e:
                         LOG.exception("Failed to configure %s channel" % channel)
@@ -392,11 +392,11 @@ class PatchAgent(PatchService):
 
             if add_channel:
                 LOG.info("Adding channel %s" % channel)
-                cmd_args = [ "channel", "--yes", "--add", channel,
-                             "type=%s" % ch_type,
-                             "name=%s" % ch_name ]
+                cmd_args = ["channel", "--yes", "--add", channel,
+                            "type=%s" % ch_type,
+                            "name=%s" % ch_name]
                 if ch_baseurl is not None:
-                    cmd_args += [ "baseurl=%s" % ch_baseurl ]
+                    cmd_args += ["baseurl=%s" % ch_baseurl]
 
                 try:
                     output = subprocess.check_output(smart_cmd + cmd_args,
@@ -411,7 +411,7 @@ class PatchAgent(PatchService):
         # Validate the smart config
         try:
             output = subprocess.check_output(smart_cmd +
-                                             [ "config", "--yaml" ],
+                                             ["config", "--yaml"],
                                              stderr=subprocess.STDOUT)
             config = yaml.load(output)
         except subprocess.CalledProcessError as e:
@@ -429,8 +429,8 @@ class PatchAgent(PatchService):
             LOG.warning("Setting %s option" % nolinktos)
             try:
                 output = subprocess.check_output(smart_cmd +
-                                                 [ "config", "--set",
-                                                   "%s=true" % nolinktos ],
+                                                 ["config", "--set",
+                                                  "%s=true" % nolinktos],
                                                  stderr=subprocess.STDOUT)
             except subprocess.CalledProcessError as e:
                 LOG.exception("Failed to configure %s option" % nolinktos)
@@ -446,8 +446,8 @@ class PatchAgent(PatchService):
             LOG.warning("Setting %s option" % nosignature)
             try:
                 output = subprocess.check_output(smart_cmd +
-                                                 [ "config", "--set",
-                                                   "%s=false" % nosignature],
+                                                 ["config", "--set",
+                                                  "%s=false" % nosignature],
                                                  stderr=subprocess.STDOUT)
             except subprocess.CalledProcessError as e:
                 LOG.exception("Failed to configure %s option" % nosignature)
@@ -542,7 +542,7 @@ class PatchAgent(PatchService):
             highest_version = None
 
             try:
-                query = subprocess.check_output(smart_query_repos + [ "--show-format", '$version\n', pkgname ])
+                query = subprocess.check_output(smart_query_repos + ["--show-format", '$version\n', pkgname])
                 # The last non-blank version is the highest
                 for version in query.splitlines():
                     if version == '':
@@ -562,7 +562,7 @@ class PatchAgent(PatchService):
 
             # Get the installed version
             try:
-                query = subprocess.check_output(smart_query + [ "--installed", "--show-format", '$version\n', pkgname ])
+                query = subprocess.check_output(smart_query + ["--installed", "--show-format", '$version\n', pkgname])
                 for version in query.splitlines():
                     if version == '':
                         continue
@@ -932,8 +932,8 @@ class PatchAgent(PatchService):
         remaining = 30
 
         while True:
-            inputs = [ self.sock_in, self.listener ] + connections
-            outputs = [ ]
+            inputs = [self.sock_in, self.listener] + connections
+            outputs = []
 
             rlist, wlist, xlist = select.select(inputs, outputs, inputs, remaining)
 

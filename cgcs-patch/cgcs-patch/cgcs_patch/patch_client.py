@@ -84,58 +84,58 @@ def print_help():
     print "Subcomands:"
     print ""
     print textwrap.fill("    {0:<15} ".format("upload:") + help_upload,
-                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
     print ""
     print textwrap.fill("    {0:<15} ".format("upload-dir:") + help_upload_dir,
-                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
     print ""
     print textwrap.fill("    {0:<15} ".format("apply:") + help_apply,
-                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
     print textwrap.fill(help_patch_args,
-                        width=TERM_WIDTH, initial_indent=' '*20, subsequent_indent=' '*20)
+                        width=TERM_WIDTH, initial_indent=' ' * 20, subsequent_indent=' ' * 20)
     print ""
     print textwrap.fill("    {0:<15} ".format("remove:") + help_remove,
-                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
     print textwrap.fill(help_patch_args,
-                        width=TERM_WIDTH, initial_indent=' '*20, subsequent_indent=' '*20)
+                        width=TERM_WIDTH, initial_indent=' ' * 20, subsequent_indent=' ' * 20)
     print ""
     print textwrap.fill("    {0:<15} ".format("delete:") + help_delete,
-                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
     print textwrap.fill(help_patch_args,
-                        width=TERM_WIDTH, initial_indent=' '*20, subsequent_indent=' '*20)
+                        width=TERM_WIDTH, initial_indent=' ' * 20, subsequent_indent=' ' * 20)
     print ""
     print textwrap.fill("    {0:<15} ".format("query:") + help_query,
-                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
     print ""
     print textwrap.fill("    {0:<15} ".format("show:") + help_show,
-                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
     print ""
     print textwrap.fill("    {0:<15} ".format("what-requires:") + help_what_requires,
-                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
     print ""
     print textwrap.fill("    {0:<15} ".format("query-hosts:") + help_query_hosts,
-                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
     print ""
     print textwrap.fill("    {0:<15} ".format("host-install:") + help_host_install,
-                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
     print ""
     print textwrap.fill("    {0:<15} ".format("host-install-async:") + help_host_install_async,
-                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
     print ""
     print textwrap.fill("    {0:<15} ".format("install-local:") + help_install_local,
-                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
     print ""
     print textwrap.fill("    {0:<15} ".format("drop-host:") + help_drop_host,
-                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
     print ""
     print textwrap.fill("    {0:<15} ".format("query-dependencies:") + help_query_dependencies,
-                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
     print ""
     print textwrap.fill("    {0:<15} ".format("commit:") + help_commit,
-                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
     print ""
     print textwrap.fill("    {0:<15} ".format("--os-region-name:") + help_region_name,
-                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
     print ""
 
     exit(1)
@@ -284,73 +284,73 @@ def print_patch_show_result(req):
 
                 if "sw_version" in pd[patch_id] and pd[patch_id]["sw_version"] != "":
                     print textwrap.fill("    {0:<15} ".format("Release:") + pd[patch_id]["sw_version"],
-                                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
 
                 if "patchstate" in pd[patch_id] and pd[patch_id]["patchstate"] != "":
                     print textwrap.fill("    {0:<15} ".format("Patch State:") + pd[patch_id]["patchstate"],
-                                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
 
                     if pd[patch_id]["patchstate"] == "n/a":
                         if "repostate" in pd[patch_id] and pd[patch_id]["repostate"] != "":
                             print textwrap.fill("    {0:<15} ".format("Repo State:") + pd[patch_id]["repostate"],
-                                                width=TERM_WIDTH, subsequent_indent=' '*20)
+                                                width=TERM_WIDTH, subsequent_indent=' ' * 20)
 
                 if "status" in pd[patch_id] and pd[patch_id]["status"] != "":
                     print textwrap.fill("    {0:<15} ".format("Status:") + pd[patch_id]["status"],
-                                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
 
                 if "unremovable" in pd[patch_id] and pd[patch_id]["unremovable"] != "":
                     print textwrap.fill("    {0:<15} ".format("Unremovable:") + pd[patch_id]["unremovable"],
-                                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
 
                 if "reboot_required" in pd[patch_id] and pd[patch_id]["reboot_required"] != "":
                     print textwrap.fill("    {0:<15} ".format("RR:") + pd[patch_id]["reboot_required"],
-                                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
 
                 if "summary" in pd[patch_id] and pd[patch_id]["summary"] != "":
                     print textwrap.fill("    {0:<15} ".format("Summary:") + pd[patch_id]["summary"],
-                                        width=TERM_WIDTH, subsequent_indent=' '*20)
+                                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
 
                 if "description" in pd[patch_id] and pd[patch_id]["description"] != "":
                     first_line = True
                     for line in pd[patch_id]["description"].split('\n'):
                         if first_line:
                             print textwrap.fill("    {0:<15} ".format("Description:") + line,
-                                                width=TERM_WIDTH, subsequent_indent=' '*20)
+                                                width=TERM_WIDTH, subsequent_indent=' ' * 20)
                             first_line = False
                         else:
                             print textwrap.fill(line,
-                                                width=TERM_WIDTH, subsequent_indent=' '*20,
-                                                initial_indent=' '*20)
+                                                width=TERM_WIDTH, subsequent_indent=' ' * 20,
+                                                initial_indent=' ' * 20)
 
                 if "install_instructions" in pd[patch_id] and pd[patch_id]["install_instructions"] != "":
                     print "    Install Instructions:"
                     for line in pd[patch_id]["install_instructions"].split('\n'):
                         print textwrap.fill(line,
-                                            width=TERM_WIDTH, subsequent_indent=' '*20,
-                                            initial_indent=' '*20)
+                                            width=TERM_WIDTH, subsequent_indent=' ' * 20,
+                                            initial_indent=' ' * 20)
 
                 if "warnings" in pd[patch_id] and pd[patch_id]["warnings"] != "":
                     first_line = True
                     for line in pd[patch_id]["warnings"].split('\n'):
                         if first_line:
                             print textwrap.fill("    {0:<15} ".format("Warnings:") + line,
-                                                width=TERM_WIDTH, subsequent_indent=' '*20)
+                                                width=TERM_WIDTH, subsequent_indent=' ' * 20)
                             first_line = False
                         else:
                             print textwrap.fill(line,
-                                                width=TERM_WIDTH, subsequent_indent=' '*20,
-                                                initial_indent=' '*20)
+                                                width=TERM_WIDTH, subsequent_indent=' ' * 20,
+                                                initial_indent=' ' * 20)
 
                 if "requires" in pd[patch_id] and len(pd[patch_id]["requires"]) > 0:
                     print "    Requires:"
                     for req_patch in sorted(pd[patch_id]["requires"]):
-                        print ' '*20 + req_patch
+                        print ' ' * 20 + req_patch
 
                 if "contents" in data and patch_id in data["contents"]:
                     print "    Contents:"
                     for pkg in sorted(data["contents"][patch_id]):
-                        print ' '*20 + pkg
+                        print ' ' * 20 + pkg
 
                 print "\n"
 
@@ -597,7 +597,7 @@ def patch_commit_req(debug, args):
     print
     commit_warning = "WARNING: Committing a patch is an irreversible operation. " + \
                      "Committed patches cannot be removed."
-    print textwrap.fill(commit_warning, width=TERM_WIDTH, subsequent_indent=' '*9)
+    print textwrap.fill(commit_warning, width=TERM_WIDTH, subsequent_indent=' ' * 9)
     print
 
     user_input = raw_input("Would you like to continue? [y/N]: ")
@@ -699,19 +699,19 @@ def print_query_hosts_result(req):
 
         for agent in sorted(agents, key=lambda a: a["hostname"]):
             patch_current_field = "Yes" if agent["patch_current"] else "No"
-            if agent.get("interim_state") == True:
+            if agent.get("interim_state") is True:
                 patch_current_field = "Pending"
 
             if agent["patch_failed"]:
                 patch_current_field = "Failed"
 
             print "{0:<{width_hn}}  {1:<{width_ip}}  {2:^{width_pc}}  {3:^{width_rr}}  {4:^{width_rel}}  {5:^{width_state}}".format(
-                agent["hostname"], 
-                agent["ip"], 
+                agent["hostname"],
+                agent["ip"],
                 patch_current_field,
                 "Yes" if agent["requires_reboot"] else "No",
-                agent["sw_version"], 
-                agent["state"], 
+                agent["sw_version"],
+                agent["state"],
                 width_hn=width_hn, width_ip=width_ip, width_pc=width_pc, width_rr=width_rr, width_rel=width_rel, width_state=width_state)
 
     elif req.status_code == 500:
@@ -862,7 +862,7 @@ def wait_for_install_complete(agent_ip):
                     break
 
             if state == constants.PATCH_AGENT_STATE_INSTALLING or \
-                    interim_state == True:
+                    interim_state is True:
                 # Still installing
                 sys.stdout.write(".")
                 sys.stdout.flush()
@@ -1206,7 +1206,7 @@ def check_for_os_region_name():
             try:
                 subprocess.check_output("pgrep -f dcorch-api-proxy", shell=True)
             except subprocess.CalledProcessError:
-                print ("Command must be run from the active controller.")
+                print("Command must be run from the active controller.")
                 exit(1)
 
             # get a token and fetch the internal endpoint in SystemController

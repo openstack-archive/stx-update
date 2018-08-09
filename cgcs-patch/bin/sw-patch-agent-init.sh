@@ -22,7 +22,7 @@ DAEMON="/usr/sbin/sw-patch-agent"
 PIDFILE="/var/run/sw-patch-agent.pid"
 PATCH_INSTALLING_FILE="/var/run/patch_installing"
 
-start() 
+start()
 {
     if [ -e $PIDFILE ]; then
         PIDDIR=/proc/$(cat $PIDFILE)
@@ -47,18 +47,15 @@ start()
     fi
 }
 
-stop() 
+stop()
 {
-    if [ -f $PATCH_INSTALLING_FILE ]
-    then
+    if [ -f $PATCH_INSTALLING_FILE ]; then
         echo "Patches are installing. Waiting for install to complete."
-        while [ -f $PATCH_INSTALLING_FILE ]
-        do
+        while [ -f $PATCH_INSTALLING_FILE ]; do
             # Verify the agent is still running
             pid=$(cat $PATCH_INSTALLING_FILE)
             cat /proc/$pid/cmdline 2>/dev/null | grep -q $DAEMON
-            if [ $? -ne 0 ]
-            then
+            if [ $? -ne 0 ]; then
                 echo "Patch agent not running."
                 break
             fi

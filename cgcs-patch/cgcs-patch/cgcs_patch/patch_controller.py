@@ -537,7 +537,6 @@ class PatchMessageDropHostReq(messages.PatchMessage):
         sock.sendto(message, (cfg.controller_mcast_group, cfg.controller_port))
 
 
-
 class PatchController(PatchService):
     def __init__(self):
         PatchService.__init__(self)
@@ -1561,7 +1560,7 @@ class PatchController(PatchService):
         self.inc_patch_op_counter()
 
         self.patch_data_lock.acquire()
-        #self.patch_data.load_all()
+        # self.patch_data.load_all()
         self.check_patch_states()
         self.patch_data_lock.release()
 
@@ -1813,7 +1812,7 @@ class PatchController(PatchService):
                     raise e
 
                 if pkgname not in keep[patch_sw_version]:
-                    keep[patch_sw_version][pkgname] = { arch: pkgver }
+                    keep[patch_sw_version][pkgname] = {arch: pkgver}
                     continue
                 elif arch not in keep[patch_sw_version][pkgname]:
                     keep[patch_sw_version][pkgname][arch] = pkgver
@@ -1823,9 +1822,9 @@ class PatchController(PatchService):
                 keep_pkgver = keep[patch_sw_version][pkgname][arch]
                 if pkgver > keep_pkgver:
                     if pkgname not in cleanup[patch_sw_version]:
-                        cleanup[patch_sw_version][pkgname] = { arch: [ keep_pkgver ] }
+                        cleanup[patch_sw_version][pkgname] = {arch: [keep_pkgver]}
                     elif arch not in cleanup[patch_sw_version][pkgname]:
-                        cleanup[patch_sw_version][pkgname][arch] = [ keep_pkgver ]
+                        cleanup[patch_sw_version][pkgname][arch] = [keep_pkgver]
                     else:
                         cleanup[patch_sw_version][pkgname][arch].append(keep_pkgver)
 
@@ -1845,9 +1844,9 @@ class PatchController(PatchService):
                 else:
                     # Put this pkg in the cleanup list
                     if pkgname not in cleanup[patch_sw_version]:
-                        cleanup[patch_sw_version][pkgname] = { arch: [ pkgver ] }
+                        cleanup[patch_sw_version][pkgname] = {arch: [pkgver]}
                     elif arch not in cleanup[patch_sw_version][pkgname]:
-                        cleanup[patch_sw_version][pkgname][arch] = [ pkgver ]
+                        cleanup[patch_sw_version][pkgname][arch] = [pkgver]
                     else:
                         cleanup[patch_sw_version][pkgname][arch].append(pkgver)
 
@@ -1868,7 +1867,7 @@ class PatchController(PatchService):
             disk_space += statinfo.st_size
 
         if dry_run:
-            results["info"] = "This commit operation would free %0.2f MiB" % (disk_space/(1024.0*1024.0))
+            results["info"] = "This commit operation would free %0.2f MiB" % (disk_space / (1024.0 * 1024.0))
             return results
 
         # Do the commit

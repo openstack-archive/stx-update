@@ -16,6 +16,7 @@ from cgcs_patch.patch_controller import pc
 import logging
 from cgcs_patch.patch_functions import LOG
 
+
 class PatchAPIController(object):
 
     @expose('json')
@@ -107,7 +108,7 @@ class PatchAPIController(object):
         # currently 64K chunk size is selected
         dst = os.open(fn, os.O_WRONLY | os.O_CREAT)
         src = fileitem.file.fileno()
-        size = 64*1024
+        size = 64 * 1024
         n = size
         while n >= size:
             s = os.read(src, size)
@@ -263,4 +264,3 @@ class RootController(object):
 
     patch = PatchAPIController()
     v1 = PatchAPIController()
-

@@ -28,8 +28,6 @@ from cgcs_patch.constants import ENABLE_DEV_CERTIFICATE_PATCH_IDENTIFIER
 LOG_FILE = '/var/log/patch-alarms.log'
 PID_FILE = '/var/run/patch-alarm-manager.pid'
 
-#logging.basicConfig(filename=LOG_FILE, level=logging.DEBUG)
-
 
 ###################
 # METHODS
@@ -97,10 +95,10 @@ class PatchAlarmDaemon():
             if 'pd' in data:
                 for patch_id, metadata in data['pd'].iteritems():
                     if 'patchstate' in metadata and \
-                        (metadata['patchstate'] == 'Partial-Apply' or metadata['patchstate'] == 'Partial-Remove'):
+                            (metadata['patchstate'] == 'Partial-Apply' or metadata['patchstate'] == 'Partial-Remove'):
                         raise_pip_alarm = True
                     if 'status' in metadata and \
-                        (metadata['status'] == 'OBS' or metadata['status'] == 'Obsolete'):
+                            (metadata['status'] == 'OBS' or metadata['status'] == 'Obsolete'):
                         raise_obs_alarm = True
                     # If there is a patch in the system (in any state) that is
                     # named some variation of "enable-dev-certificate", raise
@@ -113,16 +111,16 @@ class PatchAlarmDaemon():
                                           entity_instance_id)
         if raise_pip_alarm and pip_alarm is None:
             logging.info("Raising patch-in-progress alarm")
-            fault = fm_api.Fault(alarm_id = fm_constants.FM_ALARM_ID_PATCH_IN_PROGRESS,
-                                 alarm_type = fm_constants.FM_ALARM_TYPE_5,
-                                 alarm_state = fm_constants.FM_ALARM_STATE_SET,
-                                 entity_type_id = fm_constants.FM_ENTITY_TYPE_HOST,
-                                 entity_instance_id = entity_instance_id,
-                                 severity = fm_constants.FM_ALARM_SEVERITY_MINOR,
-                                 reason_text = 'Patching operation in progress',
-                                 probable_cause = fm_constants.ALARM_PROBABLE_CAUSE_65,
-                                 proposed_repair_action = 'Complete reboots of affected hosts',
-                                 service_affecting = False)
+            fault = fm_api.Fault(alarm_id=fm_constants.FM_ALARM_ID_PATCH_IN_PROGRESS,
+                                 alarm_type=fm_constants.FM_ALARM_TYPE_5,
+                                 alarm_state=fm_constants.FM_ALARM_STATE_SET,
+                                 entity_type_id=fm_constants.FM_ENTITY_TYPE_HOST,
+                                 entity_instance_id=entity_instance_id,
+                                 severity=fm_constants.FM_ALARM_SEVERITY_MINOR,
+                                 reason_text='Patching operation in progress',
+                                 probable_cause=fm_constants.ALARM_PROBABLE_CAUSE_65,
+                                 proposed_repair_action='Complete reboots of affected hosts',
+                                 service_affecting=False)
 
             self.fm_api.set_fault(fault)
         elif not raise_pip_alarm and pip_alarm is not None:
@@ -134,16 +132,16 @@ class PatchAlarmDaemon():
                                           entity_instance_id)
         if raise_obs_alarm and obs_alarm is None:
             logging.info("Raising obsolete-patch-in-system alarm")
-            fault = fm_api.Fault(alarm_id = fm_constants.FM_ALARM_ID_PATCH_OBS_IN_SYSTEM,
-                                 alarm_type = fm_constants.FM_ALARM_TYPE_5,
-                                 alarm_state = fm_constants.FM_ALARM_STATE_SET,
-                                 entity_type_id = fm_constants.FM_ENTITY_TYPE_HOST,
-                                 entity_instance_id = entity_instance_id,
-                                 severity = fm_constants.FM_ALARM_SEVERITY_WARNING,
-                                 reason_text = 'Obsolete patch in system',
-                                 probable_cause = fm_constants.ALARM_PROBABLE_CAUSE_65,
-                                 proposed_repair_action = 'Remove and delete obsolete patches',
-                                 service_affecting = False)
+            fault = fm_api.Fault(alarm_id=fm_constants.FM_ALARM_ID_PATCH_OBS_IN_SYSTEM,
+                                 alarm_type=fm_constants.FM_ALARM_TYPE_5,
+                                 alarm_state=fm_constants.FM_ALARM_STATE_SET,
+                                 entity_type_id=fm_constants.FM_ENTITY_TYPE_HOST,
+                                 entity_instance_id=entity_instance_id,
+                                 severity=fm_constants.FM_ALARM_SEVERITY_WARNING,
+                                 reason_text='Obsolete patch in system',
+                                 probable_cause=fm_constants.ALARM_PROBABLE_CAUSE_65,
+                                 proposed_repair_action='Remove and delete obsolete patches',
+                                 service_affecting=False)
 
             self.fm_api.set_fault(fault)
         elif not raise_obs_alarm and obs_alarm is not None:
@@ -155,20 +153,19 @@ class PatchAlarmDaemon():
                                            entity_instance_id)
         if raise_cert_alarm and cert_alarm is None:
             logging.info("Raising developer-certificate-enabled alarm")
-            fault = fm_api.Fault(alarm_id = fm_constants.FM_ALARM_ID_NONSTANDARD_CERT_PATCH,
-                                 alarm_type = fm_constants.FM_ALARM_TYPE_9,
-                                 alarm_state = fm_constants.FM_ALARM_STATE_SET,
-                                 entity_type_id = fm_constants.FM_ENTITY_TYPE_HOST,
-                                 entity_instance_id = entity_instance_id,
-                                 severity = fm_constants.FM_ALARM_SEVERITY_CRITICAL,
-                                 reason_text = 'Developer patch certificate is enabled',
-                                 probable_cause = fm_constants.ALARM_PROBABLE_CAUSE_65,
-                                 proposed_repair_action = 'Reinstall system to disable certificate and remove untrusted patches',
-                                 suppression = False,
-                                 service_affecting = False)
+            fault = fm_api.Fault(alarm_id=fm_constants.FM_ALARM_ID_NONSTANDARD_CERT_PATCH,
+                                 alarm_type=fm_constants.FM_ALARM_TYPE_9,
+                                 alarm_state=fm_constants.FM_ALARM_STATE_SET,
+                                 entity_type_id=fm_constants.FM_ENTITY_TYPE_HOST,
+                                 entity_instance_id=entity_instance_id,
+                                 severity=fm_constants.FM_ALARM_SEVERITY_CRITICAL,
+                                 reason_text='Developer patch certificate is enabled',
+                                 probable_cause=fm_constants.ALARM_PROBABLE_CAUSE_65,
+                                 proposed_repair_action='Reinstall system to disable certificate and remove untrusted patches',
+                                 suppression=False,
+                                 service_affecting=False)
 
             self.fm_api.set_fault(fault)
-
 
     def _get_handle_failed_hosts(self):
         url = "http://%s/patch/query_hosts" % self.api_addr
@@ -202,16 +199,16 @@ class PatchAlarmDaemon():
                 else:
                     logging.info("Updating patch-host-install-failure alarm")
 
-                fault = fm_api.Fault(alarm_id = fm_constants.FM_ALARM_ID_PATCH_HOST_INSTALL_FAILED,
-                                     alarm_type = fm_constants.FM_ALARM_TYPE_5,
-                                     alarm_state = fm_constants.FM_ALARM_STATE_SET,
-                                     entity_type_id = fm_constants.FM_ENTITY_TYPE_HOST,
-                                     entity_instance_id = entity_instance_id,
-                                     severity = fm_constants.FM_ALARM_SEVERITY_MAJOR,
-                                     reason_text = reason_text,
-                                     probable_cause = fm_constants.ALARM_PROBABLE_CAUSE_65,
-                                     proposed_repair_action = 'Undo patching operation',
-                                     service_affecting = False)
+                fault = fm_api.Fault(alarm_id=fm_constants.FM_ALARM_ID_PATCH_HOST_INSTALL_FAILED,
+                                     alarm_type=fm_constants.FM_ALARM_TYPE_5,
+                                     alarm_state=fm_constants.FM_ALARM_STATE_SET,
+                                     entity_type_id=fm_constants.FM_ENTITY_TYPE_HOST,
+                                     entity_instance_id=entity_instance_id,
+                                     severity=fm_constants.FM_ALARM_SEVERITY_MAJOR,
+                                     reason_text=reason_text,
+                                     probable_cause=fm_constants.ALARM_PROBABLE_CAUSE_65,
+                                     proposed_repair_action='Undo patching operation',
+                                     service_affecting=False)
                 self.fm_api.set_fault(fault)
 
         elif patch_failed_alarm is not None:
@@ -220,4 +217,3 @@ class PatchAlarmDaemon():
                                     entity_instance_id)
 
         return False
-

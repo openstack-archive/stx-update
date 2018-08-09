@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 """
 
+
 class PatchError(Exception):
     """Base class for patching exceptions."""
 

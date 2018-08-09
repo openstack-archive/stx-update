@@ -10,7 +10,8 @@ import posixfile
 import string
 import time
 
-directory="/localdisk/designer/jenkins/patch_ids"
+directory = "/localdisk/designer/jenkins/patch_ids"
+
 
 def get_unique_id(filename, digits=4):
     counter = 1
@@ -29,14 +30,15 @@ def get_unique_id(filename, digits=4):
             print "creation of file '%s' failed" % path
             return -1
 
-    file.seek(0) # rewind
-    format = "%%0%dd" % digits 
+    file.seek(0)  # rewind
+    format = "%%0%dd" % digits
     file.write(format % counter)
 
     # Note: close releases lock
     file.close()
 
     return counter
+
 
 def get_patch_id(version, prefix="CGCS", digits=4):
     filename = "%s_%s_patchid" % (prefix, version)
@@ -46,4 +48,3 @@ def get_patch_id(version, prefix="CGCS", digits=4):
     patch_id_format = "%%s_%%s_PATCH_%%0%dd" % digits
     patch_id = patch_id_format % (prefix, version, id)
     return patch_id
-

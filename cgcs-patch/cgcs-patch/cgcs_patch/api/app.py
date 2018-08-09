@@ -5,12 +5,10 @@ SPDX-License-Identifier: Apache-2.0
 
 """
 
-#from oslo.config import cfg
 import pecan
 
 from cgcs_patch.api import config
 
-#CONF = cfg.CONF
 
 def get_pecan_config():
     # Set up the pecan configuration
@@ -30,7 +28,7 @@ def setup_app(pecan_config=None):
         template_path=pecan_config.app.template_path,
         debug=False,
         force_canonical=getattr(pecan_config.app, 'force_canonical', True),
-        guess_content_type_from_ext=False, # Avoid mime-type lookup
+        guess_content_type_from_ext=False,  # Avoid mime-type lookup
     )
 
     return app
