@@ -4,10 +4,10 @@ pushd `dirname $0` > /dev/null
 SCRIPTPATH=`pwd`
 popd > /dev/null
 
-CGCSPATCH_DIR=$SCRIPTPATH/../../stx-update/cgcs-patch
+CGCSPATCH_DIR=$SCRIPTPATH/../../cgcs-patch
 
 # Source release-info
-. $SCRIPTPATH/../../middleware/recipes-common/build-info/release-info.inc
+. $SCRIPTPATH/../../../stx-integ/utilities/build-info/release-info.inc
 export PLATFORM_RELEASE
 
 # Set environment variables for python

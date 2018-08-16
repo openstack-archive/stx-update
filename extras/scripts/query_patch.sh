@@ -4,7 +4,7 @@ pushd `dirname $0` > /dev/null
 SCRIPTPATH=`pwd`
 popd > /dev/null
 
-CGCSPATCH_DIR=$SCRIPTPATH/../../stx-update/cgcs-patch
+CGCSPATCH_DIR=$SCRIPTPATH/../../cgcs-patch
 
 # Set environment variables for python
 export PYTHONPATH=$CGCSPATCH_DIR/cgcs-patch
