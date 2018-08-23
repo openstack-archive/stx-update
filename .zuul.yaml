@@ -4,7 +4,17 @@
       jobs:
         - openstack-tox-linters
         - openstack-tox-pep8
+        - openstack-tox-pylint
+            required-projects:
+              - openstack/stx-config
+              - openstack/stx-fault
+              - openstack/stx-integ
     gate:
       jobs:
         - openstack-tox-linters
         - openstack-tox-pep8
+        - openstack-tox-pylint
+            required-projects:
+              - openstack/stx-config
+              - openstack/stx-fault
+              - openstack/stx-integ
