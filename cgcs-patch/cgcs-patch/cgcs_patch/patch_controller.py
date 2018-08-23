@@ -15,7 +15,7 @@ import ConfigParser
 import rpm
 import os
 
-from rpmUtils.miscutils import stringToVersion
+from rpmUtils.miscutils import stringToVersion # pylint: disable=import-error
 
 from wsgiref import simple_server
 from cgcs_patch.api import app
@@ -25,7 +25,7 @@ from cgcs_patch.patch_functions import \
     avail_dir, applied_dir, committed_dir, \
     PatchFile, parse_rpm_filename, \
     package_dir, repo_dir, SW_VERSION, root_package_dir
-from cgcs_patch.exceptions import MetadataFail, RpmFail, PatchFail, PatchValidationFailure, PatchMismatchFailure
+from cgcs_patch.exceptions import MetadataFail, RpmFail, PatchError, PatchFail, PatchValidationFailure, PatchMismatchFailure
 from cgcs_patch.patch_functions import LOG
 from cgcs_patch.patch_functions import audit_log_info
 from cgcs_patch.patch_functions import patch_dir, repo_root_dir
@@ -721,7 +721,7 @@ class PatchController(PatchService):
                         # Ignore epoch
                         patch_ver = patch_ver.split(':')[1]
 
-                    rc = rpm.labelCompare(stringToVersion(installed_ver),
+                    rc = rpm.labelCompare(stringToVersion(installed_ver), # pylint: disable=no-member
                                           stringToVersion(patch_ver))
 
                     if self.patch_data.metadata[patch_id]["repostate"] == constants.AVAILABLE:
@@ -1733,7 +1733,6 @@ class PatchController(PatchService):
             raise PatchFail(msg)
 
         release = None
-        all = False
         patch_added = False
         failure = False
         recursive = True
@@ -1945,7 +1944,7 @@ class PatchController(PatchService):
 
         return rc
 
-    def patch_host_install(self, host_ip, force, async=False):
+    def patch_host_install(self, host_ip, force, async_req=False):
         msg_info = ""
         msg_warning = ""
         msg_error = ""
@@ -1960,7 +1959,7 @@ class PatchController(PatchService):
                 if ip not in self.hosts:
                     # Translated successfully, but IP isn't in the table.
                     # Raise an exception to drop out to the failure handling
-                    raise
+                    raise PatchError("Host IP (%s) not in table" % ip)
             except:
                 self.hosts_lock.release()
                 msg = "Unknown host specified: %s" % host_ip
@@ -1968,7 +1967,7 @@ class PatchController(PatchService):
                 LOG.error("Error in host-install: " + msg)
                 return dict(info=msg_info, warning=msg_warning, error=msg_error)
 
-        msg = "Running host-install for %s (%s), force=%s, async=%s" % (host_ip, ip, force, async)
+        msg = "Running host-install for %s (%s), force=%s, async_req=%s" % (host_ip, ip, force, async_req)
         LOG.info(msg)
         audit_log_info(msg)
 
@@ -1989,11 +1988,11 @@ class PatchController(PatchService):
         installreq.send(self.sock_out)
         self.socket_lock.release()
 
-        if async:
-            # async install requested, so return now
+        if async_req:
+            # async_req install requested, so return now
             msg = "Patch installation request sent to %s." % self.hosts[ip].hostname
             msg_info += msg + "\n"
-            LOG.info("host-install async: " + msg)
+            LOG.info("host-install async_req: " + msg)
             return dict(info=msg_info, warning=msg_warning, error=msg_error)
 
         # Now we wait, up to ten mins... TODO: Wait on a condition
@@ -2063,7 +2062,7 @@ class PatchController(PatchService):
                 if ip not in self.hosts:
                     # Translated successfully, but IP isn't in the table.
                     # Raise an exception to drop out to the failure handling
-                    raise
+                    raise PatchError("Host IP (%s) not in table" % ip)
             except:
                 self.hosts_lock.release()
                 msg = "Unknown host specified: %s" % host_ip
@@ -2132,7 +2131,7 @@ def get_handler_cls():
             handler = MyServerHandler(
                 self.rfile, self.wfile, self.get_stderr(), self.get_environ()
             )
-            handler.request_handler = self  # backpointer for logging
+            handler.request_handler = self  # pylint: disable=attribute-defined-outside-init
             handler.run(self.server.get_app())
 
     return MyHandler

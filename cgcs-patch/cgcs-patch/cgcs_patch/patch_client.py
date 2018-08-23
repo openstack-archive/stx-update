@@ -503,9 +503,9 @@ def patch_commit_req(debug, args):
         dry_run = True
         args.remove(constants.CLI_OPT_DRY_RUN)
 
-    all = False
+    all_patches = False
     if constants.CLI_OPT_ALL in args:
-        all = True
+        all_patches = True
         args.remove(constants.CLI_OPT_ALL)
 
     # Default to running release
@@ -526,11 +526,11 @@ def patch_commit_req(debug, args):
 
     headers = {}
     append_auth_token_if_required(headers)
-    if release and not all:
+    if release and not all_patches:
         # Disallow
         print "Use of --release option requires --all"
         return 1
-    elif all:
+    elif all_patches:
         # Get a list of all patches
         extra_opts = "&release=%s" % relopt
         url = "http://%s/patch/query?show=all%s" % (api_addr, extra_opts)

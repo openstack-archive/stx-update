@@ -10,6 +10,7 @@ class PatchError(Exception):
     """Base class for patching exceptions."""
 
     def __init__(self, message=None):
+        super(PatchError, self).__init__(message)
         self.message = message
 
     def __str__(self):

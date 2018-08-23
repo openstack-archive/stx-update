@@ -59,7 +59,6 @@ def verify_hash(data_hash, signature_bytes, certificate_list):
             verified = verifier.verify(data_hash, signature_bytes)
         except ValueError as e:
             verified = False
-            pass
 
         if not verified:
             verifier = PKCS1_v1_5.new(pub_key)
@@ -67,11 +66,11 @@ def verify_hash(data_hash, signature_bytes, certificate_list):
                 verified = verifier.verify(data_hash, signature_bytes)
             except ValueError as e:
                 verified = False
-                pass
+
     return verified
 
 
-def get_public_certificates_by_type(cert_type=cert_type_all):
+def get_public_certificates_by_type(cert_type=None):
     """
     Builds a list of accepted certificates which can be used to validate
     further things.  This list may contain multiple certificates depending on
@@ -82,6 +81,9 @@ def get_public_certificates_by_type(cert_type=cert_type_all):
         'dev'    - include developer certificate if available
     :return: A list of certificates in PEM format
     """
+
+    if cert_type is None:
+        cert_type = cert_type_all
 
     cert_list = []
 
