@@ -6,12 +6,9 @@ SPDX-License-Identifier: Apache-2.0
 """
 
 from pecan import make_app
-from cgcs_patch import model
 
 
 def setup_app(config):
-
-    model.init_model()
 
     return make_app(
         config.app.root,

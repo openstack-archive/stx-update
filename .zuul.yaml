@@ -4,7 +4,17 @@
       jobs:
         - openstack-tox-linters
         - openstack-tox-pep8
+        - stx-updates-pylint
     gate:
       jobs:
         - openstack-tox-linters
         - openstack-tox-pep8
+        - stx-updates-pylint
+
+- job:
+    name: stx-updates-pylint
+    parent: openstack-tox-pylint
+    required-projects:
+      - openstack/stx-config
+      - openstack/stx-fault
+      - openstack/stx-integ

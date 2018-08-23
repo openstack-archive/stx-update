@@ -13,7 +13,6 @@ import glob
 from cgcs_patch.exceptions import PatchError
 from cgcs_patch.patch_controller import pc
 
-import logging
 from cgcs_patch.patch_functions import LOG
 
 
@@ -206,7 +205,7 @@ class PatchAPIController(object):
             force = True
 
         try:
-            result = pc.patch_host_install(list(args)[0], force, async=True)
+            result = pc.patch_host_install(list(args)[0], force, async_req=True)
         except PatchError as e:
             return dict(error="Error: %s" % e.message)
 

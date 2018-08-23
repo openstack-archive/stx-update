@@ -19,7 +19,7 @@ import sys
 import yaml
 import shutil
 
-from rpmUtils.miscutils import stringToVersion
+from rpmUtils.miscutils import stringToVersion  # pylint: disable=import-error
 
 from cgcs_patch.patch_functions import (configure_logging, LOG)
 import cgcs_patch.config as cfg
@@ -300,6 +300,7 @@ class PatchAgent(PatchService):
         self.query_id = 0
         self.state = constants.PATCH_AGENT_STATE_IDLE
         self.last_config_audit = 0
+        self.rejection_timestamp = 0
 
         # Check state flags
         if os.path.exists(patch_installing_file):

@@ -12,9 +12,8 @@ import logging
 import time
 import requests
 import json
-import os
 
-from daemon import runner
+from daemon import runner  # pylint: disable=no-name-in-module
 from fm_api import fm_api
 from fm_api import constants as fm_constants
 

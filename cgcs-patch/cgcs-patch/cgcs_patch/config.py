@@ -8,7 +8,6 @@ SPDX-License-Identifier: Apache-2.0
 import os
 import ConfigParser
 import StringIO
-import subprocess
 import logging
 import socket
 import cgcs_patch.utils as utils

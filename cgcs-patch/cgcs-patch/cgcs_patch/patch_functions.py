@@ -147,7 +147,7 @@ def parse_rpm_filename(filename):
     # RPM name format is:
     # [<epoch>:]<pkgname>-<version>-<release>.<arch>
     #
-    pattern = re.compile('((([^:]):)?)(.*)-([^-]+)-(.*)\.([^\.]*)$')
+    pattern = re.compile(r'((([^:]):)?)(.*)-([^-]+)-(.*)\.([^\.]*)$')
 
     m = pattern.match(basename)
 
@@ -424,25 +424,26 @@ class PatchData:
         tree = ElementTree.parse(filename)
         root = tree.getroot()
 
-        """
-            <patch>
-                <id>PATCH_0001</id>
-                <summary>Brief description</summary>
-                <description>Longer description</description>
-                <install_instructions/>
-                <warnings/>
-                <status>Dev</status>
-                <unremovable/>
-                <reboot_required/>
-                <personality type="compute">
-                    <package>pkgA</package>
-                    <package>pkgB</package>
-                </personality>
-                <personality type="controller">
-                    <package>pkgB</package>
-                </personality>
-            </patch>
-        """
+        #
+        #    <patch>
+        #        <id>PATCH_0001</id>
+        #        <summary>Brief description</summary>
+        #        <description>Longer description</description>
+        #        <install_instructions/>
+        #        <warnings/>
+        #        <status>Dev</status>
+        #        <unremovable/>
+        #        <reboot_required/>
+        #        <personality type="compute">
+        #            <package>pkgA</package>
+        #            <package>pkgB</package>
+        #        </personality>
+        #        <personality type="controller">
+        #            <package>pkgB</package>
+        #        </personality>
+        #    </patch>
+        #
+
         patch_id = root.findtext("id")
         if patch_id is None:
             LOG.error("Patch metadata contains no id tag")
@@ -554,17 +555,17 @@ class PatchData:
         self.load_all_metadata(avail_dir, repostate=constants.AVAILABLE)
         self.load_all_metadata(committed_dir, repostate=constants.COMMITTED)
 
-    def gen_release_groups_xml(self, sw_version, dir=None):
+    def gen_release_groups_xml(self, sw_version, output_dir=None):
         """
         Generate the groups configuration file for the patching repo
         """
-        if dir is None:
-            dir = repo_dir[sw_version]
+        if output_dir is None:
+            output_dir = repo_dir[sw_version]
 
-        if not os.path.exists(dir):
-            os.makedirs(dir)
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
 
-        fname = "%s/comps.xml" % dir
+        fname = "%s/comps.xml" % output_dir
         top = ElementTree.Element('comps')
         if sw_version in self.groups:
             for groupname in sorted(self.groups[sw_version].keys()):
@@ -993,7 +994,8 @@ class PatchFile:
             # Change back to original working dir
             os.chdir(orig_wd)
             shutil.rmtree(tmpdir)
-            return r
+
+        return r
 
     @staticmethod
     def modify_patch(patch,
@@ -1039,7 +1041,8 @@ class PatchFile:
             # Change back to original working dir
             os.chdir(orig_wd)
             shutil.rmtree(tmpdir)
-            return rc
+
+        return rc
 
     @staticmethod
     def extract_patch(patch,
