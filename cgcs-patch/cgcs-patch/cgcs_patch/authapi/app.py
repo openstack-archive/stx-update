@@ -32,8 +32,8 @@ def get_pecan_config():
 
 
 def setup_app(pecan_config=None, extra_hooks=None):
-    config = ConfigParser.RawConfigParser()
-    config.read('/etc/patching/patching.conf')
+    config_parser = ConfigParser.RawConfigParser()
+    config_parser.read('/etc/patching/patching.conf')
 
     policy.init()
 
@@ -62,7 +62,7 @@ def setup_app(pecan_config=None, extra_hooks=None):
     )
 
     if pecan_config.app.enable_acl:
-        return acl.install(app, config, pecan_config.app.acl_public_routes)
+        return acl.install(app, config_parser, pecan_config.app.acl_public_routes)
 
     return app
 

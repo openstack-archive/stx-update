@@ -19,7 +19,7 @@ import sys
 import yaml
 import shutil
 
-from rpmUtils.miscutils import stringToVersion
+from rpmUtils.miscutils import stringToVersion # pylint: disable=import-error
 
 from cgcs_patch.patch_functions import (configure_logging, LOG)
 import cgcs_patch.config as cfg
@@ -300,6 +300,7 @@ class PatchAgent(PatchService):
         self.query_id = 0
         self.state = constants.PATCH_AGENT_STATE_IDLE
         self.last_config_audit = 0
+        self.rejection_timestamp = 0
 
         # Check state flags
         if os.path.exists(patch_installing_file):
@@ -503,7 +504,7 @@ class PatchAgent(PatchService):
                 #     1, if first arg is higher version
                 #     0, if versions are same
                 #     -1, if first arg is lower version
-                rc = rpm.labelCompare(stringToVersion(version),
+                rc = rpm.labelCompare(stringToVersion(version), # pylint: disable=no-member
                                       stringToVersion(stored_ver))
 
                 if rc > 0:
@@ -693,7 +694,7 @@ class PatchAgent(PatchService):
                     compare_version = base_version
 
                 # Compare the installed version to what's in the repo
-                rc = rpm.labelCompare(stringToVersion(installed_version),
+                rc = rpm.labelCompare(stringToVersion(installed_version), # pylint: disable=no-member
                                       stringToVersion(compare_version))
                 if rc == 0:
                     # Versions match, nothing to do.
