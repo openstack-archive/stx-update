@@ -1,0 +1,10 @@
+Code-Review+2: Al Bailey <al.bailey@windriver.com>
+Code-Review+1: Jason McKenna <jason.mckenna@windriver.com>
+Code-Review+2: David Sullivan <david.sullivan@windriver.com>
+Workflow+1: David Sullivan <david.sullivan@windriver.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Fri, 24 Aug 2018 17:43:00 +0000
+Reviewed-on: https://review.openstack.org/596140
+Project: openstack/stx-update
+Branch: refs/heads/master
