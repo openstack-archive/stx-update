@@ -220,7 +220,7 @@ class PatchList:
         return "[ data_path: %s, order_file: %s, patches_built: %s, patches_to_build: %s, xml_to_patch: %s, patch_to_xml: %s ]" % (str(self.data_path), str(self.order_file), str(self.patches_built), str(self.patches_to_build), str(self.xml_to_patch), str(self.patch_to_xml))
 
     def myprint(self, indent=""):
-        print "%s%s" % (indent, str(self))
+        print("%s%s" % (indent, str(self)))
 
     def _std_xml_patch_recipe_name(self, patch_id):
         xml_name = "%s.xml" % patch_id
@@ -267,25 +267,25 @@ class PatchList:
             remote_patch = remote_order.pop(0)
             local_patch = local_order.pop(0)
             if remote_patch == local_patch:
-                print "_validate_patch_order: %s ok" % local_patch
+                print("_validate_patch_order: %s ok" % local_patch)
                 validated_order.append(remote_patch)
             else:
                 fix_local_order = True
-                print "_validate_patch_order: %s vs %s fail" % (local_patch, remote_patch)
+                print("_validate_patch_order: %s vs %s fail" % (local_patch, remote_patch))
                 local_order.insert(0, local_patch)
                 break
         if fix_local_order:
-            print "_validate_patch_order: fix patch order"
+            print("_validate_patch_order: fix patch order")
             f = open(self._std_local_path(self.order_file), 'w')
             for patch_id in validated_order:
                 f.write("%s\n" % patch_id)
-                print "_validate_patch_order:     %s" % patch_id
+                print("_validate_patch_order:     %s" % patch_id)
             f.close()
 
             # remove remaining local patches
             for patch_id in local_order:
                 xml_path = self._std_local_path(self._std_xml_patch_recipe_name(patch_id))
-                print "_validate_patch_order: rm %s" % xml_path
+                print("_validate_patch_order: rm %s" % xml_path)
                 os.remove(xml_path)
 
     def _obtain_official_patches(self):
@@ -329,7 +329,7 @@ class PatchList:
         with open(self._std_patch_git_path(self.order_file)) as f:
             for line in f:
                 patch_id = line.strip()
-                print "remote patch_id = '%s'" % patch_id
+                print("remote patch_id = '%s'" % patch_id)
                 xml_path = self._std_patch_git_path(self._std_xml_patch_recipe_name(patch_id))
                 self.add(xml_path, built=False, fix=True)
 
@@ -337,12 +337,12 @@ class PatchList:
         for patch_id in self.patches_to_deliver:
             os.chdir(workdir)
             patch = "%s.patch" % patch_id
-            print "signing patch '%s'" % self._std_local_path(patch)
+            print("signing patch '%s'" % self._std_local_path(patch))
 
             try:
                 subprocess.check_call(["sign_patch_formal.sh", self._std_local_path(patch)])
             except subprocess.CalledProcessError as e:
-                print "Failed to to sign official patch. Call to sign_patch_formal.sh process returned non-zero exit status %i" % e.returncode
+                print("Failed to to sign official patch. Call to sign_patch_formal.sh process returned non-zero exit status %i" % e.returncode)
                 raise SystemExit(e.returncode)
 
     def deliver_official_patch(self):
@@ -362,7 +362,7 @@ class PatchList:
                 if answer is not None and "status" in answer:
                     if answer["status"] == "REL":
                         prevent_overwrite = True
-                        print "Warning: '%s' already exists in git repo and is in released state!  Cowardly refusing to overwrite it." % patch
+                        print("Warning: '%s' already exists in git repo and is in released state!  Cowardly refusing to overwrite it." % patch)
 
             if not prevent_overwrite:
                 issue_cmd("cp %s %s" % (self._std_local_path(patch), self._std_patch_git_path(".")))
@@ -383,61 +383,61 @@ class PatchList:
         with open(self._std_local_path(self.order_file)) as f:
             for line in f:
                 patch_id = line.strip()
-                print "local patch_id = '%s'" % patch_id
+                print("local patch_id = '%s'" % patch_id)
                 xml_path = self._std_local_path(self._std_xml_patch_recipe_name(patch_id))
                 self.add(xml_path, built=True, fix=False)
 
     def get_implicit_requires(self, patch_id, recipies):
         list = []
         for r in recipies:
-            print "get_implicit_requires r=%s" % r
+            print("get_implicit_requires r=%s" % r)
         for patch in self.patches_built:
             if patch == patch_id:
                 continue
             if self.patch_data[patch].has_common_recipies(recipies):
-                print "get_implicit_requires built patch '%s' provides one of %s" % (patch, str(recipies))
+                print("get_implicit_requires built patch '%s' provides one of %s" % (patch, str(recipies)))
                 list.append(patch)
         for patch in self.patches_to_build:
             if patch == patch_id:
                 continue
             if self.patch_data[patch].has_common_recipies(recipies):
-                print "get_implicit_requires unbuilt patch '%s' provides one of %s" % (patch, str(recipies))
+                print("get_implicit_requires unbuilt patch '%s' provides one of %s" % (patch, str(recipies)))
                 list.append(patch)
         return list
 
     def is_built(self, patch):
         if patch not in self.patches_built:
-            print "Queried patch '%s' is not built" % patch
+            print("Queried patch '%s' is not built" % patch)
             return False
         return True
 
     def is_known(self, patch):
         if patch not in self.patches_built:
             if patch not in self.patches_to_build:
-                print "Queried patch '%s' is not known" % patch
+                print("Queried patch '%s' is not known" % patch)
                 return False
         return True
 
     def add(self, patch_xml, built=False, fix=False, rebuild=False, require_context=True):
-        print "processing patch_xml %s, built=%s, fix=%s, rebuild=%s, require_context=%s" % (patch_xml, str(built), str(fix), str(rebuild), str(require_context))
+        print("processing patch_xml %s, built=%s, fix=%s, rebuild=%s, require_context=%s" % (patch_xml, str(built), str(fix), str(rebuild), str(require_context)))
         prd = PatchRecipeData(built, self)
         prd.parse_xml(patch_xml)
         if prd.patch_id is None:
             msg = "Invalid patch '%s' patch_xml contains no patch_id" % patch_xml
             LOG.exception(msg)
-            print msg
+            print(msg)
             raise PatchRecipeXMLFail(msg)
             sys.exit(2)
         if len(prd.recipies) <= 0:
             msg = "Invalid patch '%s' contains no recipies" % prd.patch_id
             LOG.exception(msg)
-            print msg
+            print(msg)
             raise PatchRecipeXMLFail(msg)
             sys.exit(2)
         if require_context and prd.build_context is None:
             msg = "Invalid patch '%s' contains no context" % prd.patch_id
             LOG.exception(msg)
-            print msg
+            print(msg)
             raise PatchRecipeXMLFail(msg)
             sys.exit(2)
         if not rebuild:
@@ -445,19 +445,19 @@ class PatchList:
                 if self.patch_to_xml[prd.patch_id] == patch_xml:
                     msg = "Previously added patch '%s' from same xml '%s'" % (prd.patch_id, patch_xml)
                     LOG.warn(msg)
-                    print "%s\n" % msg
+                    print("%s\n" % msg)
                     return
                 rc = issue_cmd_rc("diff %s %s" % (self.patch_to_xml[prd.patch_id], patch_xml))
                 if rc != 0:
                     msg = "Previously added patch '%s' from different xml '%s' and different content" % (prd.patch_id, patch_xml)
                     LOG.exception(msg)
-                    print "%s\n" % msg
+                    print("%s\n" % msg)
                     raise PatchRecipeXMLFail(msg)
                     sys.exit(2)
                 else:
                     msg = "Previously added patch '%s' from different xml '%s' but same content" % (prd.patch_id, patch_xml)
                     LOG.warn(msg)
-                    print "%s\n" % msg
+                    print("%s\n" % msg)
                     return
         if prd.patch_id in self.patch_data.keys():
             if not rebuild:
@@ -466,7 +466,7 @@ class PatchList:
                 if (fix and (rc2 > MAJOR_DIFF)) or (not fix and (rc2 > MINOR_DIFF)):
                     msg = "Patch '%s' added twice with differing content"
                     LOG.exception(msg)
-                    print msg
+                    print(msg)
                     raise PatchRequirementFail(msg)
                     sys.exit(2)
                 if fix and (rc2 > MINOR_DIFF):
@@ -478,7 +478,7 @@ class PatchList:
                     if rc2 > MINOR_DIFF:
                         msg = "Failed to resolve patch difference by status update for patch '%s'" % prd.patch_id
                         LOG.exception(msg)
-                        print msg
+                        print(msg)
                         raise PatchRequirementFail(msg)
                         sys.exit(2)
                     # TODO write revised xml to local/remote ?
@@ -496,14 +496,14 @@ class PatchList:
         if not rc:
             msg = "Can't proceed because patch %s has requirements on an unknown patch." % prd.patch_id
             LOG.exception(msg)
-            print msg
+            print(msg)
             raise PatchRequirementFail(msg)
             sys.exit(2)
         rc = prd.check_requires_built(self)
         if built and not rc:
             msg = "Patch %s claims to be built yet it requires a patch that is unbuilt."
             LOG.exception(msg)
-            print msg
+            print(msg)
             raise PatchRequirementFail(msg)
             sys.exit(2)
 
@@ -511,7 +511,7 @@ class PatchList:
         if not rc:
             msg = "Can't proceed because patch %s has requirements on a patch that lacks a build context." % prd.patch_id
             LOG.exception(msg)
-            print msg
+            print(msg)
             raise PatchRequirementFail(msg)
             sys.exit(2)
 
@@ -531,16 +531,16 @@ class PatchList:
             for patch_id in self.patches_to_build:
                 prd = self.patch_data[patch_id]
                 rc = prd.check_requires_built(self)
-                print "check_requires_built(%s) -> %s" % (patch_id, str(rc))
+                print("check_requires_built(%s) -> %s" % (patch_id, str(rc)))
                 if rc:
                     # This patch is ready to build, build it now
-                    print "Ready to build patch %s." % patch_id
+                    print("Ready to build patch %s." % patch_id)
                     rc = prd.build_patch()
                     if rc:
                         # append new built patch to order file
                         issue_cmd("sed -i '/^%s$/d' %s" % (patch_id, self._std_local_path(self.order_file)))
                         issue_cmd("echo %s >> %s" % (patch_id, self._std_local_path(self.order_file)))
-                        print "Built patch %s." % patch_id
+                        print("Built patch %s." % patch_id)
                         self.patches_built.append(patch_id)
                         self.patches_to_deliver.append(patch_id)
                         self.patches_to_build.remove(patch_id)
@@ -559,16 +559,16 @@ class PatchList:
                     else:
                         msg = "Failed to build patch %s" % patch_id
                         LOG.exception(msg)
-                        print msg
+                        print(msg)
                         raise PatchBuildFail(msg)
                         sys.exit(2)
             if built == 0:
                 msg = "No patches are buildable, Remaining patches: %s" % str(self.patches_to_build)
                 LOG.exception(msg)
-                print msg
+                print(msg)
                 raise PatchBuildFail(msg)
                 sys.exit(2)
-        print "All patches built."
+        print("All patches built.")
 
 
 class PackageData:
@@ -585,7 +585,7 @@ class PackageData:
         return "[ name: %s, personalities: %s, architectures: %s ]" % (str(self.name), str(self.personalities), str(self.architectures))
 
     def myprint(self, indent=""):
-        print "%s%s" % (indent, str(self))
+        print("%s%s" % (indent, str(self)))
 
     def compare(self, package):
         rc = SAME
@@ -612,7 +612,7 @@ class PackageData:
             else:
                 msg = "Unknow attribute '%s' in <PATCH_RECIPE><BUILD><RECIPE><PACKAGE>" % key
                 LOG.exception(msg)
-                print msg
+                print(msg)
                 raise PatchRecipeXMLFail(msg)
                 sys.exit(2)
 
@@ -623,7 +623,7 @@ class PackageData:
                 if txt is None:
                     msg = "personality missing under <PATCH_RECIPE><BUILD><RECIPE><PACKAGE><PERSONALITY>"
                     LOG.exception(msg)
-                    print msg
+                    print(msg)
                     raise PatchRecipeXMLFail(msg)
                     sys.exit(2)
                 self.personalities.append(txt)
@@ -632,14 +632,14 @@ class PackageData:
                 if txt is None:
                     msg = "personality missing under <PATCH_RECIPE><BUILD><RECIPE><PACKAGE><ARCH>"
                     LOG.exception(msg)
-                    print msg
+                    print(msg)
                     raise PatchRecipeXMLFail(msg)
                     sys.exit(2)
                 self.architectures.append(txt)
             else:
                 msg = "Unknow tag '%s' under <PATCH_RECIPE><BUILD><RECIPE><PACKAGE>" % child.tag
                 LOG.exception(msg)
-                print msg
+                print(msg)
                 raise PatchRecipeXMLFail(msg)
                 sys.exit(2)
 
@@ -658,36 +658,36 @@ class PackageData:
                 rpm_dir = "%s/%s/repo/cgcs-centos-repo/Data" % (workdir, build_type)
         else:
             rpm_dir = "%s/%s/%s" % (workdir, build_type, RPM_DIR)
-        print "================= rpm_dir=%s ============" % rpm_dir
+        print("================= rpm_dir=%s ============" % rpm_dir)
         return rpm_dir
 
     def _clean_rpms(self, prebuilt=False):
         global BUILD_TYPES
 
-        print "cleaning self.name %s\n" % self.name
+        print("cleaning self.name %s\n" % self.name)
         for build_type in BUILD_TYPES:
             for arch in self.architectures:
                 rpm_dir = self._get_rpm_dir(build_type=build_type, arch=arch, prebuilt=prebuilt)
                 rpm_search_pattern = "%s-*%s.rpm" % (self.name, arch)
-                print "cleaning arch %s\n" % arch
-                print "cleaning dir %s\n" % rpm_dir
-                print "cleaning rpm_search_pattern %s\n" % rpm_search_pattern
+                print("cleaning arch %s\n" % arch)
+                print("cleaning dir %s\n" % rpm_dir)
+                print("cleaning rpm_search_pattern %s\n" % rpm_search_pattern)
                 for file in os.listdir(rpm_dir):
                     if fnmatch.fnmatch(file, rpm_search_pattern):
                         file_path = "%s/%s" % (rpm_dir, file)
                         if os.path.isfile(file_path):
-                            print "cleaning match %s\n" % file
+                            print("cleaning match %s\n" % file)
                             rpm_name_cmd = ["rpm", "-qp", "--dbpath", temp_rpm_db_dir, "--queryformat", "%{NAME}", "%s" % file_path]
                             rpm_name = issue_cmd_w_stdout(rpm_name_cmd)
                             if rpm_name == self.name:
                                 rpm_release_cmd = ["rpm", "-qp", "--dbpath", temp_rpm_db_dir, "--queryformat", "%{RELEASE}", "%s" % file_path]
                                 rpm_release = issue_cmd_w_stdout(rpm_release_cmd)
-                                print "cleaning release %s" % rpm_release
+                                print("cleaning release %s" % rpm_release)
                                 rm_cmd = "rm -f %s/%s-*-%s.%s.rpm" % (rpm_dir, self.name, rpm_release, arch)
                                 issue_cmd(rm_cmd)
 
     def clean(self, prebuilt=False):
-        print "package clean"
+        print("package clean")
         self._clean_rpms(prebuilt=prebuilt)
 
     def _add_rpms(self, pf, arch=ARCH_DEFAULT, fatal=True, prebuilt=False):
@@ -720,7 +720,7 @@ class PackageData:
                                 else:
                                     exclude_search_pattern = "*%s*" % (exclude)
                             if fnmatch.fnmatch(file, exclude_search_pattern):
-                                print "reject file '%s' due to pattern '%s' -> '%s'" % (file, exclude, exclude_search_pattern)
+                                print("reject file '%s' due to pattern '%s' -> '%s'" % (file, exclude, exclude_search_pattern))
                                 reject = True
                                 break
                     if reject:
@@ -733,7 +733,7 @@ class PackageData:
                                     continue
                                 include_search_pattern = "%s-[0-9]*.rpm" % (line)
                                 if fnmatch.fnmatch(file, include_search_pattern):
-                                    print "Including file '%s' due to match in IMAGE_INC_FILE '%s'" % (file, SRCDIR_IMAGE_INC_FILE)
+                                    print("Including file '%s' due to match in IMAGE_INC_FILE '%s'" % (file, SRCDIR_IMAGE_INC_FILE))
                                     reject = False
                                     break
 
@@ -748,30 +748,30 @@ class PackageData:
                         rpm_name_cmd = ["rpm", "-qp", "--dbpath", temp_rpm_db_dir, "--queryformat", "%{NAME}", "%s/%s" % (rpm_dir, file)]
                         rpm_name = issue_cmd_w_stdout(rpm_name_cmd)
                         if rpm_name != self.name:
-                            print "reject file '%s' due to rpm_name '%s'" % (file, rpm_name)
+                            print("reject file '%s' due to rpm_name '%s'" % (file, rpm_name))
                             reject = True
                     if reject:
                         # proceed to next matching file
                         continue
-                    print "accept file '%s'" % file
+                    print("accept file '%s'" % file)
                     rpm_path = "%s/%s" % (rpm_dir, file)
                     if len(self.personalities) > 0:
-                        print "pf.add_rpm(%s, personality=%s)" % (rpm_path, str(self.personalities))
+                        print("pf.add_rpm(%s, personality=%s)" % (rpm_path, str(self.personalities)))
                         pf.add_rpm(rpm_path, personality=self.personalities)
                         added += 1
                     else:
-                        print "pf.add_rpm(%s)" % (rpm_path)
+                        print("pf.add_rpm(%s)" % (rpm_path))
                         pf.add_rpm(rpm_path)
                         added += 1
         if added == 0:
             if fatal:
                 msg = "No rpms found matching %s/%s" % (rpm_dir, rpm_search_pattern)
                 LOG.exception(msg)
-                print msg
+                print(msg)
                 raise PatchPackagingFail(msg)
                 sys.exit(2)
             msg = "No rpms found matching %s/%s" % (rpm_dir, rpm_search_pattern)
-            print msg
+            print(msg)
             raise PatchPackagingMiss(msg)
 
     def build_patch(self, pf, fatal=True, prebuilt=False):
@@ -787,7 +787,7 @@ class PackageData:
                 if not rev_lt(prev_release_map[self.name], release_map[self.name]):
                     msg = "Failed to upversion rpm %s in recipe %s: old release %s, new release %s" % (self.name, recipe_name, prev_release_map[self.name], release_map[self.name])
                     LOG.exception(msg)
-                    print msg
+                    print(msg)
                     raise PatchPackagingFail(msg)
                     sys.exit(2)
 
@@ -806,7 +806,7 @@ class RecipeData:
         return "name: %s, packages: %s" % (self.name, str(self.packages.keys()))
 
     def myprint(self, indent=""):
-        print "%sname: %s" % (indent, self.name)
+        print("%sname: %s" % (indent, self.name))
         for key in self.packages:
             self.packages[key].myprint("%s   " % indent)
 
@@ -843,7 +843,7 @@ class RecipeData:
             else:
                 msg = "Unknow attribute '%s' in <PATCH_RECIPE><BUILD><RECIPE>" % key
                 LOG.exception(msg)
-                print msg
+                print(msg)
                 raise PatchRecipeXMLFail(msg)
                 sys.exit(2)
 
@@ -854,11 +854,11 @@ class RecipeData:
                 self.packages[p.name] = p
             elif child.tag == "PREBUILT":
                 self.prebuilt = True
-                print "=========== set prebuilt=%s for %s =============" % (self.prebuilt, self.name)
+                print("=========== set prebuilt=%s for %s =============" % (self.prebuilt, self.name))
             else:
                 msg = "Unknow tag '%s' under <PATCH_RECIPE><BUILD><RECIPE>" % child.tag
                 LOG.exception(msg)
-                print msg
+                print(msg)
                 raise PatchRecipeXMLFail(msg)
                 sys.exit(2)
 
@@ -871,7 +871,7 @@ class RecipeData:
             self.packages[package].gen_xml(e_package)
 
     def clean(self):
-        print "recipe clean"
+        print("recipe clean")
         if not self.prebuilt:
             for package in self.packages:
                 self.packages[package].clean(prebuilt=self.prebuilt)
@@ -908,7 +908,7 @@ class RecipeData:
             self.packages[package].check_release(self.name, release_map, prev_release_map)
 
     def is_prebuilt(self):
-        print "=========== is_prebuilt prebuilt=%s for %s =============" % (self.prebuilt, self.name)
+        print("=========== is_prebuilt prebuilt=%s for %s =============" % (self.prebuilt, self.name))
         return self.prebuilt
 
 
@@ -970,11 +970,11 @@ class PatchRecipeData:
         rc = True
         for patch in self.requires:
             if not patch_list.is_known(patch):
-                print "patch '%s' is missing required patch '%s'" % (self.patch_id, patch)
+                print("patch '%s' is missing required patch '%s'" % (self.patch_id, patch))
                 rc = False
         for patch in self.auto_requires:
             if not patch_list.is_known(patch):
-                print "patch '%s' is missing implicitly required patch '%s'" % (self.patch_id, patch)
+                print("patch '%s' is missing implicitly required patch '%s'" % (self.patch_id, patch))
                 rc = False
         return rc
 
@@ -984,13 +984,13 @@ class PatchRecipeData:
             if not patch_list.is_built(patch):
                 ctx = patch_list.patch_data[patch].get_build_context()
                 if ctx is None:
-                    print "patch '%s' requires patch '%s' to be built first, but lack a context to do so" % (self.patch_id, patch)
+                    print("patch '%s' requires patch '%s' to be built first, but lack a context to do so" % (self.patch_id, patch))
                     rc = False
         for patch in self.auto_requires:
             if not patch_list.is_built(patch):
                 ctx = patch_list.patch_data[patch].get_build_context()
                 if ctx is None:
-                    print "patch '%s' requires patch '%s' to be built first, but lack a context to do so" % (self.patch_id, patch)
+                    print("patch '%s' requires patch '%s' to be built first, but lack a context to do so" % (self.patch_id, patch))
                     rc = False
         return rc
 
@@ -998,11 +998,11 @@ class PatchRecipeData:
         rc = True
         for patch in self.requires:
             if not patch_list.is_built(patch):
-                print "patch '%s' requires patch '%s' to be built first" % (self.patch_id, patch)
+                print("patch '%s' requires patch '%s' to be built first" % (self.patch_id, patch))
                 rc = False
         for patch in self.auto_requires:
             if not patch_list.is_built(patch):
-                print "patch '%s' requires patch '%s' to be built first" % (self.patch_id, patch)
+                print("patch '%s' requires patch '%s' to be built first" % (self.patch_id, patch))
                 rc = False
         return rc
 
@@ -1025,14 +1025,14 @@ class PatchRecipeData:
                 if req is None:
                     msg = "Patch id missing under <PATCH_RECIPE><METADATA><REQUIRES><ID>"
                     LOG.exception(msg)
-                    print msg
+                    print(msg)
                     raise PatchRecipeXMLFail(msg)
                     sys.exit(2)
                 self.requires.append(req)
             else:
                 msg = "Unknow tag '%s' under <PATCH_RECIPE><METADATA><REQUIRES>" % child.tag
                 LOG.exception(msg)
-                print msg
+                print(msg)
                 raise PatchRecipeXMLFail(msg)
                 sys.exit(2)
 
@@ -1046,7 +1046,7 @@ class PatchRecipeData:
             else:
                 msg = "Unknow tag '%s' under <PATCH_RECIPE><METADATA>" % child.tag
                 LOG.exception(msg)
-                print msg
+                print(msg)
                 raise PatchRecipeXMLFail(msg)
                 sys.exit(2)
 
@@ -1058,11 +1058,11 @@ class PatchRecipeData:
                 self.recipies[r.name] = r
             elif child.tag == "CONTEXT":
                 self.build_context = child.text and child.text.strip() or None
-                print "====== CONTEXT = %s ========" % self.build_context
+                print("====== CONTEXT = %s ========" % self.build_context)
             else:
                 msg = "Unknow tag '%s' under <PATCH_RECIPE><BUILD>" % child.tag
                 LOG.exception(msg)
-                print msg
+                print(msg)
                 raise PatchRecipeXMLFail(msg)
                 sys.exit(2)
 
@@ -1076,7 +1076,7 @@ class PatchRecipeData:
             else:
                 msg = "Unknow tag '%s' under <PATCH_RECIPE>" % child.tag
                 LOG.exception(msg)
-                print msg
+                print(msg)
                 raise PatchRecipeXMLFail(msg)
                 sys.exit(2)
         if 'ID' in self.metadata:
@@ -1084,7 +1084,7 @@ class PatchRecipeData:
         else:
             msg = "patch is missing required field <PATCH_RECIPE><METADATA><ID>"
             LOG.exception(msg)
-            print msg
+            print(msg)
             raise PatchRecipeXMLFail(msg)
             sys.exit(2)
 
@@ -1093,22 +1093,22 @@ class PatchRecipeData:
             if self.sw_version != build_info['SW_VERSION']:
                 msg = "patch '%s' SW_VERSION is inconsistent with that of workdir '%s'" % (self.patch_id, workdir)
                 LOG.exception(msg)
-                print msg
+                print(msg)
                 raise PatchRecipeXMLFail(msg)
                 sys.exit(2)
 
         else:
             msg = "patch '%s' is missing required field <PATCH_RECIPE><METADATA><SW_VERSION>" % self.patch_id
             LOG.exception(msg)
-            print msg
+            print(msg)
             raise PatchRecipeXMLFail(msg)
             sys.exit(2)
 
-        print "_parse_root patch_id = '%s'" % self.patch_id
+        print("_parse_root patch_id = '%s'" % self.patch_id)
 
     def recursive_print(self, e, depth=0):
         for child in e:
-            print "%sTag: %s, attr: %s, text: %s" % (" " * depth, child.tag, child.attrib, child.text and child.text.strip() or "")
+            print("%sTag: %s, attr: %s, text: %s" % (" " * depth, child.tag, child.attrib, child.text and child.text.strip() or ""))
             self.recursive_print(child.getchildren(), depth + 1)
         # for child in e.iter('BUILD'):
         #     print "Tag: %s, attr: %s" % (child.tag, child.attrib)
@@ -1173,10 +1173,10 @@ class PatchRecipeData:
         return "[ patch_id: %s, context:  %s, metadata: %s, requires: %s, recipies: %s ]" % (str(self.patch_id), str(self.build_context), str(self.metadata), str(self.requires), str(self.recipies, keys()))
 
     def myprint(self, indent=""):
-        print "patch_id: %s" % str(self.patch_id)
-        print "context:  %s" % str(self.build_context)
-        print "metadata: %s" % str(self.metadata)
-        print "requires: %s" % str(self.requires)
+        print("patch_id: %s" % str(self.patch_id))
+        print("context:  %s" % str(self.build_context))
+        print("metadata: %s" % str(self.metadata))
+        print("requires: %s" % str(self.requires))
         for key in self.recipies:
             self.recipies[key].myprint("%s   " % indent)
 
@@ -1184,7 +1184,7 @@ class PatchRecipeData:
         if workdir is None:
             msg = "workdir not provided"
             LOG.exception(msg)
-            print msg
+            print(msg)
             raise PatchBuildFail(msg)
             sys.exit(2)
             return False
@@ -1204,7 +1204,7 @@ class PatchRecipeData:
         if srcdir is None:
             msg = "srcdir not provided"
             LOG.exception(msg)
-            print msg
+            print(msg)
             raise PatchBuildFail(msg)
             sys.exit(2)
             return False
@@ -1222,7 +1222,7 @@ class PatchRecipeData:
         else:
             msg = "Don't know what build context to use for patch %s" % self.patch_id
             LOG.exception(msg)
-            print msg
+            print(msg)
             raise PatchBuildFail(msg)
             sys.exit(2)
             return False
@@ -1230,7 +1230,7 @@ class PatchRecipeData:
         if workdir is None:
             msg = "workdir not provided"
             LOG.exception(msg)
-            print msg
+            print(msg)
             raise PatchBuildFail(msg)
             sys.exit(2)
             return False
@@ -1297,7 +1297,7 @@ class PatchRecipeData:
         os.environ['DEST'] = "%s/export/patch_source/%s" % (os.environ['MY_PATCH_WORKSPACE'], self.patch_id)
         issue_cmd("mkdir -p %s" % os.environ['DEST'])
         for recipe in self.recipies.keys():
-            print "capture source of recipe %s" % recipe
+            print("capture source of recipe %s" % recipe)
             self.recipies[recipe].capture_source()
 
     def build_patch(self, local_path="."):
@@ -1312,38 +1312,38 @@ class PatchRecipeData:
             recipe_str += recipe + " "
             if not self.recipies[recipe].is_prebuilt():
                 build_recipe_str += recipe + " "
-        print "recipe_str = %s" % recipe_str
-        print "build_recipe_str = %s" % build_recipe_str
+        print("recipe_str = %s" % recipe_str)
+        print("build_recipe_str = %s" % build_recipe_str)
         if recipe_str == "":
             msg = "No recipies for patch %s" % self.patch_id
             LOG.exception(msg)
-            print msg
+            print(msg)
             raise PatchBuildFail(msg)
             sys.exit(2)
             return False
 
         if pre_compiled_flag and pre_clean_flag:
-            print "pre clean"
+            print("pre clean")
             for recipe in self.recipies.keys():
-                print "pre clean recipe %s" % recipe
+                print("pre clean recipe %s" % recipe)
                 self.recipies[recipe].clean()
-            print "done"
+            print("done")
             sys.exit(0)
 
         if not pre_compiled_flag:
             # compile patch
             os.chdir(workdir)
-            print "pre clean"
+            print("pre clean")
             if build_recipe_str == "":
-                print " ... nothing to clean"
+                print(" ... nothing to clean")
             else:
                 issue_cmd("build-pkgs  --no-build-info --clean %s" % build_recipe_str)
                 for recipe in self.recipies.keys():
-                    print "pre clean recipe %s" % recipe
+                    print("pre clean recipe %s" % recipe)
                     self.recipies[recipe].clean()
-            print "Build"
+            print("Build")
             if build_recipe_str == "":
-                print " ... nothing to build"
+                print(" ... nothing to build")
             else:
                 issue_cmd("build-pkgs --no-build-info --careful %s" % build_recipe_str)
 
@@ -1387,13 +1387,13 @@ class PatchRecipeData:
                 try:
                     self.recipies[recipe].build_patch(pf, fatal=False)
                 except PatchPackagingMiss:
-                    print "Warning: attempting rebuild of recipe %s" % self.recipies[recipe].name
+                    print("Warning: attempting rebuild of recipe %s" % self.recipies[recipe].name)
                     if not self.recipies[recipe].is_prebuilt():
                         issue_cmd("build-pkgs --no-build-info --careful %s" % self.recipies[recipe].name)
                     self.recipies[recipe].build_patch(pf, fatal=True)
 
         local_path = self.pl._std_local_path("")
-        print "=== local_path = %s ===" % local_path
+        print("=== local_path = %s ===" % local_path)
         pf.gen_patch(outdir=local_path)
 
         return True
@@ -1443,7 +1443,7 @@ def validate_tag(tag):
     except PatchRecipeCmdFail:
         msg = "TAG '%s' is invalid" % tag
         LOG.exception(msg)
-        print msg
+        print(msg)
         return False
     return True
 
@@ -1455,32 +1455,32 @@ def issue_cmd_w_stdout(cmd):
     if rc != 0:
         msg = "CMD failed: %s" % str(cmd)
         LOG.exception(msg)
-        print msg
+        print(msg)
         raise PatchRecipeCmdFail(msg)
     return out
 
 
 def issue_cmd(cmd):
-    print "CMD: %s" % cmd
+    print("CMD: %s" % cmd)
     rc = subprocess.call(cmd, shell=True)
     if rc != 0:
         msg = "CMD failed: %s" % cmd
         LOG.exception(msg)
-        print msg
+        print(msg)
         raise PatchRecipeCmdFail(msg)
 
 
 def issue_cmd_no_raise(cmd):
-    print "CMD: %s" % cmd
+    print("CMD: %s" % cmd)
     rc = subprocess.call(cmd, shell=True)
     if rc != 0:
         msg = "CMD failed: %s" % cmd
         LOG.exception(msg)
-        print msg
+        print(msg)
 
 
 def issue_cmd_rc(cmd):
-    print "CMD: %s" % cmd
+    print("CMD: %s" % cmd)
     rc = subprocess.call(cmd, shell=True)
     return rc
 
@@ -1518,7 +1518,7 @@ def capture_rpms():
 def modify_patch_usage():
     msg = "modify_patch [ --obsolete | --released | --development ] [ --sw_version <version> --id <patch_id> | --file <patch_path.patch> ]"
     LOG.exception(msg)
-    print msg
+    print(msg)
     sys.exit(1)
 
 
@@ -1542,7 +1542,7 @@ def modify_patch():
                                          'file=',
                                          ])
     except getopt.GetoptError as e:
-        print str(e)
+        print(str(e))
         modify_patch_usage()
 
     patch_path = None
@@ -1575,11 +1575,11 @@ def modify_patch():
         elif opt in ("-h", "--help"):
             modify_patch_usage()
         else:
-            print "unknown option '%s'" % opt
+            print("unknown option '%s'" % opt)
             modify_patch_usage()
 
     if not status_set:
-        print "new status not specified"
+        print("new status not specified")
         modify_patch_usage()
 
     workdir = tempfile.mkdtemp(prefix="patch_modify_")
@@ -1589,10 +1589,10 @@ def modify_patch():
         if patch_path is not None:
             rc = PatchFile.modify_patch(patch_path, "status", new_status)
             assert(rc)
-            print "Patch '%s' has been modified to status '%s'" % (patch_path, new_status)
+            print("Patch '%s' has been modified to status '%s'" % (patch_path, new_status))
         else:
             if sw_version is None or patch_id is None:
-                print "--sw_version and --id are required"
+                print("--sw_version and --id are required")
                 shutil.rmtree(workdir)
                 modify_patch_usage()
 
@@ -1600,9 +1600,9 @@ def modify_patch():
             pl = PatchList([])
             patch_file_name = "%s.patch" % patch_id
             patch_path = pl._std_patch_git_path(patch_file_name)
-            print "patch_id = %s" % patch_id
-            print "patch_file_name = %s" % patch_file_name
-            print "patch_path = %s" % patch_path
+            print("patch_id = %s" % patch_id)
+            print("patch_file_name = %s" % patch_file_name)
+            print("patch_path = %s" % patch_path)
             rc = PatchFile.modify_patch(patch_path, "status", new_status)
             assert(rc)
             os.chdir(pl._std_patch_git_path(".."))
@@ -1610,7 +1610,7 @@ def modify_patch():
             issue_cmd("git commit -m \"Modify status of patch '%s' to '%s'\"" % (patch_id, new_status))
             issue_cmd("git push --dry-run --set-upstream origin %s:%s" % (sw_version, sw_version))
             issue_cmd("git push --set-upstream origin %s:%s" % (sw_version, sw_version))
-            print "Patch '%s' has been modified to status '%s'" % (patch_id, new_status)
+            print("Patch '%s' has been modified to status '%s'" % (patch_id, new_status))
 
             if new_status == STATUS_RELEASED:
                 tm = time.localtime(time.time())
@@ -1694,26 +1694,26 @@ def modify_patch():
                     issue_cmd_no_raise("chmod 664 %s/%s" % (deliver_dest, patch_file_name))
                     issue_cmd_no_raise("chmod 664 %s/%s.md5" % (deliver_dest, patch_file_name))
 
-                    print ""
-                    print "Go here to deliver the patch"
-                    print "   http://deliveryplus.windriver.com/update/release"
-                    print "Login if required"
-                    print ""
-                    print "Release to be updated:"
-                    print "   select '%s'" % human_release
-                    print "press 'select' and wait for next page to load."
-                    print ""
-                    print "Windshare folder to be uploaded:"
-                    print "   select '%s'" % windshare_folder
-                    print "Subdirectory of WindShare folder in which to place updates:"
-                    print "   select 'patches'"
-                    print "Pathname from which to copy update content:"
-                    print "   %s" % deliver_dest
-                    print "press 'Release to Production'"
-                    print ""
+                    print("")
+                    print("Go here to deliver the patch")
+                    print("   http://deliveryplus.windriver.com/update/release")
+                    print("Login if required")
+                    print("")
+                    print("Release to be updated:")
+                    print("   select '%s'" % human_release)
+                    print("press 'select' and wait for next page to load.")
+                    print("")
+                    print("Windshare folder to be uploaded:")
+                    print("   select '%s'" % windshare_folder)
+                    print("Subdirectory of WindShare folder in which to place updates:")
+                    print("   select 'patches'")
+                    print("Pathname from which to copy update content:")
+                    print("   %s" % deliver_dest)
+                    print("press 'Release to Production'")
+                    print("")
 
     except:
-        print "Failed to modify patch!"
+        print("Failed to modify patch!")
     finally:
         shutil.rmtree(workdir)
 
@@ -1721,10 +1721,10 @@ def modify_patch():
 def query_patch_usage():
     msg = "query_patch [ --sw_version <version> --id <patch_id> | --file <patch_path.patch> ] [ --field <field_name> ]"
     LOG.exception(msg)
-    print msg
+    print(msg)
     msg = "   field_name = [ status | summary | description | install_instructions | warnings | contents | requires ]"
     LOG.exception(msg)
-    print msg
+    print(msg)
     sys.exit(1)
 
 
@@ -1746,7 +1746,7 @@ def query_patch():
                                          'field=',
                                          ])
     except getopt.GetoptError as e:
-        print str(e)
+        print(str(e))
         query_patch_usage()
 
     patch_path = None
@@ -1765,7 +1765,7 @@ def query_patch():
         elif opt in ("-h", "--help"):
             query_patch_usage()
         else:
-            print "unknown option '%s'" % opt
+            print("unknown option '%s'" % opt)
             query_patch_usage()
 
     workdir = tempfile.mkdtemp(prefix="patch_modify_")
@@ -1777,14 +1777,14 @@ def query_patch():
             field_order = ['id', 'sw_version', 'status', 'cert', 'reboot_required', 'unremovable', 'summary', 'description', 'install_instructions', 'warnings']
             for k in field_order:
                 if k in answer.keys():
-                    print "%s: '%s'" % (k, answer[k])
+                    print("%s: '%s'" % (k, answer[k]))
             # Print any remaining fields, any order
             for k in answer.keys():
                 if k not in field_order:
-                    print "%s: '%s'" % (k, answer[k])
+                    print("%s: '%s'" % (k, answer[k]))
         else:
             if sw_version is None or patch_id is None:
-                print "--sw_version and --id are required"
+                print("--sw_version and --id are required")
                 shutil.rmtree(workdir)
                 query_patch_usage()
 
@@ -1792,14 +1792,14 @@ def query_patch():
             pl = PatchList([])
             patch_file_name = "%s.patch" % patch_id
             patch_path = pl._std_patch_git_path(patch_file_name)
-            print "patch_id = %s" % patch_id
-            print "patch_file_name = %s" % patch_file_name
-            print "patch_path = %s" % patch_path
+            print("patch_id = %s" % patch_id)
+            print("patch_file_name = %s" % patch_file_name)
+            print("patch_path = %s" % patch_path)
             answer = PatchFile.query_patch(patch_path, field=field)
-            print str(answer)
+            print(str(answer))
 
     except:
-        print "Failed to query patch!"
+        print("Failed to query patch!")
     finally:
         shutil.rmtree(workdir)
 
@@ -1807,7 +1807,7 @@ def query_patch():
 def make_patch_usage():
     msg = "make_patch [--formal | --pre-compiled [--pre-clean]] [--workdir <path>] [--srcdir <path>] [--branch <name>] [--capture_source] [--capture_rpms] [ --all --sw_version <version> | <patch_recipe.xml> ]"
     LOG.exception(msg)
-    print msg
+    print(msg)
     sys.exit(1)
 
 
@@ -1844,7 +1844,7 @@ def make_patch():
                                          'sw_version=',
                                          ])
     except getopt.GetoptError as e:
-        print str(e)
+        print(str(e))
         make_patch_usage()
 
     cwd = os.getcwd()
@@ -1874,124 +1874,124 @@ def make_patch():
         elif opt in ("-h", "--help"):
             make_patch_usage()
         else:
-            print "unknown option '%s'" % opt
+            print("unknown option '%s'" % opt)
             make_patch_usage()
 
     for x in remainder:
         patch_list.append(os.path.normpath(os.path.join(cwd, os.path.expanduser(x))))
 
     if len(patch_list) <= 0 and not all_flag:
-        print "Either '--all' or a patch.xml must be specified"
+        print("Either '--all' or a patch.xml must be specified")
         make_patch_usage()
 
     if all_flag and len(patch_list) > 0:
-        print "only specify one of '--all' or a patch.xml"
+        print("only specify one of '--all' or a patch.xml")
         make_patch_usage()
 
     if len(patch_list) > 1:
-        print "only one patch.xml can be specified"
+        print("only one patch.xml can be specified")
         make_patch_usage()
 
     if all_flag:
         if sw_version is None:
-            print "'--sw_version' must be specified when using '--all'"
+            print("'--sw_version' must be specified when using '--all'")
             make_patch_usage()
 
     if branch is not None:
         if workdir is None or srcdir is None:
-            print "If --branch is specified, then a srcdir and workdir must also be specified"
+            print("If --branch is specified, then a srcdir and workdir must also be specified")
             make_patch_usage()
 
     if pre_compiled_flag:
-        print "pre_compiled_flag = %s" % str(pre_compiled_flag)
+        print("pre_compiled_flag = %s" % str(pre_compiled_flag))
 
     if formal_flag:
         os.environ["FORMAL_BUILD"] = "1"
-        print "formal_flag = %s" % str(formal_flag)
+        print("formal_flag = %s" % str(formal_flag))
         # TODO if branch is not None or workdir is not None or srcdir is not None:
         # TODO     print "If --formal is specified, then srcdir, workdir and branch are automatci and must not be specified"
         # TODO     make_patch_usage()
 
     if pre_compiled_flag and formal_flag:
-        print "invalid options: --formal and --pre-compiled can't be used together."
+        print("invalid options: --formal and --pre-compiled can't be used together.")
         make_patch_usage()
 
     if workdir is not None:
         if not os.path.isdir(workdir):
-            print "invalid directory: workdir = '%s'" % workdir
+            print("invalid directory: workdir = '%s'" % workdir)
             make_patch_usage()
 
     temp_rpm_db_dir = "%s/%s" % (workdir, ".rpmdb")
 
     if srcdir is not None:
         if not os.path.isdir(srcdir):
-            print "invalid directory: srcdir = '%s'" % srcdir
+            print("invalid directory: srcdir = '%s'" % srcdir)
             make_patch_usage()
 
     for patch in patch_list:
         if not os.path.isfile(patch):
-            print "invalid patch file path: '%s'" % patch
+            print("invalid patch file path: '%s'" % patch)
             make_patch_usage()
 
     if 'MY_REPO' in os.environ:
         MY_REPO = os.path.normpath(os.path.join(cwd, os.path.expanduser(os.environ['MY_REPO'])))
     else:
-        print "ERROR: environment variable 'MY_REPO' is not defined"
+        print("ERROR: environment variable 'MY_REPO' is not defined")
         sys.exit(1)
 
     if 'MY_WORKSPACE' in os.environ:
         MY_WORKSPACE = os.path.normpath(os.path.join(cwd, os.path.expanduser(os.environ['MY_WORKSPACE'])))
     else:
-        print "ERROR: environment variable 'MY_REPO' is not defined"
+        print("ERROR: environment variable 'MY_REPO' is not defined")
         sys.exit(1)
 
     if 'PROJECT' in os.environ:
         PROJECT = os.path.normpath(os.path.join(cwd, os.path.expanduser(os.environ['PROJECT'])))
     else:
-        print "ERROR: environment variable 'PROJECT' is not defined"
+        print("ERROR: environment variable 'PROJECT' is not defined")
         sys.exit(1)
 
     if 'SRC_BUILD_ENVIRONMENT' in os.environ:
         SRC_BUILD_ENVIRONMENT = os.path.normpath(os.path.join(cwd, os.path.expanduser(os.environ['SRC_BUILD_ENVIRONMENT'])))
     else:
-        print "ERROR: environment variable 'SRC_BUILD_ENVIRONMENT' is not defined"
+        print("ERROR: environment variable 'SRC_BUILD_ENVIRONMENT' is not defined")
         sys.exit(1)
 
     if 'MY_SRC_RPM_BUILD_DIR' in os.environ:
         MY_SRC_RPM_BUILD_DIR = os.path.normpath(os.path.join(cwd, os.path.expanduser(os.environ['MY_SRC_RPM_BUILD_DIR'])))
     else:
-        print "ERROR: environment variable 'MY_SRC_RPM_BUILD_DIR' is not defined"
+        print("ERROR: environment variable 'MY_SRC_RPM_BUILD_DIR' is not defined")
         sys.exit(1)
 
     if 'MY_BUILD_CFG' in os.environ:
         MY_BUILD_CFG = os.path.normpath(os.path.join(cwd, os.path.expanduser(os.environ['MY_BUILD_CFG'])))
     else:
-        print "ERROR: environment variable 'MY_BUILD_CFG' is not defined"
+        print("ERROR: environment variable 'MY_BUILD_CFG' is not defined")
         sys.exit(1)
 
     if 'MY_BUILD_DIR' in os.environ:
         MY_BUILD_DIR = os.path.normpath(os.path.join(cwd, os.path.expanduser(os.environ['MY_BUILD_DIR'])))
     else:
-        print "ERROR: environment variable 'MY_BUILD_DIR' is not defined"
+        print("ERROR: environment variable 'MY_BUILD_DIR' is not defined")
         sys.exit(1)
 
-    print "formal: %s" % formal_flag
-    print "pre_compiled_flag: %s" % pre_compiled_flag
-    print "pre_clean_flag: %s" % pre_clean_flag
-    print "capture_source_flag: %s" % capture_source_flag
-    print "capture_rpms_flag: %s" % capture_rpms_flag
-    print "workdir: %s" % workdir
-    print "srcdir: %s" % srcdir
-    print "branch: %s" % branch
-    print "sw_version: %s" % sw_version
-    print "patch_list: %s" % patch_list
-    print ""
+    print("formal: %s" % formal_flag)
+    print("pre_compiled_flag: %s" % pre_compiled_flag)
+    print("pre_clean_flag: %s" % pre_clean_flag)
+    print("capture_source_flag: %s" % capture_source_flag)
+    print("capture_rpms_flag: %s" % capture_rpms_flag)
+    print("workdir: %s" % workdir)
+    print("srcdir: %s" % srcdir)
+    print("branch: %s" % branch)
+    print("sw_version: %s" % sw_version)
+    print("patch_list: %s" % patch_list)
+    print("")
 
     if workdir is not None:
         os.chdir(workdir)
 
     if not read_build_info():
-        print "build.info is missing. workdir is invalid, or has never completed initial loadbuild:  workdir = '%s'" % workdir
+        print("build.info is missing. workdir is invalid, or has never completed initial loadbuild:  workdir = '%s'" % workdir)
         make_patch_usage()
 
     # Capture initial state before any patches are built
