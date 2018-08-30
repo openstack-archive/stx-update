@@ -5,10 +5,17 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-import urllib
-import urllib2
 import getopt
 import sys
+
+try:
+    # Python 3
+    from urllib.parse import urlencode
+    from urllib.request import urlopen
+except ImportError:
+    # Python 2
+    from urllib import urlencode
+    from urllib2 import urlopen
 
 
 opts = ['sw_version=', 'prefix=']
@@ -24,8 +31,8 @@ def request_patch_id(sw_version="1.01", prefix="CGCS"):
     print("raw_parms = %s" % str(raw_parms))
 
     url = "http://%s:%d/get_patch_id" % (server, port)
-    params = urllib.urlencode(raw_parms)
-    response = urllib2.urlopen(url, params).read()
+    params = urlencode(raw_parms)
+    response = urlopen(url, params).read()
     return response
 
 
