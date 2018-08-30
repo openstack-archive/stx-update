@@ -11,7 +11,7 @@ import socket
 import json
 import select
 import subprocess
-import ConfigParser
+import configparser
 import rpm
 import os
 
@@ -592,7 +592,7 @@ class PatchController(PatchService):
             pass
 
     def write_state_file(self):
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
 
         cfgfile = open(state_file, 'w')
 
@@ -602,7 +602,7 @@ class PatchController(PatchService):
         cfgfile.close()
 
     def read_state_file(self):
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
 
         config.read(state_file)
 
@@ -611,7 +611,7 @@ class PatchController(PatchService):
             self.patch_op_counter = counter
 
             LOG.info("patch_op_counter is: %d" % self.patch_op_counter)
-        except ConfigParser.Error:
+        except configparser.Error:
             LOG.exception("Failed to read state info")
 
     def handle_nbr_patch_op_counter(self, host, nbr_patch_op_counter):
