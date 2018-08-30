@@ -200,7 +200,7 @@ def print_patch_op_result(req):
 
             show_repo = False
 
-            for patch_id in pd.keys():
+            for patch_id in list(pd.keys()):
                 if len(patch_id) > width_id:
                     width_id = len(patch_id)
                 if len(pd[patch_id]["sw_version"]) > width_rel:
@@ -1108,7 +1108,7 @@ def completion_opts(args):
             data = json.loads(req.text)
 
             if 'pd' in data:
-                print(" ".join(data['pd'].keys()))
+                print(" ".join(list(data['pd'].keys())))
         return 0
 
     elif args[0] == "hosts":
@@ -1145,11 +1145,11 @@ def get_auth_token_and_endpoint(region_name):
                     'OS_USER_DOMAIN_NAME': 'user_domain_name',
                     'OS_PROJECT_DOMAIN_NAME': 'project_domain_name'}
 
-    for k, v in user_env_map.items():
+    for k, v in list(user_env_map.items()):
         check_env(k, v)
 
     user = dict()
-    for k, v in user_env_map.items():
+    for k, v in list(user_env_map.items()):
         user[v] = os.environ.get(k)
 
     auth = identity.V3Password(**user)

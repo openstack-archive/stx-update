@@ -129,7 +129,7 @@ class PatchAPIController(object):
     @expose('json')
     def upload_dir(self, **kwargs):
         files = []
-        for key, path in kwargs.iteritems():
+        for key, path in kwargs.items():
             LOG.info("upload-dir: Retrieving patches from %s" % path)
             for f in glob.glob(path + '/*.patch'):
                 if os.path.isfile(f):

@@ -768,7 +768,7 @@ class PatchAgent(PatchService):
             print("Checking for software updates...")
         self.query()
         install_set = []
-        for pkg, version in self.to_install.iteritems():
+        for pkg, version in self.to_install.items():
             install_set.append("%s-%s" % (pkg, version))
 
         install_set += self.missing_pkgs

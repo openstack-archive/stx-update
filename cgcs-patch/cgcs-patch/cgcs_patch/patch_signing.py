@@ -53,7 +53,7 @@ def sign_files(filenames, signature_file, private_key=None, cert_type=None):
     if private_key is None:
         if cert_type is not None:
             # A Specific key is asked for
-            assert (cert_type in private_key_files.keys()), "cert_type=%s is not a known cert type" % cert_type
+            assert (cert_type in list(private_key_files.keys())), "cert_type=%s is not a known cert type" % cert_type
             dict_key = cert_type
             filename = private_key_files[dict_key]
             # print 'cert_type given: Checking to see if ' + filename + ' exists\n'
@@ -68,7 +68,7 @@ def sign_files(filenames, signature_file, private_key=None, cert_type=None):
                 private_key = read_RSA_key(open(filename, 'rb').read())
         else:
             # Search for available keys
-            for dict_key in private_key_files.keys():
+            for dict_key in list(private_key_files.keys()):
                 filename = private_key_files[dict_key]
                 # print 'Search for available keys: Checking to see if ' + filename + ' exists\n'
                 if os.path.exists(filename):
