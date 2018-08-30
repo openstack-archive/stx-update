@@ -459,7 +459,7 @@ class PatchList:
                     LOG.warn(msg)
                     print("%s\n" % msg)
                     return
-        if prd.patch_id in self.patch_data.keys():
+        if prd.patch_id in list(self.patch_data.keys()):
             if not rebuild:
                 # Already know about this patch, perhaps local vs remote
                 rc2 = prd.compare(self.patch_data[prd.patch_id])
@@ -782,8 +782,8 @@ class PackageData:
             self._add_rpms(pf, fatal=fatal, prebuilt=prebuilt)
 
     def check_release(self, recipe_name, release_map, prev_release_map):
-        if self.name in release_map.keys():
-            if self.name in prev_release_map.keys():
+        if self.name in list(release_map.keys()):
+            if self.name in list(prev_release_map.keys()):
                 if not rev_lt(prev_release_map[self.name], release_map[self.name]):
                     msg = "Failed to upversion rpm %s in recipe %s: old release %s, new release %s" % (self.name, recipe_name, prev_release_map[self.name], release_map[self.name])
                     LOG.exception(msg)
@@ -803,7 +803,7 @@ class RecipeData:
         self._parse_recipe(e)
 
     def __str__(self):
-        return "name: %s, packages: %s" % (self.name, str(self.packages.keys()))
+        return "name: %s, packages: %s" % (self.name, str(list(self.packages.keys())))
 
     def myprint(self, indent=""):
         print("%sname: %s" % (indent, self.name))
@@ -818,8 +818,8 @@ class RecipeData:
             return MAJOR_DIFF
         if self.prebuilt != recipe.prebuilt:
             return MAJOR_DIFF
-        for key in self.packages.keys():
-            if key not in recipe.packages.keys():
+        for key in list(self.packages.keys()):
+            if key not in list(recipe.packages.keys()):
                 return MAJOR_DIFF
             rc2 = self.packages[key].compare(recipe.packages[key])
             if rc2 >= MAJOR_DIFF:
@@ -866,7 +866,7 @@ class RecipeData:
         if self.prebuilt:
             ElementTree.SubElement(e_recipe, 'PREBUILT')
 
-        for package in self.packages.keys():
+        for package in list(self.packages.keys()):
             e_package = ElementTree.SubElement(e_recipe, 'PACKAGE', attrib={'name': package})
             self.packages[package].gen_xml(e_package)
 
@@ -882,10 +882,10 @@ class RecipeData:
         path = capture_source_path
         extra_arg = ""
 
-        if 'MY_REPO' in os.environ.keys():
+        if 'MY_REPO' in list(os.environ.keys()):
             my_repo = os.environ['MY_REPO']
 
-        if 'MY_PATCH_REPO' in os.environ.keys():
+        if 'MY_PATCH_REPO' in list(os.environ.keys()):
             my_repo = os.environ['MY_PATCH_REPO']
 
         if my_repo is not None:
@@ -942,16 +942,16 @@ class PatchRecipeData:
         for require in self.requires:
             if require not in prd.requires:
                 return MAJOR_DIFF
-        for item in self.metadata.keys():
-            if item not in prd.metadata.keys():
+        for item in list(self.metadata.keys()):
+            if item not in list(prd.metadata.keys()):
                 return MAJOR_DIFF
             if self.metadata[item] != prd.metadata[item]:
                 if item == "STATUS":
                     rc = MINOR_DIFF
                 else:
                     return MAJOR_DIFF
-        for recipe in self.recipies.keys():
-            if recipe not in prd.recipies.keys():
+        for recipe in list(self.recipies.keys()):
+            if recipe not in list(prd.recipies.keys()):
                 return MAJOR_DIFF
             rc2 = self.recipies[recipe].compare(prd.recipies[recipe])
             if rc2 >= MAJOR_DIFF:
@@ -961,7 +961,7 @@ class PatchRecipeData:
         return rc
 
     def set_implicit_requires(self, patch_list):
-        self.auto_requires = patch_list.get_implicit_requires(self.patch_id, self.recipies.keys())
+        self.auto_requires = patch_list.get_implicit_requires(self.patch_id, list(self.recipies.keys()))
 
     def get_build_context(self):
         return self.build_context
@@ -1007,7 +1007,7 @@ class PatchRecipeData:
         return rc
 
     def has_common_recipies(self, recipies):
-        for recipe in self.recipies.keys():
+        for recipe in list(self.recipies.keys()):
             if recipe in recipies:
                 return True
         return False
@@ -1152,7 +1152,7 @@ class PatchRecipeData:
         """
         e_top = ElementTree.Element('PATCH_RECIPE')
         e_metadata = ElementTree.SubElement(e_top, 'METADATA')
-        for key in self.metadata.keys():
+        for key in list(self.metadata.keys()):
             add_text_tag_to_xml(e_metadata, key, self.metadata[key])
         if len(self.requires) > 0:
             e_requires = ElementTree.SubElement(e_metadata, 'REQUIRES')
@@ -1163,7 +1163,7 @@ class PatchRecipeData:
             add_text_tag_to_xml(e_build, 'CONTEXT', self.build_context)
         else:
             add_text_tag_to_xml(e_build, 'CONTEXT', patch_id_to_tag(self.patch_id))
-        for recipe in self.recipies.keys():
+        for recipe in list(self.recipies.keys()):
             e_recipe = ElementTree.SubElement(e_build, 'RECIPE', attrib={'name': recipe})
             self.recipies[recipe].gen_xml(e_recipe)
 
@@ -1287,7 +1287,7 @@ class PatchRecipeData:
             prev_patch_id = delim.join(words)
         prev_release_map = self._read_rpm_db(prev_patch_id)
         release_map = self._read_rpm_db(self.patch_id)
-        for recipe in self.recipies.keys():
+        for recipe in list(self.recipies.keys()):
             self.recipies[recipe].check_release(release_map, prev_release_map)
 
     def capture_source(self):
@@ -1296,7 +1296,7 @@ class PatchRecipeData:
         os.environ['MY_WORKSPACE'] = os.environ['MY_PATCH_WORKSPACE']
         os.environ['DEST'] = "%s/export/patch_source/%s" % (os.environ['MY_PATCH_WORKSPACE'], self.patch_id)
         issue_cmd("mkdir -p %s" % os.environ['DEST'])
-        for recipe in self.recipies.keys():
+        for recipe in list(self.recipies.keys()):
             print("capture source of recipe %s" % recipe)
             self.recipies[recipe].capture_source()
 
@@ -1308,7 +1308,7 @@ class PatchRecipeData:
 
         recipe_str = ""
         build_recipe_str = ""
-        for recipe in self.recipies.keys():
+        for recipe in list(self.recipies.keys()):
             recipe_str += recipe + " "
             if not self.recipies[recipe].is_prebuilt():
                 build_recipe_str += recipe + " "
@@ -1324,7 +1324,7 @@ class PatchRecipeData:
 
         if pre_compiled_flag and pre_clean_flag:
             print("pre clean")
-            for recipe in self.recipies.keys():
+            for recipe in list(self.recipies.keys()):
                 print("pre clean recipe %s" % recipe)
                 self.recipies[recipe].clean()
             print("done")
@@ -1338,7 +1338,7 @@ class PatchRecipeData:
                 print(" ... nothing to clean")
             else:
                 issue_cmd("build-pkgs  --no-build-info --clean %s" % build_recipe_str)
-                for recipe in self.recipies.keys():
+                for recipe in list(self.recipies.keys()):
                     print("pre clean recipe %s" % recipe)
                     self.recipies[recipe].clean()
             print("Build")
@@ -1380,7 +1380,7 @@ class PatchRecipeData:
         for patch in list(set(self.requires) | set(self.auto_requires)):
             pf.meta.requires.append(patch)
 
-        for recipe in self.recipies.keys():
+        for recipe in list(self.recipies.keys()):
             if not pre_compiled_flag:
                 self.recipies[recipe].build_patch(pf, fatal=True)
             else:
@@ -1491,10 +1491,10 @@ def set_capture_source_path():
     new_dir = "/tmp/%s" % os.environ['USER']
     new_path = "%s/source_collect_package" % new_dir
 
-    if 'MY_REPO' in os.environ.keys():
+    if 'MY_REPO' in list(os.environ.keys()):
         my_repo = os.environ['MY_REPO']
 
-    if 'MY_PATCH_REPO' in os.environ.keys():
+    if 'MY_PATCH_REPO' in list(os.environ.keys()):
         my_repo = os.environ['MY_PATCH_REPO']
 
     if my_repo is not None:
@@ -1776,10 +1776,10 @@ def query_patch():
             answer = PatchFile.query_patch(patch_path, field=field)
             field_order = ['id', 'sw_version', 'status', 'cert', 'reboot_required', 'unremovable', 'summary', 'description', 'install_instructions', 'warnings']
             for k in field_order:
-                if k in answer.keys():
+                if k in list(answer.keys()):
                     print("%s: '%s'" % (k, answer[k]))
             # Print any remaining fields, any order
-            for k in answer.keys():
+            for k in list(answer.keys()):
                 if k not in field_order:
                     print("%s: '%s'" % (k, answer[k]))
         else:

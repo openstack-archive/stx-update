@@ -317,42 +317,42 @@ class PatchData:
         self.content_versions.update(new_patch.content_versions)
 
         # Need to recursively update package_version and keys dicts
-        for patch_sw_version in new_patch.package_versions.keys():
+        for patch_sw_version in list(new_patch.package_versions.keys()):
             if patch_sw_version not in self.package_versions:
                 self.package_versions[patch_sw_version] = {}
-            for pkgname in new_patch.package_versions[patch_sw_version].keys():
+            for pkgname in list(new_patch.package_versions[patch_sw_version].keys()):
                 if pkgname not in self.package_versions[patch_sw_version]:
                     self.package_versions[patch_sw_version][pkgname] = {}
-                for arch in new_patch.package_versions[patch_sw_version][pkgname].keys():
+                for arch in list(new_patch.package_versions[patch_sw_version][pkgname].keys()):
                     if arch not in self.package_versions[patch_sw_version][pkgname]:
                         self.package_versions[patch_sw_version][pkgname][arch] = {}
-                    for pkgver in new_patch.package_versions[patch_sw_version][pkgname][arch].keys():
+                    for pkgver in list(new_patch.package_versions[patch_sw_version][pkgname][arch].keys()):
                         self.package_versions[patch_sw_version][pkgname][arch][pkgver] = patch_id
 
-        for patch_sw_version in new_patch.groups.keys():
+        for patch_sw_version in list(new_patch.groups.keys()):
             if patch_sw_version not in self.groups:
                 self.groups[patch_sw_version] = {}
-            for ptype in new_patch.groups[patch_sw_version].keys():
+            for ptype in list(new_patch.groups[patch_sw_version].keys()):
                 if ptype not in self.groups[patch_sw_version]:
                     self.groups[patch_sw_version][ptype] = {}
-                for patch_id in new_patch.groups[patch_sw_version][ptype].keys():
+                for patch_id in list(new_patch.groups[patch_sw_version][ptype].keys()):
                     if patch_id not in self.groups[patch_sw_version][ptype]:
                         self.groups[patch_sw_version][ptype][patch_id] = {}
                     self.groups[patch_sw_version][ptype][patch_id].update(
                         new_patch.groups[patch_sw_version][ptype][patch_id])
 
     def update_patch(self, updated_patch):
-        for patch_id in updated_patch.metadata.keys():
+        for patch_id in list(updated_patch.metadata.keys()):
             # Update all fields except repostate
             cur_repostate = self.metadata[patch_id]['repostate']
             self.metadata[patch_id].update(updated_patch.metadata[patch_id])
             self.metadata[patch_id]['repostate'] = cur_repostate
 
     def delete_patch(self, patch_id):
-        for patch_sw_version in self.package_versions.keys():
-            for pkgname in self.package_versions[patch_sw_version].keys():
-                for arch in self.package_versions[patch_sw_version][pkgname].keys():
-                    for pkgver in self.package_versions[patch_sw_version][pkgname][arch].keys():
+        for patch_sw_version in list(self.package_versions.keys()):
+            for pkgname in list(self.package_versions[patch_sw_version].keys()):
+                for arch in list(self.package_versions[patch_sw_version][pkgname].keys()):
+                    for pkgver in list(self.package_versions[patch_sw_version][pkgname][arch].keys()):
                         if self.package_versions[patch_sw_version][pkgname][arch][pkgver] == patch_id:
                             del self.package_versions[patch_sw_version][pkgname][arch][pkgver]
                     if len(self.package_versions[patch_sw_version][pkgname][arch]) is 0:
@@ -362,8 +362,8 @@ class PatchData:
             if len(self.package_versions[patch_sw_version]) is 0:
                 del self.package_versions[patch_sw_version]
 
-        for patch_sw_version in self.groups.keys():
-            for ptype in self.groups[patch_sw_version].keys():
+        for patch_sw_version in list(self.groups.keys()):
+            for ptype in list(self.groups[patch_sw_version].keys()):
                 if patch_id in self.groups[patch_sw_version][ptype]:
                     del self.groups[patch_sw_version][ptype][patch_id]
 
@@ -600,7 +600,7 @@ class PatchData:
         write_xml_file(top, fname)
 
     def gen_groups_xml(self):
-        for ver, rdir in repo_dir.iteritems():
+        for ver, rdir in repo_dir.items():
             self.gen_release_groups_xml(ver)
 
     def query_line(self,
@@ -771,7 +771,7 @@ class PatchFile:
         os.chdir(tmpdir)
 
         # Copy RPM files to tmpdir
-        for rpmfile in self.rpmlist.keys():
+        for rpmfile in list(self.rpmlist.keys()):
             shutil.copy(rpmfile, tmpdir)
 
         # add file signatures to RPMs
@@ -785,7 +785,7 @@ class PatchFile:
 
         # generate tar file
         tar = tarfile.open("software.tar", "w")
-        for rpmfile in self.rpmlist.keys():
+        for rpmfile in list(self.rpmlist.keys()):
             tar.add(os.path.basename(rpmfile))
         tar.close()
 
