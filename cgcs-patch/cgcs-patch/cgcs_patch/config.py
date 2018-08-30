@@ -6,8 +6,8 @@ SPDX-License-Identifier: Apache-2.0
 """
 
 import os
-import ConfigParser
-import StringIO
+from six.moves import configparser
+import io
 import logging
 import socket
 import cgcs_patch.utils as utils
@@ -48,7 +48,7 @@ def read_config():
     global controller_port
     global agent_port
 
-    config = ConfigParser.SafeConfigParser(defaults)
+    config = configparser.SafeConfigParser(defaults)
     config.read(patching_conf)
     patching_conf_mtime = os.stat(patching_conf).st_mtime
 
@@ -62,8 +62,8 @@ def read_config():
 
     # The platform.conf file has no section headers, which causes problems
     # for ConfigParser. So we'll fake it out.
-    ini_str = '[platform_conf]\n' + open(tsc.PLATFORM_CONF_FILE, 'r').read()
-    ini_fp = StringIO.StringIO(ini_str)
+    ini_str = u'[platform_conf]\n' + open(tsc.PLATFORM_CONF_FILE, 'r').read()
+    ini_fp = io.StringIO(ini_str)
     config.readfp(ini_fp)
 
     try:
@@ -71,7 +71,7 @@ def read_config():
 
         global nodetype
         nodetype = value
-    except ConfigParser.Error:
+    except configparser.Error:
         logging.exception("Failed to read nodetype from config")
         return False
 
@@ -103,12 +103,12 @@ def get_mgmt_iface():
         # so return the cached value.
         return mgmt_if
 
-    config = ConfigParser.SafeConfigParser()
+    config = configparser.SafeConfigParser()
 
     # The platform.conf file has no section headers, which causes problems
     # for ConfigParser. So we'll fake it out.
-    ini_str = '[platform_conf]\n' + open(tsc.PLATFORM_CONF_FILE, 'r').read()
-    ini_fp = StringIO.StringIO(ini_str)
+    ini_str = u'[platform_conf]\n' + open(tsc.PLATFORM_CONF_FILE, 'r').read()
+    ini_fp = io.StringIO(ini_str)
     config.readfp(ini_fp)
 
     try:
@@ -118,7 +118,7 @@ def get_mgmt_iface():
         mgmt_if = value
 
         platform_conf_mtime = os.stat(tsc.PLATFORM_CONF_FILE).st_mtime
-    except ConfigParser.Error:
+    except configparser.Error:
         logging.exception("Failed to read management_interface from config")
         return None
     return mgmt_if
