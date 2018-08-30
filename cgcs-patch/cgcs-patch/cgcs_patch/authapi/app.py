@@ -13,7 +13,7 @@ from cgcs_patch.authapi import config
 from cgcs_patch.authapi import hooks
 from cgcs_patch.authapi import policy
 
-import ConfigParser
+import configparser
 
 auth_opts = [
     cfg.StrOpt('auth_strategy',
@@ -32,7 +32,7 @@ def get_pecan_config():
 
 
 def setup_app(pecan_config=None, extra_hooks=None):
-    config_parser = ConfigParser.RawConfigParser()
+    config_parser = configparser.RawConfigParser()
     config_parser.read('/etc/patching/patching.conf')
 
     policy.init()
