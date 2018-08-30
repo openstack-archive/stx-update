@@ -27,7 +27,7 @@ def get_unique_id(filename, digits=4):
             file = posixfile.open(path, "w")
             file.lock("w|", digits)
         except IOError:
-            print "creation of file '%s' failed" % path
+            print("creation of file '%s' failed" % path)
             return -1
 
     file.seek(0)  # rewind
