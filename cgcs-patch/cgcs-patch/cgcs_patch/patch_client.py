@@ -4,7 +4,7 @@ Copyright (c) 2014-2017 Wind River Systems, Inc.
 SPDX-License-Identifier: Apache-2.0
 
 """
-
+from __future__ import print_function
 import requests
 import json
 import os
@@ -78,65 +78,65 @@ def set_term_width():
 
 
 def print_help():
-    print "usage: sw-patch [--debug]"
-    print "                  <subcommand> ..."
-    print ""
-    print "Subcomands:"
-    print ""
-    print textwrap.fill("    {0:<15} ".format("upload:") + help_upload,
-                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
-    print ""
-    print textwrap.fill("    {0:<15} ".format("upload-dir:") + help_upload_dir,
-                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
-    print ""
-    print textwrap.fill("    {0:<15} ".format("apply:") + help_apply,
-                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
-    print textwrap.fill(help_patch_args,
-                        width=TERM_WIDTH, initial_indent=' ' * 20, subsequent_indent=' ' * 20)
-    print ""
-    print textwrap.fill("    {0:<15} ".format("remove:") + help_remove,
-                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
-    print textwrap.fill(help_patch_args,
-                        width=TERM_WIDTH, initial_indent=' ' * 20, subsequent_indent=' ' * 20)
-    print ""
-    print textwrap.fill("    {0:<15} ".format("delete:") + help_delete,
-                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
-    print textwrap.fill(help_patch_args,
-                        width=TERM_WIDTH, initial_indent=' ' * 20, subsequent_indent=' ' * 20)
-    print ""
-    print textwrap.fill("    {0:<15} ".format("query:") + help_query,
-                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
-    print ""
-    print textwrap.fill("    {0:<15} ".format("show:") + help_show,
-                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
-    print ""
-    print textwrap.fill("    {0:<15} ".format("what-requires:") + help_what_requires,
-                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
-    print ""
-    print textwrap.fill("    {0:<15} ".format("query-hosts:") + help_query_hosts,
-                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
-    print ""
-    print textwrap.fill("    {0:<15} ".format("host-install:") + help_host_install,
-                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
-    print ""
-    print textwrap.fill("    {0:<15} ".format("host-install-async:") + help_host_install_async,
-                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
-    print ""
-    print textwrap.fill("    {0:<15} ".format("install-local:") + help_install_local,
-                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
-    print ""
-    print textwrap.fill("    {0:<15} ".format("drop-host:") + help_drop_host,
-                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
-    print ""
-    print textwrap.fill("    {0:<15} ".format("query-dependencies:") + help_query_dependencies,
-                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
-    print ""
-    print textwrap.fill("    {0:<15} ".format("commit:") + help_commit,
-                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
-    print ""
-    print textwrap.fill("    {0:<15} ".format("--os-region-name:") + help_region_name,
-                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
-    print ""
+    print("usage: sw-patch [--debug]")
+    print("                  <subcommand> ...")
+    print("")
+    print("Subcomands:")
+    print("")
+    print(textwrap.fill("    {0:<15} ".format("upload:") + help_upload,
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
+    print("")
+    print(textwrap.fill("    {0:<15} ".format("upload-dir:") + help_upload_dir,
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
+    print("")
+    print(textwrap.fill("    {0:<15} ".format("apply:") + help_apply,
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
+    print(textwrap.fill(help_patch_args,
+                        width=TERM_WIDTH, initial_indent=' ' * 20, subsequent_indent=' ' * 20))
+    print("")
+    print(textwrap.fill("    {0:<15} ".format("remove:") + help_remove,
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
+    print(textwrap.fill(help_patch_args,
+                        width=TERM_WIDTH, initial_indent=' ' * 20, subsequent_indent=' ' * 20))
+    print("")
+    print(textwrap.fill("    {0:<15} ".format("delete:") + help_delete,
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
+    print(textwrap.fill(help_patch_args,
+                        width=TERM_WIDTH, initial_indent=' ' * 20, subsequent_indent=' ' * 20))
+    print("")
+    print(textwrap.fill("    {0:<15} ".format("query:") + help_query,
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
+    print("")
+    print(textwrap.fill("    {0:<15} ".format("show:") + help_show,
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
+    print("")
+    print(textwrap.fill("    {0:<15} ".format("what-requires:") + help_what_requires,
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
+    print("")
+    print(textwrap.fill("    {0:<15} ".format("query-hosts:") + help_query_hosts,
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
+    print("")
+    print(textwrap.fill("    {0:<15} ".format("host-install:") + help_host_install,
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
+    print("")
+    print(textwrap.fill("    {0:<15} ".format("host-install-async:") + help_host_install_async,
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
+    print("")
+    print(textwrap.fill("    {0:<15} ".format("install-local:") + help_install_local,
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
+    print("")
+    print(textwrap.fill("    {0:<15} ".format("drop-host:") + help_drop_host,
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
+    print("")
+    print(textwrap.fill("    {0:<15} ".format("query-dependencies:") + help_query_dependencies,
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
+    print("")
+    print(textwrap.fill("    {0:<15} ".format("commit:") + help_commit,
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
+    print("")
+    print(textwrap.fill("    {0:<15} ".format("--os-region-name:") + help_region_name,
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
+    print("")
 
     exit(1)
 
@@ -157,25 +157,25 @@ def print_result_debug(req):
     if req.status_code == 200:
         data = json.loads(req.text)
         if 'pd' in data:
-            print json.dumps(data['pd'],
+            print(json.dumps(data['pd'],
                              sort_keys=True,
                              indent=4,
-                             separators=(',', ': '))
+                             separators=(',', ': ')))
         elif 'data' in data:
-            print json.dumps(data['data'],
+            print(json.dumps(data['data'],
                              sort_keys=True,
                              indent=4,
-                             separators=(',', ': '))
+                             separators=(',', ': ')))
         else:
-            print json.dumps(data,
+            print(json.dumps(data,
                              sort_keys=True,
                              indent=4,
-                             separators=(',', ': '))
+                             separators=(',', ': ')))
     elif req.status_code == 500:
-        print "An internal error has occurred. Please check /var/log/patching.log for details"
+        print("An internal error has occurred. Please check /var/log/patching.log for details")
     else:
         m = re.search("(Error message:.*)", req.text, re.MULTILINE)
-        print m.group(0)
+        print(m.group(0))
 
 
 def print_patch_op_result(req):
@@ -213,13 +213,13 @@ def print_patch_op_result(req):
                     show_repo = True
 
             if show_repo:
-                print "{0:^{width_id}}  {1:^{width_rr}}  {2:^{width_rel}}  {3:^{width_repo}}  {4:^{width_state}}".format(
+                print("{0:^{width_id}}  {1:^{width_rr}}  {2:^{width_rel}}  {3:^{width_repo}}  {4:^{width_state}}".format(
                     hdr_id, hdr_rr, hdr_rel, hdr_repo, hdr_state,
                     width_id=width_id, width_rr=width_rr,
-                    width_rel=width_rel, width_repo=width_repo, width_state=width_state)
+                    width_rel=width_rel, width_repo=width_repo, width_state=width_state))
 
-                print "{0}  {1}  {2}  {3}  {4}".format(
-                    '=' * width_id, '=' * width_rr, '=' * width_rel, '=' * width_repo, '=' * width_state)
+                print("{0}  {1}  {2}  {3}  {4}".format(
+                    '=' * width_id, '=' * width_rr, '=' * width_rel, '=' * width_repo, '=' * width_state))
 
                 for patch_id in sorted(pd.keys()):
                     if "reboot_required" in pd[patch_id]:
@@ -227,21 +227,21 @@ def print_patch_op_result(req):
                     else:
                         rr = "Y"
 
-                    print "{0:<{width_id}}  {1:^{width_rr}}  {2:^{width_rel}}  {3:^{width_repo}}  {4:^{width_state}}".format(
+                    print("{0:<{width_id}}  {1:^{width_rr}}  {2:^{width_rel}}  {3:^{width_repo}}  {4:^{width_state}}".format(
                         patch_id,
                         rr,
                         pd[patch_id]["sw_version"],
                         pd[patch_id]["repostate"],
                         pd[patch_id]["patchstate"],
                         width_id=width_id, width_rr=width_rr,
-                        width_rel=width_rel, width_repo=width_repo, width_state=width_state)
+                        width_rel=width_rel, width_repo=width_repo, width_state=width_state))
             else:
-                print "{0:^{width_id}}  {1:^{width_rr}}  {2:^{width_rel}}  {3:^{width_state}}".format(
+                print("{0:^{width_id}}  {1:^{width_rr}}  {2:^{width_rel}}  {3:^{width_state}}".format(
                     hdr_id, hdr_rr, hdr_rel, hdr_state,
-                    width_id=width_id, width_rr=width_rr, width_rel=width_rel, width_state=width_state)
+                    width_id=width_id, width_rr=width_rr, width_rel=width_rel, width_state=width_state))
 
-                print "{0}  {1}  {2}  {3}".format(
-                    '=' * width_id, '=' * width_rr, '=' * width_rel, '=' * width_state)
+                print("{0}  {1}  {2}  {3}".format(
+                    '=' * width_id, '=' * width_rr, '=' * width_rel, '=' * width_state))
 
                 for patch_id in sorted(pd.keys()):
                     if "reboot_required" in pd[patch_id]:
@@ -249,28 +249,28 @@ def print_patch_op_result(req):
                     else:
                         rr = "Y"
 
-                    print "{0:<{width_id}}  {1:^{width_rr}}  {2:^{width_rel}}  {3:^{width_state}}".format(
+                    print("{0:<{width_id}}  {1:^{width_rr}}  {2:^{width_rel}}  {3:^{width_state}}".format(
                         patch_id,
                         rr,
                         pd[patch_id]["sw_version"],
                         pd[patch_id]["patchstate"],
-                        width_id=width_id, width_rr=width_rr, width_rel=width_rel, width_state=width_state)
+                        width_id=width_id, width_rr=width_rr, width_rel=width_rel, width_state=width_state))
 
-            print ""
+            print("")
 
         if 'info' in data and data["info"] != "":
-            print data["info"]
+            print(data["info"])
 
         if 'warning' in data and data["warning"] != "":
-            print "Warning:"
-            print data["warning"]
+            print("Warning:")
+            print(data["warning"])
 
         if 'error' in data and data["error"] != "":
-            print "Error:"
-            print data["error"]
+            print("Error:")
+            print(data["error"])
 
     elif req.status_code == 500:
-        print "An internal error has occurred. Please check /var/log/patching.log for details"
+        print("An internal error has occurred. Please check /var/log/patching.log for details")
 
 
 def print_patch_show_result(req):
@@ -280,93 +280,93 @@ def print_patch_show_result(req):
         if 'metadata' in data:
             pd = data['metadata']
             for patch_id in sorted(pd.keys()):
-                print "%s:" % patch_id
+                print("%s:" % patch_id)
 
                 if "sw_version" in pd[patch_id] and pd[patch_id]["sw_version"] != "":
-                    print textwrap.fill("    {0:<15} ".format("Release:") + pd[patch_id]["sw_version"],
-                                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
+                    print(textwrap.fill("    {0:<15} ".format("Release:") + pd[patch_id]["sw_version"],
+                                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
 
                 if "patchstate" in pd[patch_id] and pd[patch_id]["patchstate"] != "":
-                    print textwrap.fill("    {0:<15} ".format("Patch State:") + pd[patch_id]["patchstate"],
-                                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
+                    print(textwrap.fill("    {0:<15} ".format("Patch State:") + pd[patch_id]["patchstate"],
+                                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
 
                     if pd[patch_id]["patchstate"] == "n/a":
                         if "repostate" in pd[patch_id] and pd[patch_id]["repostate"] != "":
-                            print textwrap.fill("    {0:<15} ".format("Repo State:") + pd[patch_id]["repostate"],
-                                                width=TERM_WIDTH, subsequent_indent=' ' * 20)
+                            print(textwrap.fill("    {0:<15} ".format("Repo State:") + pd[patch_id]["repostate"],
+                                                width=TERM_WIDTH, subsequent_indent=' ' * 20))
 
                 if "status" in pd[patch_id] and pd[patch_id]["status"] != "":
-                    print textwrap.fill("    {0:<15} ".format("Status:") + pd[patch_id]["status"],
-                                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
+                    print(textwrap.fill("    {0:<15} ".format("Status:") + pd[patch_id]["status"],
+                                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
 
                 if "unremovable" in pd[patch_id] and pd[patch_id]["unremovable"] != "":
-                    print textwrap.fill("    {0:<15} ".format("Unremovable:") + pd[patch_id]["unremovable"],
-                                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
+                    print(textwrap.fill("    {0:<15} ".format("Unremovable:") + pd[patch_id]["unremovable"],
+                                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
 
                 if "reboot_required" in pd[patch_id] and pd[patch_id]["reboot_required"] != "":
-                    print textwrap.fill("    {0:<15} ".format("RR:") + pd[patch_id]["reboot_required"],
-                                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
+                    print(textwrap.fill("    {0:<15} ".format("RR:") + pd[patch_id]["reboot_required"],
+                                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
 
                 if "summary" in pd[patch_id] and pd[patch_id]["summary"] != "":
-                    print textwrap.fill("    {0:<15} ".format("Summary:") + pd[patch_id]["summary"],
-                                        width=TERM_WIDTH, subsequent_indent=' ' * 20)
+                    print(textwrap.fill("    {0:<15} ".format("Summary:") + pd[patch_id]["summary"],
+                                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
 
                 if "description" in pd[patch_id] and pd[patch_id]["description"] != "":
                     first_line = True
                     for line in pd[patch_id]["description"].split('\n'):
                         if first_line:
-                            print textwrap.fill("    {0:<15} ".format("Description:") + line,
-                                                width=TERM_WIDTH, subsequent_indent=' ' * 20)
+                            print(textwrap.fill("    {0:<15} ".format("Description:") + line,
+                                                width=TERM_WIDTH, subsequent_indent=' ' * 20))
                             first_line = False
                         else:
-                            print textwrap.fill(line,
+                            print(textwrap.fill(line,
                                                 width=TERM_WIDTH, subsequent_indent=' ' * 20,
-                                                initial_indent=' ' * 20)
+                                                initial_indent=' ' * 20))
 
                 if "install_instructions" in pd[patch_id] and pd[patch_id]["install_instructions"] != "":
-                    print "    Install Instructions:"
+                    print("    Install Instructions:")
                     for line in pd[patch_id]["install_instructions"].split('\n'):
-                        print textwrap.fill(line,
+                        print(textwrap.fill(line,
                                             width=TERM_WIDTH, subsequent_indent=' ' * 20,
-                                            initial_indent=' ' * 20)
+                                            initial_indent=' ' * 20))
 
                 if "warnings" in pd[patch_id] and pd[patch_id]["warnings"] != "":
                     first_line = True
                     for line in pd[patch_id]["warnings"].split('\n'):
                         if first_line:
-                            print textwrap.fill("    {0:<15} ".format("Warnings:") + line,
-                                                width=TERM_WIDTH, subsequent_indent=' ' * 20)
+                            print(textwrap.fill("    {0:<15} ".format("Warnings:") + line,
+                                                width=TERM_WIDTH, subsequent_indent=' ' * 20))
                             first_line = False
                         else:
-                            print textwrap.fill(line,
+                            print(textwrap.fill(line,
                                                 width=TERM_WIDTH, subsequent_indent=' ' * 20,
-                                                initial_indent=' ' * 20)
+                                                initial_indent=' ' * 20))
 
                 if "requires" in pd[patch_id] and len(pd[patch_id]["requires"]) > 0:
-                    print "    Requires:"
+                    print("    Requires:")
                     for req_patch in sorted(pd[patch_id]["requires"]):
-                        print ' ' * 20 + req_patch
+                        print(' ' * 20 + req_patch)
 
                 if "contents" in data and patch_id in data["contents"]:
-                    print "    Contents:"
+                    print("    Contents:")
                     for pkg in sorted(data["contents"][patch_id]):
-                        print ' ' * 20 + pkg
+                        print(' ' * 20 + pkg)
 
-                print "\n"
+                print("\n")
 
         if 'info' in data and data["info"] != "":
-            print data["info"]
+            print(data["info"])
 
         if 'warning' in data and data["warning"] != "":
-            print "Warning:"
-            print data["warning"]
+            print("Warning:")
+            print(data["warning"])
 
         if 'error' in data and data["error"] != "":
-            print "Error:"
-            print data["error"]
+            print("Error:")
+            print(data["error"])
 
     elif req.status_code == 500:
-        print "An internal error has occurred. Please check /var/log/patching.log for details"
+        print("An internal error has occurred. Please check /var/log/patching.log for details")
 
 
 def patch_upload_req(debug, args):
@@ -380,11 +380,11 @@ def patch_upload_req(debug, args):
 
     for patchfile in sorted(list(set(args))):
         if os.path.isdir(patchfile):
-            print "Error: %s is a directory. Please use upload-dir" % patchfile
+            print("Error: %s is a directory. Please use upload-dir" % patchfile)
             continue
 
         if not os.path.isfile(patchfile):
-            print "Error: File does not exist: %s" % patchfile
+            print("Error: File does not exist: %s" % patchfile)
             continue
 
         enc = MultipartEncoder(fields={'file': (patchfile,
@@ -528,7 +528,7 @@ def patch_commit_req(debug, args):
     append_auth_token_if_required(headers)
     if release and not all_patches:
         # Disallow
-        print "Use of --release option requires --all"
+        print("Use of --release option requires --all")
         return 1
     elif all_patches:
         # Get a list of all patches
@@ -544,17 +544,17 @@ def patch_commit_req(debug, args):
             if 'pd' in data:
                 patch_list = sorted(data['pd'].keys())
         elif req.status_code == 500:
-            print "Failed to get patch list. Aborting..."
+            print("Failed to get patch list. Aborting...")
             return 1
 
         if len(patch_list) == 0:
-            print "There are no %s patches to commit." % relopt
+            print("There are no %s patches to commit." % relopt)
             return 0
 
-        print "The following patches will be committed:"
+        print("The following patches will be committed:")
         for patch_id in patch_list:
-            print "    %s" % patch_id
-        print
+            print("    %s" % patch_id)
+        print()
 
         patches = "/".join(patch_list)
     else:
@@ -569,16 +569,16 @@ def patch_commit_req(debug, args):
             data = json.loads(req.text)
 
             if 'patches' in data:
-                print "The following patches will be committed:"
+                print("The following patches will be committed:")
                 for patch_id in sorted(data['patches']):
-                    print "    %s" % patch_id
-                print
+                    print("    %s" % patch_id)
+                print()
             else:
-                print "No patches found to commit"
+                print("No patches found to commit")
                 return 1
 
         elif req.status_code == 500:
-            print "An internal error has occurred. Please check /var/log/patching.log for details"
+            print("An internal error has occurred. Please check /var/log/patching.log for details")
             return 1
 
     # Run dry-run
@@ -588,21 +588,21 @@ def patch_commit_req(debug, args):
     print_patch_op_result(req)
 
     if check_rc(req) != 0:
-        print "Aborting..."
+        print("Aborting...")
         return 1
 
     if dry_run:
         return 0
 
-    print
+    print()
     commit_warning = "WARNING: Committing a patch is an irreversible operation. " + \
                      "Committed patches cannot be removed."
-    print textwrap.fill(commit_warning, width=TERM_WIDTH, subsequent_indent=' ' * 9)
-    print
+    print(textwrap.fill(commit_warning, width=TERM_WIDTH, subsequent_indent=' ' * 9))
+    print()
 
     user_input = raw_input("Would you like to continue? [y/N]: ")
     if user_input.lower() != 'y':
-        print "Aborting..."
+        print("Aborting...")
         return 1
 
     url = "http://%s/patch/commit/%s" % (api_addr, patches)
@@ -659,7 +659,7 @@ def print_query_hosts_result(req):
     if req.status_code == 200:
         data = json.loads(req.text)
         if 'data' not in data:
-            print "Invalid data returned:"
+            print("Invalid data returned:")
             print_result_debug(req)
             return
 
@@ -690,12 +690,12 @@ def print_query_hosts_result(req):
             if len(agent["state"]) > width_state:
                 width_state = len(agent["state"])
 
-        print "{0:^{width_hn}}  {1:^{width_ip}}  {2:^{width_pc}}  {3:^{width_rr}}  {4:^{width_rel}}  {5:^{width_state}}".format(
+        print("{0:^{width_hn}}  {1:^{width_ip}}  {2:^{width_pc}}  {3:^{width_rr}}  {4:^{width_rel}}  {5:^{width_state}}".format(
             hdr_hn, hdr_ip, hdr_pc, hdr_rr, hdr_rel, hdr_state,
-            width_hn=width_hn, width_ip=width_ip, width_pc=width_pc, width_rr=width_rr, width_rel=width_rel, width_state=width_state)
+            width_hn=width_hn, width_ip=width_ip, width_pc=width_pc, width_rr=width_rr, width_rel=width_rel, width_state=width_state))
 
-        print "{0}  {1}  {2}  {3}  {4}  {5}".format(
-            '=' * width_hn, '=' * width_ip, '=' * width_pc, '=' * width_rr, '=' * width_rel, '=' * width_state)
+        print("{0}  {1}  {2}  {3}  {4}  {5}".format(
+            '=' * width_hn, '=' * width_ip, '=' * width_pc, '=' * width_rr, '=' * width_rel, '=' * width_state))
 
         for agent in sorted(agents, key=lambda a: a["hostname"]):
             patch_current_field = "Yes" if agent["patch_current"] else "No"
@@ -705,17 +705,17 @@ def print_query_hosts_result(req):
             if agent["patch_failed"]:
                 patch_current_field = "Failed"
 
-            print "{0:<{width_hn}}  {1:<{width_ip}}  {2:^{width_pc}}  {3:^{width_rr}}  {4:^{width_rel}}  {5:^{width_state}}".format(
+            print("{0:<{width_hn}}  {1:<{width_ip}}  {2:^{width_pc}}  {3:^{width_rr}}  {4:^{width_rel}}  {5:^{width_state}}".format(
                 agent["hostname"],
                 agent["ip"],
                 patch_current_field,
                 "Yes" if agent["requires_reboot"] else "No",
                 agent["sw_version"],
                 agent["state"],
-                width_hn=width_hn, width_ip=width_ip, width_pc=width_pc, width_rr=width_rr, width_rel=width_rel, width_state=width_state)
+                width_hn=width_hn, width_ip=width_ip, width_pc=width_pc, width_rr=width_rr, width_rel=width_rel, width_state=width_state))
 
     elif req.status_code == 500:
-        print "An internal error has occurred. Please check /var/log/patching.log for details"
+        print("An internal error has occurred. Please check /var/log/patching.log for details")
 
 
 def patch_query_hosts_req(debug, args):
@@ -800,10 +800,10 @@ def query_dependencies(debug, args):
 
             if 'patches' in data:
                 for patch_id in sorted(data['patches']):
-                    print patch_id
+                    print(patch_id)
 
         elif req.status_code == 500:
-            print "An internal error has occurred. Please check /var/log/patching.log for details"
+            print("An internal error has occurred. Please check /var/log/patching.log for details")
 
     return check_rc(req)
 
@@ -828,14 +828,14 @@ def wait_for_install_complete(agent_ip):
             if retriable_count <= max_retries:
                 continue
             else:
-                print "Lost communications with the patch controller"
+                print("Lost communications with the patch controller")
                 rc = 1
                 break
 
         if req.status_code == 200:
             data = json.loads(req.text)
             if 'data' not in data:
-                print "Invalid query-hosts data returned:"
+                print("Invalid query-hosts data returned:")
                 print_result_debug(req)
                 rc = 1
                 break
@@ -857,7 +857,7 @@ def wait_for_install_complete(agent_ip):
                 if retriable_count <= max_retries:
                     continue
                 else:
-                    print "%s agent has timed out." % agent_ip
+                    print("%s agent has timed out." % agent_ip)
                     rc = 1
                     break
 
@@ -867,29 +867,29 @@ def wait_for_install_complete(agent_ip):
                 sys.stdout.write(".")
                 sys.stdout.flush()
             elif state == constants.PATCH_AGENT_STATE_INSTALL_REJECTED:
-                print "\nInstallation rejected. Node must be locked"
+                print("\nInstallation rejected. Node must be locked")
                 rc = 1
                 break
             elif state == constants.PATCH_AGENT_STATE_INSTALL_FAILED:
-                print "\nInstallation failed. Please check logs for details."
+                print("\nInstallation failed. Please check logs for details.")
                 rc = 1
                 break
             elif state == constants.PATCH_AGENT_STATE_IDLE:
-                print "\nInstallation was successful."
+                print("\nInstallation was successful.")
                 rc = 0
                 break
             else:
-                print "\nPatch agent is reporting unknown state: %s" % state
+                print("\nPatch agent is reporting unknown state: %s" % state)
                 rc = 1
                 break
 
         elif req.status_code == 500:
-            print "An internal error has occurred. Please check /var/log/patching.log for details"
+            print("An internal error has occurred. Please check /var/log/patching.log for details")
             rc = 1
             break
         else:
             m = re.search("(Error message:.*)", req.text, re.MULTILINE)
-            print m.group(0)
+            print(m.group(0))
             rc = 1
             break
 
@@ -920,17 +920,17 @@ def host_install(debug, args):
     if req.status_code == 200:
         data = json.loads(req.text)
         if 'error' in data and data["error"] != "":
-            print "Error:"
-            print data["error"]
+            print("Error:")
+            print(data["error"])
             rc = 1
         else:
             rc = wait_for_install_complete(agent_ip)
     elif req.status_code == 500:
-        print "An internal error has occurred. Please check /var/log/patching.log for details"
+        print("An internal error has occurred. Please check /var/log/patching.log for details")
         rc = 1
     else:
         m = re.search("(Error message:.*)", req.text, re.MULTILINE)
-        print m.group(0)
+        print(m.group(0))
         rc = 1
 
     return rc
@@ -1015,7 +1015,7 @@ def patch_install_local(debug, args):
     # First, check to see if the controller hostname is already known.
     if utils.gethostbyname(constants.CONTROLLER_FLOATING_HOSTNAME):
         # If this is successful, disallow the install
-        print >>sys.stderr, "Error: This function can only be used before initial system configuration."
+        print("Error: This function can only be used before initial system configuration.", file=sys.stderr)
         return 1
 
     # Ignore interrupts during this function
@@ -1041,15 +1041,15 @@ def patch_install_local(debug, args):
         # install patches but won't automatically reboot if the RR flag is set
         subprocess.check_output(['/etc/init.d/sw-patch', 'restart'])
     except subprocess.CalledProcessError:
-        print >>sys.stderr, "Error: Failed to install patches. Please check /var/log/patching.log for details"
+        print("Error: Failed to install patches. Please check /var/log/patching.log for details", file=sys.stderr)
         rc = 1
 
     # Restore /etc/hosts
     os.rename('/etc/hosts.patchbak', '/etc/hosts')
 
     if rc == 0:
-        print "Patch installation is complete."
-        print "Please reboot before continuing with configuration."
+        print("Patch installation is complete.")
+        print("Please reboot before continuing with configuration.")
 
     return rc
 
@@ -1108,7 +1108,7 @@ def completion_opts(args):
             data = json.loads(req.text)
 
             if 'pd' in data:
-                print " ".join(data['pd'].keys())
+                print(" ".join(data['pd'].keys()))
         return 0
 
     elif args[0] == "hosts":
@@ -1121,7 +1121,7 @@ def completion_opts(args):
 
             if 'data' in data:
                 for agent in data['data']:
-                    print agent["hostname"]
+                    print(agent["hostname"])
         return 0
 
     return 1
@@ -1129,7 +1129,7 @@ def completion_opts(args):
 
 def check_env(env, var):
     if env not in os.environ:
-        print "You must provide a %s via env[%s]" % (var, env)
+        print("You must provide a %s via env[%s]" % (var, env))
         exit(-1)
 
 
@@ -1160,7 +1160,7 @@ def get_auth_token_and_endpoint(region_name):
                                      interface='internal',
                                      region_name=region_name)
     except (exceptions.http.Unauthorized, exceptions.EndpointNotFound) as e:
-        print e.message
+        print(e.message)
         exit(-1)
 
     return token, endpoint
@@ -1192,13 +1192,13 @@ def check_for_os_region_name():
     for c, value in enumerate(sys.argv, 1):
         if value == region_option:
             if c == len(sys.argv):
-                print "Please specify a region name"
+                print("Please specify a region name")
                 print_help()
 
             region = sys.argv[c]
             global VIRTUAL_REGION
             if region != VIRTUAL_REGION:
-                print "Unsupported region name: %s" % region
+                print("Unsupported region name: %s" % region)
                 exit(1)
 
             # check it is running on the active controller
@@ -1246,8 +1246,8 @@ def main():
                                   "host-install-async",
                                   "install-local", "drop-host"]):
         global VIRTUAL_REGION
-        print "\n%s command is not allowed in %s region" % (action,
-                                                            VIRTUAL_REGION)
+        print("\n%s command is not allowed in %s region" % (action,
+                                                            VIRTUAL_REGION))
         exit(1)
 
     if auth_token is None and os.geteuid() != 0:
@@ -1263,7 +1263,7 @@ def main():
         elif action == "--help" or action == "-h":
             print_help()
         else:
-            print >>sys.stderr, "Error: Command must be run as sudo or root"
+            print("Error: Command must be run as sudo or root", file=sys.stderr)
             rc = 1
     else:
         if action == "upload":

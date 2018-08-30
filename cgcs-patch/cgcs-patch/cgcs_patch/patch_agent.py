@@ -765,7 +765,7 @@ class PatchAgent(PatchService):
 
         # Build up the install set
         if verbose_to_stdout:
-            print "Checking for software updates..."
+            print("Checking for software updates...")
         self.query()
         install_set = []
         for pkg, version in self.to_install.iteritems():
@@ -779,23 +779,23 @@ class PatchAgent(PatchService):
         if len(install_set) > 0:
             try:
                 if verbose_to_stdout:
-                    print "Installing software updates..."
+                    print("Installing software updates...")
                 LOG.info("Installing: %s" % ", ".join(install_set))
                 output = subprocess.check_output(smart_install_cmd + install_set, stderr=subprocess.STDOUT)
                 changed = True
                 for line in output.split('\n'):
                     LOG.info("INSTALL: %s" % line)
                 if verbose_to_stdout:
-                    print "Software updated."
+                    print("Software updated.")
             except subprocess.CalledProcessError as e:
                 LOG.exception("Failed to install RPMs")
                 LOG.error("Command output: %s" % e.output)
                 rc = False
                 if verbose_to_stdout:
-                    print "WARNING: Software update failed."
+                    print("WARNING: Software update failed.")
         else:
             if verbose_to_stdout:
-                print "Nothing to install."
+                print("Nothing to install.")
             LOG.info("Nothing to install")
 
         if rc:
@@ -805,23 +805,23 @@ class PatchAgent(PatchService):
             if len(remove_set) > 0:
                 try:
                     if verbose_to_stdout:
-                        print "Handling patch removal..."
+                        print("Handling patch removal...")
                     LOG.info("Removing: %s" % ", ".join(remove_set))
                     output = subprocess.check_output(smart_remove_cmd + remove_set, stderr=subprocess.STDOUT)
                     changed = True
                     for line in output.split('\n'):
                         LOG.info("REMOVE: %s" % line)
                     if verbose_to_stdout:
-                        print "Patch removal complete."
+                        print("Patch removal complete.")
                 except subprocess.CalledProcessError as e:
                     LOG.exception("Failed to remove RPMs")
                     LOG.error("Command output: %s" % e.output)
                     rc = False
                     if verbose_to_stdout:
-                        print "WARNING: Patch removal failed."
+                        print("WARNING: Patch removal failed.")
             else:
                 if verbose_to_stdout:
-                    print "Nothing to remove."
+                    print("Nothing to remove.")
                 LOG.info("Nothing to remove")
 
         if changed:
@@ -830,7 +830,7 @@ class PatchAgent(PatchService):
 
             self.node_is_patched = True
             if verbose_to_stdout:
-                print "This node has been patched."
+                print("This node has been patched.")
 
             if os.path.exists(node_is_patched_rr_file):
                 LOG.info("Reboot is required. Skipping patch-scripts")
