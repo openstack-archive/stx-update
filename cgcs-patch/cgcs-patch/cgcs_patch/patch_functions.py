@@ -600,7 +600,7 @@ class PatchData:
         write_xml_file(top, fname)
 
     def gen_groups_xml(self):
-        for ver, rdir in repo_dir.iteritems():
+        for ver, rdir in repo_dir.items():
             self.gen_release_groups_xml(ver)
 
     def query_line(self,

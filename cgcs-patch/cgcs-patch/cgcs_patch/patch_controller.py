@@ -1013,7 +1013,7 @@ class PatchController(PatchService):
 
         # Now verify the state of the required patches
         req_verification = True
-        for req_patch, iter_patch_list in required_patches.iteritems():
+        for req_patch, iter_patch_list in required_patches.items():
             if req_patch not in self.patch_data.metadata \
                     or self.patch_data.metadata[req_patch]["repostate"] == constants.AVAILABLE:
                 msg = "%s is required by: %s" % (req_patch, ", ".join(sorted(iter_patch_list)))
@@ -1105,7 +1105,7 @@ class PatchController(PatchService):
         if repo_changed:
             # Update the repo
             self.patch_data.gen_groups_xml()
-            for ver, rdir in repo_dir.iteritems():
+            for ver, rdir in repo_dir.items():
                 try:
                     output = subprocess.check_output(["createrepo",
                                                       "--update",
@@ -1201,7 +1201,7 @@ class PatchController(PatchService):
                 required_patches[req_patch].append(patch_iter)
 
         if len(required_patches) > 0:
-            for req_patch, iter_patch_list in required_patches.iteritems():
+            for req_patch, iter_patch_list in required_patches.items():
                 msg = "%s is required by: %s" % (req_patch, ", ".join(sorted(iter_patch_list)))
                 msg_error += msg + "\n"
                 LOG.info(msg)
@@ -1265,7 +1265,7 @@ class PatchController(PatchService):
         if repo_changed:
             # Update the repo
             self.patch_data.gen_groups_xml()
-            for ver, rdir in repo_dir.iteritems():
+            for ver, rdir in repo_dir.items():
                 try:
                     output = subprocess.check_output(["createrepo",
                                                       "--update",
@@ -1629,7 +1629,7 @@ class PatchController(PatchService):
             results = self.patch_data.metadata
         else:
             # Filter results
-            for patch_id, data in self.patch_data.metadata.iteritems():
+            for patch_id, data in self.patch_data.metadata.items():
                 if query_state is not None and data["repostate"] != query_state:
                     continue
                 if query_release is not None and data["sw_version"] != query_release:
@@ -1652,10 +1652,10 @@ class PatchController(PatchService):
             if patch_id not in self.patch_data.metadata.keys():
                 results["error"] += "%s is unrecognized\n" % patch_id
 
-        for patch_id, data in self.patch_data.metadata.iteritems():
+        for patch_id, data in self.patch_data.metadata.items():
             if patch_id in patch_ids:
                 results["metadata"][patch_id] = data
-        for patch_id, data in self.patch_data.contents.iteritems():
+        for patch_id, data in self.patch_data.contents.items():
             if patch_id in patch_ids:
                 results["contents"][patch_id] = data
 
@@ -1895,7 +1895,7 @@ class PatchController(PatchService):
 
         # Update the repo
         self.patch_data.gen_groups_xml()
-        for ver, rdir in repo_dir.iteritems():
+        for ver, rdir in repo_dir.items():
             try:
                 output = subprocess.check_output(["createrepo",
                                                   "--update",
@@ -1935,7 +1935,7 @@ class PatchController(PatchService):
         rc = False
 
         self.hosts_lock.acquire()
-        for ip, host in self.hosts.iteritems():
+        for ip, host in self.hosts.items():
             if host.state == constants.PATCH_AGENT_STATE_INSTALLING:
                 rc = True
                 break

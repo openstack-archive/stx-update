@@ -92,7 +92,7 @@ class PatchAlarmDaemon():
             data = json.loads(req.text)
 
             if 'pd' in data:
-                for patch_id, metadata in data['pd'].iteritems():
+                for patch_id, metadata in data['pd'].items():
                     if 'patchstate' in metadata and \
                             (metadata['patchstate'] == 'Partial-Apply' or metadata['patchstate'] == 'Partial-Remove'):
                         raise_pip_alarm = True
