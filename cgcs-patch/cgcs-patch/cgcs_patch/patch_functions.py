@@ -778,7 +778,7 @@ class PatchFile:
         try:
             subprocess.check_call(["sign-rpms", "-d", tmpdir])
         except subprocess.CalledProcessError as e:
-            print "Failed to to add file signatures to RPMs. Call to sign-rpms process returned non-zero exit status %i" % e.returncode
+            print("Failed to to add file signatures to RPMs. Call to sign-rpms process returned non-zero exit status %i" % e.returncode)
             os.chdir(orig_wd)
             shutil.rmtree(tmpdir)
             raise SystemExit(e.returncode)
@@ -800,7 +800,7 @@ class PatchFile:
 
         shutil.rmtree(tmpdir)
 
-        print "Patch is %s" % patchfile
+        print("Patch is %s" % patchfile)
 
     @staticmethod
     def write_patch(patchfile, cert_type=None):
@@ -849,7 +849,7 @@ class PatchFile:
                 # Note: This can fail if the user is not authorized to sign with the formal key.
                 subprocess.check_call(["sign_patch_formal.sh", patchfile])
             except subprocess.CalledProcessError as e:
-                print "Failed to sign official patch. Call to sign_patch_formal.sh process returned non-zero exit status %i" % e.returncode
+                print("Failed to sign official patch. Call to sign_patch_formal.sh process returned non-zero exit status %i" % e.returncode)
                 raise SystemExit(e.returncode)
 
     @staticmethod
@@ -1036,7 +1036,7 @@ class PatchFile:
         except Exception as e:
             template = "An exception of type {0} occurred. Arguments:\n{1!r}"
             message = template.format(type(e).__name__, e.args)
-            print message
+            print(message)
         finally:
             # Change back to original working dir
             os.chdir(orig_wd)
@@ -1079,7 +1079,7 @@ class PatchFile:
             patch_id = thispatch.parse_metadata("metadata.xml")
 
             if patch_id is None:
-                print "Failed to import patch"
+                print("Failed to import patch")
                 # Change back to original working dir
                 os.chdir(orig_wd)
                 shutil.rmtree(tmpdir)
@@ -1188,26 +1188,26 @@ def patch_build():
                                          'storage=',
                                          'all-nodes='])
     except getopt.GetoptError:
-        print "Usage: %s [ <args> ] ... <rpm list>" \
-            % os.path.basename(sys.argv[0])
-        print "Options:"
-        print "\t--id <id>               Patch ID"
-        print "\t--release <version>     Platform release version"
-        print "\t--status <status>       Patch Status Code (ie. O, R, V)"
-        print "\t--unremovable           Marks patch as unremovable"
-        print "\t--reboot-required <Y|N> Marks patch as reboot-required (default=Y)"
-        print "\t--summary <summary>     Patch Summary"
-        print "\t--desc <description>    Patch Description"
-        print "\t--warn <warnings>       Patch Warnings"
-        print "\t--inst <instructions>   Patch Install Instructions"
-        print "\t--req <patch_id>        Required Patch"
-        print "\t--controller <rpm>      New package for controller"
-        print "\t--compute <rpm>         New package for compute node"
-        print "\t--compute-lowlatency <rpm>   New package for compute-lowlatency node"
-        print "\t--storage <rpm>         New package for storage node"
-        print "\t--controller-compute <rpm>   New package for combined node"
-        print "\t--controller-compute-lowlatency <rpm>   New package for lowlatency combined node"
-        print "\t--all-nodes <rpm>       New package for all node types"
+        print("Usage: %s [ <args> ] ... <rpm list>" \
+            % os.path.basename(sys.argv[0]))
+        print("Options:")
+        print("\t--id <id>               Patch ID")
+        print("\t--release <version>     Platform release version")
+        print("\t--status <status>       Patch Status Code (ie. O, R, V)")
+        print("\t--unremovable           Marks patch as unremovable")
+        print("\t--reboot-required <Y|N> Marks patch as reboot-required (default=Y)")
+        print("\t--summary <summary>     Patch Summary")
+        print("\t--desc <description>    Patch Description")
+        print("\t--warn <warnings>       Patch Warnings")
+        print("\t--inst <instructions>   Patch Install Instructions")
+        print("\t--req <patch_id>        Required Patch")
+        print("\t--controller <rpm>      New package for controller")
+        print("\t--compute <rpm>         New package for compute node")
+        print("\t--compute-lowlatency <rpm>   New package for compute-lowlatency node")
+        print("\t--storage <rpm>         New package for storage node")
+        print("\t--controller-compute <rpm>   New package for combined node")
+        print("\t--controller-compute-lowlatency <rpm>   New package for lowlatency combined node")
+        print("\t--all-nodes <rpm>       New package for all node types")
         exit(1)
 
     pf = PatchFile()
@@ -1228,7 +1228,7 @@ def patch_build():
             pf.meta.unremovable = "Y"
         elif opt == "--reboot-required":
             if arg != "Y" and arg != "N":
-                print "The --reboot-required option requires either Y or N as argument."
+                print("The --reboot-required option requires either Y or N as argument.")
                 exit(1)
             pf.meta.reboot_required = arg
         elif opt == "--desc":
@@ -1256,7 +1256,7 @@ def patch_build():
             pf.add_rpm(arg, personality=opt[2:])
 
     if pf.meta.id is None:
-        print "The --id argument is mandatory."
+        print("The --id argument is mandatory.")
         exit(1)
 
     for rpmfile in remainder:
