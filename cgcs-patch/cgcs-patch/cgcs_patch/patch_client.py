@@ -1215,7 +1215,10 @@ def check_for_os_region_name():
             auth_token, endpoint = get_auth_token_and_endpoint(region)
             if endpoint is not None:
                 global api_addr
-                from urlparse import urlparse
+                try:
+                    from urllib.parse import urlparse
+                except ImportError:
+                    from urlparse import urlparse
                 url = urlparse(endpoint)
                 address = format_url_address(url.hostname)
                 api_addr = '{}:{}'.format(address, url.port)
