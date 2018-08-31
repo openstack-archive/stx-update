@@ -1,0 +1,10 @@
+Code-Review+2: Scott Little <scott.little@windriver.com>
+Code-Review+1: Brent Rowsell <brent.rowsell@windriver.com>
+Workflow+1: Don Penney <don.penney@windriver.com>
+Code-Review+2: David Sullivan <david.sullivan@windriver.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Fri, 31 Aug 2018 18:46:54 +0000
+Reviewed-on: https://review.openstack.org/599007
+Project: openstack/stx-update
+Branch: refs/heads/master
