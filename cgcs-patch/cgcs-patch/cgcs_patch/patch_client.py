@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 """
 
+from six.moves import input
 import requests
 import json
 import os
@@ -600,7 +601,7 @@ def patch_commit_req(debug, args):
     print textwrap.fill(commit_warning, width=TERM_WIDTH, subsequent_indent=' ' * 9)
     print
 
-    user_input = raw_input("Would you like to continue? [y/N]: ")
+    user_input = input("Would you like to continue? [y/N]: ")
     if user_input.lower() != 'y':
         print "Aborting..."
         return 1
