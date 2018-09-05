@@ -73,10 +73,10 @@ def main():
         # Load the existing metadata
         allpatches.load_all_metadata(committed_dir, constants.COMMITTED)
     else:
-        os.mkdir(output, 0755)
-        os.mkdir(datadir, 0755)
-        os.mkdir(committed_dir, 0755)
-        os.mkdir(pkgdir, 0755)
+        os.mkdir(output, 0o755)
+        os.mkdir(datadir, 0o755)
+        os.mkdir(committed_dir, 0o755)
+        os.mkdir(pkgdir, 0o755)
 
     # Save the current directory, so we can chdir back after
     orig_wd = os.getcwd()
