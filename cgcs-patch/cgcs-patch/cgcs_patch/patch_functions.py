@@ -30,7 +30,7 @@ import rpm
 try:
     # The tsconfig module is only available at runtime
     from tsconfig.tsconfig import SW_VERSION
-except:
+except Exception:
     SW_VERSION = "unknown"
 
 # Constants
@@ -1188,8 +1188,8 @@ def patch_build():
                                          'storage=',
                                          'all-nodes='])
     except getopt.GetoptError:
-        print("Usage: %s [ <args> ] ... <rpm list>" \
-            % os.path.basename(sys.argv[0]))
+        print("Usage: %s [ <args> ] ... <rpm list>"
+              % os.path.basename(sys.argv[0]))
         print("Options:")
         print("\t--id <id>               Patch ID")
         print("\t--release <version>     Platform release version")

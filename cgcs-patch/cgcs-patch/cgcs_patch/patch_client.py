@@ -74,7 +74,7 @@ def set_term_width():
             width = int(output)
             if width > 60:
                 TERM_WIDTH = width - 4
-    except:
+    except Exception:
         pass
 
 

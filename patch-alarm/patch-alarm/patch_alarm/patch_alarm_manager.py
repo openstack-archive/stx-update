@@ -80,7 +80,7 @@ class PatchAlarmDaemon():
 
         try:
             req = requests.get(url)
-        except:
+        except Exception:
             return
 
         entity_instance_id = "%s=%s" % (fm_constants.FM_ENTITY_TYPE_HOST, "controller")
@@ -171,7 +171,7 @@ class PatchAlarmDaemon():
 
         try:
             req = requests.get(url)
-        except:
+        except Exception:
             return
 
         entity_instance_id = "%s=%s" % (fm_constants.FM_ENTITY_TYPE_HOST, "controller")

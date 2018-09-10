@@ -64,7 +64,7 @@ def setflag(fname):
     try:
         with open(fname, "w") as f:
             f.write("%d\n" % os.getpid())
-    except:
+    except Exception:
         LOG.exception("Failed to update %s flag" % fname)
 
 
@@ -72,7 +72,7 @@ def clearflag(fname):
     if os.path.exists(fname):
         try:
             os.remove(fname)
-        except:
+        except Exception:
             LOG.exception("Failed to clear %s flag" % fname)
 
 
@@ -753,9 +753,9 @@ class PatchAgent(PatchService):
                 shutil.rmtree(insvc_patch_scripts, ignore_errors=True)
             if os.path.exists(insvc_patch_flags):
                 shutil.rmtree(insvc_patch_flags, ignore_errors=True)
-            os.mkdir(insvc_patch_scripts, 0700)
-            os.mkdir(insvc_patch_flags, 0700)
-        except:
+            os.mkdir(insvc_patch_scripts, 0o700)
+            os.mkdir(insvc_patch_flags, 0o700)
+        except Exception:
             LOG.exception("Failed to create in-service patch directories")
 
         # Send a hello to provide a state update

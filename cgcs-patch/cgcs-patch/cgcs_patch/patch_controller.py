@@ -588,7 +588,7 @@ class PatchController(PatchService):
     def socket_lock_release(self):
         try:
             self.socket_lock.release()
-        except:
+        except Exception:
             pass
 
     def write_state_file(self):
@@ -1960,7 +1960,7 @@ class PatchController(PatchService):
                     # Translated successfully, but IP isn't in the table.
                     # Raise an exception to drop out to the failure handling
                     raise PatchError("Host IP (%s) not in table" % ip)
-            except:
+            except Exception:
                 self.hosts_lock.release()
                 msg = "Unknown host specified: %s" % host_ip
                 msg_error += msg + "\n"
@@ -2063,7 +2063,7 @@ class PatchController(PatchService):
                     # Translated successfully, but IP isn't in the table.
                     # Raise an exception to drop out to the failure handling
                     raise PatchError("Host IP (%s) not in table" % ip)
-            except:
+            except Exception:
                 self.hosts_lock.release()
                 msg = "Unknown host specified: %s" % host_ip
                 msg_error += msg + "\n"
@@ -2167,7 +2167,7 @@ class PatchControllerApiThread(threading.Thread):
             global keep_running
             while keep_running:
                 self.wsgi.handle_request()
-        except:
+        except Exception:
             # Log all exceptions
             LOG.exception("Error occurred during request processing")
 
@@ -2218,7 +2218,7 @@ class PatchControllerAuthApiThread(threading.Thread):
             global keep_running
             while keep_running:
                 self.wsgi.handle_request()
-        except:
+        except Exception:
             # Log all exceptions
             LOG.exception("Authorized API failure: Error occurred during request processing")
 
@@ -2384,7 +2384,7 @@ class PatchControllerMainThread(threading.Thread):
                         query = PatchMessageQueryDetailed()
                         query.send(agent_sock)
                         agent_query_conns.append(agent_sock)
-                    except:
+                    except Exception:
                         # Put it back on the list
                         stale_hosts.append(ip)
 
@@ -2425,7 +2425,7 @@ class PatchControllerMainThread(threading.Thread):
                                     pc.interim_state[patch_id].remove(n)
 
                     pc.hosts_lock.release()
-        except:
+        except Exception:
             # Log all exceptions
             LOG.exception("Error occurred during request processing")
             thread_death.set()
