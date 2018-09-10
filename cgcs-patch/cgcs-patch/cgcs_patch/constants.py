@@ -12,7 +12,7 @@ try:
 
     INITIAL_CONFIG_COMPLETE_FLAG = os.path.join(
         tsc.PLATFORM_CONF_PATH, ".initial_config_complete")
-except:
+except Exception:
     pass
 
 PATCH_AGENT_STATE_IDLE = "idle"

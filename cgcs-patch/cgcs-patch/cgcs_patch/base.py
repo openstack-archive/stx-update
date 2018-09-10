@@ -132,7 +132,7 @@ class PatchService:
                 sock_in = self.setup_socket_ipv4()
             self.socket_lock_release()
             return sock_in
-        except:
+        except Exception:
             LOG.exception("Failed to setup socket")
 
         # Close sockets, if necessary

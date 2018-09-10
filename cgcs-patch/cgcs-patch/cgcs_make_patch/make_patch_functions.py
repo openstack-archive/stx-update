@@ -103,11 +103,11 @@ def rev_lt(num1, num2):
     while True:
         try:
             n1 = int(n1w.pop(0))
-        except:
+        except Exception:
             return True
         try:
             n2 = int(n2w.pop(0))
-        except:
+        except Exception:
             return False
         if n1 < n2:
             return True
@@ -1170,7 +1170,7 @@ class PatchRecipeData:
         write_xml_file(e_top, fname)
 
     def __str__(self):
-        return "[ patch_id: %s, context:  %s, metadata: %s, requires: %s, recipies: %s ]" % (str(self.patch_id), str(self.build_context), str(self.metadata), str(self.requires), str(self.recipies, keys()))
+        return "[ patch_id: %s, context:  %s, metadata: %s, requires: %s, recipies: %s ]" % (str(self.patch_id), str(self.build_context), str(self.metadata), str(self.requires), str(self.recipies.keys()))
 
     def myprint(self, indent=""):
         print("patch_id: %s" % str(self.patch_id))
@@ -1282,8 +1282,8 @@ class PatchRecipeData:
         if prev_patch_id is None:
             delim = "_"
             words = self.patch_id.split(delim)
-            l = len(words[-1])
-            words[-1] = '0' * l
+            word_lens = len(words[-1])
+            words[-1] = '0' * word_lens
             prev_patch_id = delim.join(words)
         prev_release_map = self._read_rpm_db(prev_patch_id)
         release_map = self._read_rpm_db(self.patch_id)
@@ -1399,9 +1399,9 @@ class PatchRecipeData:
         return True
 
 
-def _tag_build_context():
+def _tag_build_context(patch_id):
     os.chdir(srcdir)
-    issue_cmd("for e in . `wrgit all-core-gits` ; do (cd $e ; git tag v%s) done" % self.patch_id)
+    issue_cmd("for e in . `wrgit all-core-gits` ; do (cd $e ; git tag v%s) done" % patch_id)
 
 
 def read_build_info():
@@ -1426,7 +1426,7 @@ def read_build_info():
                 if var.startswith('"') and var.endswith('"'):
                     var = var[1:-1]
                 build_info[name] = var
-    except:
+    except Exception:
         return False
     return True
 
@@ -1712,7 +1712,7 @@ def modify_patch():
                     print("press 'Release to Production'")
                     print("")
 
-    except:
+    except Exception:
         print("Failed to modify patch!")
     finally:
         shutil.rmtree(workdir)
@@ -1798,7 +1798,7 @@ def query_patch():
             answer = PatchFile.query_patch(patch_path, field=field)
             print(str(answer))
 
-    except:
+    except Exception:
         print("Failed to query patch!")
     finally:
         shutil.rmtree(workdir)

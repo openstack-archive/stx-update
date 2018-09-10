@@ -23,7 +23,7 @@ def gethostbyname(hostname):
     """ gethostbyname with IPv6 support """
     try:
         return socket.getaddrinfo(hostname, None)[0][4][0]
-    except:
+    except Exception:
         return None
 
 
@@ -61,7 +61,7 @@ def ip_to_url(ip_address_string):
             return "[%s]" % ip_address_string
         else:
             return ip_address_string
-    except:
+    except Exception:
         return ip_address_string
 
 
