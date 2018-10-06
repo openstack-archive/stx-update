@@ -14,6 +14,9 @@
         - openstack-tox-linters
         - openstack-tox-pep8
         - stx-updates-pylint
+    post:
+      jobs:
+        - publish-stx-tox
 
 - job:
     name: stx-updates-pylint
