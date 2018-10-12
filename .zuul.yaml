@@ -16,7 +16,9 @@
         - stx-updates-pylint
     post:
       jobs:
+        - publish-stx-api-ref
         - publish-stx-tox
+        - publish-stx-releasenotes
 
 - job:
     name: stx-updates-pylint
