@@ -1,0 +1,12 @@
+#!/bin/bash
+# Devstack settings
+
+# Defaults
+# --------
+
+STX_UPDATE_NAME=stx-update
+
+######### Plugin Specific ##########
+enable_service $STX_UPDATE_NAME tsconfig
+#define_plugin $STX_UPDATE_NAME
+#plugin_requires ???
