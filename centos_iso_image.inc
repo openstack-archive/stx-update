@@ -12,3 +12,7 @@ cgcs-patch-agent
 
 # patch-alarm
 patch-alarm
+
+# post-update
+post-update-scripts
+

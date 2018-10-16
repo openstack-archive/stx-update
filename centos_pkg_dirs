@@ -2,6 +2,7 @@ tsconfig
 cgcs-patch
 patch-alarm
 requests-toolbelt
+patch-scripts/post-update-scripts
 patch-scripts/EXAMPLE_0001
 patch-scripts/EXAMPLE_0002
 patch-scripts/EXAMPLE_0003
