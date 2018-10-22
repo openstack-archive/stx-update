@@ -11,6 +11,8 @@ Source0: %{name}-%{version}.tar.gz
 %define debug_package %{nil}
 
 BuildRequires: python-setuptools
+BuildRequires: python2-pip
+BuildRequires: python2-wheel
 Requires: python-devel
 Requires: /bin/bash
 
@@ -24,6 +26,7 @@ TIS Platform Patching
 
 %build
 %{__python} setup.py build
+%py2_build_wheel
 
 %install
 %{__python} setup.py install --root=$RPM_BUILD_ROOT \
@@ -31,6 +34,8 @@ TIS Platform Patching
                              --prefix=/usr \
                              --install-data=/usr/share \
                              --single-version-externally-managed
+mkdir -p $RPM_BUILD_ROOT/wheels
+install -m 644 dist/*.whl $RPM_BUILD_ROOT/wheels/
 
     install -m 755 -d %{buildroot}%{_bindir}
     install -m 755 -d %{buildroot}%{_sysconfdir}/init.d
@@ -53,3 +58,11 @@ rm -rf $RPM_BUILD_ROOT
 "%{_bindir}/patch-alarm-manager"
 "%{_sysconfdir}/init.d/patch-alarm-manager"
 
+%package wheels
+Summary: %{name} wheels
+
+%description wheels
+Contains python wheels for %{name}
+
+%files wheels
+/wheels/*
