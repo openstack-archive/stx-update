@@ -10,6 +10,8 @@ Source0: %{name}-%{version}.tar.gz
 Source1: LICENSE
 
 BuildRequires: python-setuptools
+BuildRequires: python2-pip
+BuildRequires: python2-wheel
 BuildRequires: systemd-units
 BuildRequires: systemd-devel
 Requires: python-devel
@@ -27,6 +29,7 @@ TIS Platform Patching
 
 %build
 %{__python} setup.py build
+%py2_build_wheel
 
 %install
 %{__python} setup.py install --root=$RPM_BUILD_ROOT \
@@ -34,6 +37,8 @@ TIS Platform Patching
                              --prefix=/usr \
                              --install-data=/usr/share \
                              --single-version-externally-managed
+mkdir -p $RPM_BUILD_ROOT/wheels
+install -m 644 dist/*.whl $RPM_BUILD_ROOT/wheels/
 
     install -m 755 -d %{buildroot}%{_sbindir}
     install -m 755 -d %{buildroot}%{_sysconfdir}/bash_completion.d
@@ -178,3 +183,11 @@ TIS Platform Patching
 %{_sysconfdir}/init.d/sw-patch-agent
 %{_unitdir}/sw-patch-agent.service
 
+%package wheels
+Summary: %{module_name} wheels
+
+%description wheels
+Contains python wheels for %{module_name}
+
+%files wheels
+/wheels/*
