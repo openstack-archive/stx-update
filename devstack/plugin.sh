@@ -11,15 +11,19 @@
 # ``stack.sh`` calls the entry points in this order:
 #
 echo_summary "stx-update devstack plugin.sh called: $1/$2"
-source $DEST/stx-update/devstack/lib/stx-update
 
 # check for service enabled
 if is_service_enabled stx-update; then
+    if [[ "$1" == "source" ]]; then
+        # Initial source of lib script
+        source $(dirname "$0")/lib/stx-update
+    fi
+
     if [[ "$1" == "stack" && "$2" == "install" ]]; then
         # Perform installation of source
         echo_summary "Installing stx-update"
-        # install_update
-
+        install_tsconfig
+        install_patch
     elif [[ "$1" == "stack" && "$2" == "post-config" ]]; then
         # Configure after the other layer 1 and 2 services have been configured
         echo_summary "Configuring update"
