@@ -7,6 +7,8 @@
 STX_UPDATE_NAME=stx-update
 
 ######### Plugin Specific ##########
-enable_service $STX_UPDATE_NAME tsconfig
+enable_service $STX_UPDATE_NAME
 #define_plugin $STX_UPDATE_NAME
-#plugin_requires ???
+
+# Initial source of lib script
+source $DEST/stx-update/devstack/lib/stx-update
