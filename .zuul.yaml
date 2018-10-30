@@ -26,3 +26,53 @@
       - openstack/stx-config
       - openstack/stx-fault
       - openstack/stx-integ
+
+- job:
+    name: stx-devstack-update
+    parent: stx-devstack-base
+    timeout: 7800
+    required-projects:
+      - openstack/stx-fault
+    vars:
+      tox_envlist: functional
+      devstack_services:
+        # Cinder services
+        c-api: false
+        c-bak: false
+        c-sch: false
+        c-vol: false
+        cinder: false
+        # Glance services
+        g-api: false
+        g-reg: false
+        # Nova services
+        n-api: false
+        n-api-meta: false
+        n-cauth: false
+        n-cond: false
+        n-cpu: false
+        n-novnc: false
+        n-obj: false
+        n-sch: false
+        placement-api: false
+        # Neutron services
+        # We need to keep using the neutron-legacy based services for
+        # now until all issues with the new lib/neutron code are solved
+        q-agt: false
+        q-dhcp: false
+        q-l3: false
+        q-meta: false
+        q-metering: false
+        q-svc: false
+        # neutron-api: false
+        # neutron-agent: false
+        # neutron-dhcp: false
+        # neutron-l3: false
+        # neutron-metadata-agent: false
+        # neutron-metering: false
+        horizon: false
+      devstack_plugins:
+        stx-fault: git://git.starlingx.io/stx-fault
+        stx-update: git://git.starlingx.io/stx-update
+    files:
+      - ^devstack/.*$
