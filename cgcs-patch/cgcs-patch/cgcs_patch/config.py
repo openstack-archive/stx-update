@@ -67,7 +67,7 @@ def read_config():
     config.readfp(ini_fp)
 
     try:
-        value = config.get('platform_conf', 'nodetype')
+        value = str(config.get('platform_conf', 'nodetype'))
 
         global nodetype
         nodetype = value
@@ -112,7 +112,7 @@ def get_mgmt_iface():
     config.readfp(ini_fp)
 
     try:
-        value = config.get('platform_conf', 'management_interface')
+        value = str(config.get('platform_conf', 'management_interface'))
 
         global nodetype
         mgmt_if = value
