@@ -1,0 +1,9 @@
+Code-Review+2: Bart Wensley <barton.wensley@windriver.com>
+Code-Review+2: Don Penney <don.penney@windriver.com>
+Workflow+1: Don Penney <don.penney@windriver.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Fri, 02 Nov 2018 13:50:17 +0000
+Reviewed-on: https://review.openstack.org/614504
+Project: openstack/stx-update
+Branch: refs/heads/master
