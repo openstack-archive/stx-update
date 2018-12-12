@@ -211,13 +211,13 @@ table, th, td {
         <td>N</td>
         <td>Will cause neutron services to not be available while restarting,
             which will prevent instances from being created while it is down.
-            Could cause RPCs from computes to fail while it is restarting.
+            Could cause RPCs from workers to fail while it is restarting.
         </td>
         <td>N</td>
     </tr>
     <tr>
         <td><font color="blue">neutron-dhcp-agent</font></td>
-        <td>Agent on compute node that manages DHCP servers for tenant
+        <td>Agent on worker node that manages DHCP servers for tenant
             networks
         </td>
         <td>Y</td>
@@ -232,7 +232,7 @@ table, th, td {
     </tr>
     <tr>
         <td><font color="blue">neutron-metadata-agent</font></td>
-        <td>Agent on compute node serving metadata to nodes</td>
+        <td>Agent on worker node serving metadata to nodes</td>
         <td>Y</td>
         <td>PMON</td>
         <td><b>/etc/init.d/neutron-metadata-agent restart</b></td>
@@ -243,7 +243,7 @@ table, th, td {
     </tr>
     <tr>
         <td><font color="blue">neutron-sriov-nic-agent</font></td>
-        <td>Agent on compute node responsible for setting SR-IOV port
+        <td>Agent on worker node responsible for setting SR-IOV port
             information
         </td>
         <td>Y</td>

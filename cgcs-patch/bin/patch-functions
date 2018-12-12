@@ -30,9 +30,9 @@ function is_controller()
     [[ $nodetype == "controller" ]]
 }
 
-function is_compute()
+function is_worker()
 {
-    [[ $nodetype == "compute" ]]
+    [[ $nodetype == "worker" ]]
 }
 
 function is_storage()
@@ -42,7 +42,7 @@ function is_storage()
 
 function is_cpe()
 {
-    [[ $nodetype == "controller" && $subfunction =~ compute ]]
+    [[ $nodetype == "controller" && $subfunction =~ worker ]]
 }
 
 function is_locked()

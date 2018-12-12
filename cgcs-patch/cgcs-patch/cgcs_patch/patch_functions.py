@@ -184,7 +184,7 @@ class PackageVersion(object):
 
     def __str__(self):
         """
-        This function is called by str() and print to compute the
+        This function is called by str() and print to worker the
         informal string representation of a PackageVersion object.
         """
         prefix = ""
@@ -434,7 +434,7 @@ class PatchData:
         #        <status>Dev</status>
         #        <unremovable/>
         #        <reboot_required/>
-        #        <personality type="compute">
+        #        <personality type="worker">
         #            <package>pkgA</package>
         #            <package>pkgB</package>
         #        </personality>
@@ -1181,10 +1181,10 @@ def patch_build():
                                          'inst=',
                                          'req=',
                                          'controller=',
-                                         'controller-compute=',
-                                         'controller-compute-lowlatency=',
-                                         'compute=',
-                                         'compute-lowlatency=',
+                                         'controller-worker=',
+                                         'controller-worker-lowlatency=',
+                                         'worker=',
+                                         'worker-lowlatency=',
                                          'storage=',
                                          'all-nodes='])
     except getopt.GetoptError:
@@ -1202,11 +1202,11 @@ def patch_build():
         print("\t--inst <instructions>   Patch Install Instructions")
         print("\t--req <patch_id>        Required Patch")
         print("\t--controller <rpm>      New package for controller")
-        print("\t--compute <rpm>         New package for compute node")
-        print("\t--compute-lowlatency <rpm>   New package for compute-lowlatency node")
+        print("\t--worker <rpm>         New package for worker node")
+        print("\t--worker-lowlatency <rpm>   New package for worker-lowlatency node")
         print("\t--storage <rpm>         New package for storage node")
-        print("\t--controller-compute <rpm>   New package for combined node")
-        print("\t--controller-compute-lowlatency <rpm>   New package for lowlatency combined node")
+        print("\t--controller-worker <rpm>   New package for combined node")
+        print("\t--controller-worker-lowlatency <rpm>   New package for lowlatency combined node")
         print("\t--all-nodes <rpm>       New package for all node types")
         exit(1)
 
@@ -1241,18 +1241,18 @@ def patch_build():
             pf.meta.requires.append(arg)
         elif opt == "--all-nodes":
             for p in ("controller",
-                      "compute",
-                      "compute-lowlatency",
+                      "worker",
+                      "worker-lowlatency",
                       "storage",
-                      "controller-compute",
-                      "controller-compute-lowlatency"):
+                      "controller-worker",
+                      "controller-worker-lowlatency"):
                 pf.add_rpm(arg, personality=p)
         elif opt in ("--controller",
-                     "--compute",
-                     "--compute-lowlatency",
+                     "--worker",
+                     "--worker-lowlatency",
                      "--storage",
-                     "--controller-compute",
-                     "--controller-compute-lowlatency"):
+                     "--controller-worker",
+                     "--controller-worker-lowlatency"):
             pf.add_rpm(arg, personality=opt[2:])
 
     if pf.meta.id is None:
