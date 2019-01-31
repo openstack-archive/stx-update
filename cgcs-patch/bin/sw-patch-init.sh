@@ -31,7 +31,7 @@ function check_for_rr_patch {
 
 function check_install_uuid {
     # Check whether our installed load matches the active controller
-    CONTROLLER_UUID=`curl -sf http://controller/feed/rel-${SW_VERSION}/install_uuid`
+    CONTROLLER_UUID=`curl -sf http://controller:${http_port}/feed/rel-${SW_VERSION}/install_uuid`
     if [ $? -ne 0 ]; then
         if [ "$HOSTNAME" = "controller-1" ]; then
             # If we're on controller-1, controller-0 may not have the install_uuid
