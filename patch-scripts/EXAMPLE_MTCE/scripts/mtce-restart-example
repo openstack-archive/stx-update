@@ -34,7 +34,7 @@ declare -i GLOBAL_RC=$PATCH_STATUS_OK
     mtcalarmd mtclogd \
     hbsAgent hbsClient \
     mtcAgent mtcClient \
-    pmond rmond fsmond hwmond hostwd \
+    pmond rmond fsmond hwmond hostwd lmond \
     guestServer guestAgent
 
 if [ $? -ne 0 ] ; then
