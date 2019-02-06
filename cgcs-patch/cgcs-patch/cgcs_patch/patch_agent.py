@@ -21,14 +21,18 @@ import shutil
 
 from rpmUtils.miscutils import stringToVersion  # pylint: disable=import-error
 
-from cgcs_patch.patch_functions import (configure_logging, LOG)
+from cgcs_patch.patch_functions import configure_logging
+from cgcs_patch.patch_functions import LOG
 import cgcs_patch.config as cfg
 from cgcs_patch.base import PatchService
 import cgcs_patch.utils as utils
 import cgcs_patch.messages as messages
 import cgcs_patch.constants as constants
 
-from tsconfig.tsconfig import (SW_VERSION, subfunctions, install_uuid, http_port)
+from tsconfig.tsconfig import http_port
+from tsconfig.tsconfig import install_uuid
+from tsconfig.tsconfig import subfunctions
+from tsconfig.tsconfig import SW_VERSION
 
 pidfile_path = "/var/run/patch_agent.pid"
 node_is_patched_file = "/var/run/node_is_patched"

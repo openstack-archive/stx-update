@@ -15,7 +15,8 @@ from Crypto.PublicKey import RSA
 from Crypto.Util.asn1 import DerSequence
 from binascii import a2b_base64
 
-from cgcs_patch.certificates import dev_certificate, formal_certificate
+from cgcs_patch.certificates import dev_certificate
+from cgcs_patch.certificates import formal_certificate
 
 # To save memory, read and hash 1M of files at a time
 default_blocksize = 1 * 1024 * 1024

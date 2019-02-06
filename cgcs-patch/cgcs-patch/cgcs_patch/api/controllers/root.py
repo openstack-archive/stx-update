@@ -6,7 +6,8 @@ SPDX-License-Identifier: Apache-2.0
 """
 
 import os
-from pecan import expose, request
+from pecan import expose
+from pecan import request
 import cgi
 import glob
 

@@ -11,7 +11,9 @@ from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA  # pylint: disable=unused-import
 from Crypto.Util.asn1 import DerSequence  # pylint: disable=unused-import
 from binascii import a2b_base64  # pylint: disable=unused-import
-from cgcs_patch.patch_verify import read_RSA_key, cert_type_formal_str, cert_type_dev_str
+from cgcs_patch.patch_verify import read_RSA_key
+from cgcs_patch.patch_verify import cert_type_formal_str
+from cgcs_patch.patch_verify import cert_type_dev_str
 
 # To save memory, read and hash 1M of files at a time
 default_blocksize = 1 * 1024 * 1024

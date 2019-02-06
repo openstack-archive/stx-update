@@ -20,9 +20,13 @@ import tempfile
 import xml.etree.ElementTree as ElementTree
 from xml.dom import minidom
 
-from cgcs_patch.patch_verify import verify_files, cert_type_all
+from cgcs_patch.patch_verify import verify_files
+from cgcs_patch.patch_verify import cert_type_all
 from cgcs_patch.patch_signing import sign_files
-from cgcs_patch.exceptions import MetadataFail, PatchFail, PatchValidationFailure, PatchMismatchFailure
+from cgcs_patch.exceptions import MetadataFail
+from cgcs_patch.exceptions import PatchFail
+from cgcs_patch.exceptions import PatchValidationFailure
+from cgcs_patch.exceptions import PatchMismatchFailure
 
 import cgcs_patch.constants as constants
 import rpm

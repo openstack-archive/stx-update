@@ -20,15 +20,27 @@ from rpmUtils.miscutils import stringToVersion  # pylint: disable=import-error
 from wsgiref import simple_server
 from cgcs_patch.api import app
 from cgcs_patch.authapi import app as auth_app
-from cgcs_patch.patch_functions import \
-    configure_logging, BasePackageData, \
-    avail_dir, applied_dir, committed_dir, \
-    PatchFile, parse_rpm_filename, \
-    package_dir, repo_dir, SW_VERSION, root_package_dir
-from cgcs_patch.exceptions import MetadataFail, RpmFail, PatchError, PatchFail, PatchValidationFailure, PatchMismatchFailure
+from cgcs_patch.patch_functions import configure_logging
+from cgcs_patch.patch_functions import BasePackageData
+from cgcs_patch.patch_functions import avail_dir
+from cgcs_patch.patch_functions import applied_dir
+from cgcs_patch.patch_functions import committed_dir
+from cgcs_patch.patch_functions import PatchFile
+from cgcs_patch.patch_functions import parse_rpm_filename
+from cgcs_patch.patch_functions import package_dir
+from cgcs_patch.patch_functions import repo_dir
+from cgcs_patch.patch_functions import SW_VERSION
+from cgcs_patch.patch_functions import root_package_dir
+from cgcs_patch.exceptions import MetadataFail
+from cgcs_patch.exceptions import RpmFail
+from cgcs_patch.exceptions import PatchError
+from cgcs_patch.exceptions import PatchFail
+from cgcs_patch.exceptions import PatchValidationFailure
+from cgcs_patch.exceptions import PatchMismatchFailure
 from cgcs_patch.patch_functions import LOG
 from cgcs_patch.patch_functions import audit_log_info
-from cgcs_patch.patch_functions import patch_dir, repo_root_dir
+from cgcs_patch.patch_functions import patch_dir
+from cgcs_patch.patch_functions import repo_root_dir
 from cgcs_patch.patch_functions import PatchData
 from cgcs_patch.base import PatchService
 
