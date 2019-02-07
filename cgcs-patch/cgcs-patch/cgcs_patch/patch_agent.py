@@ -1,5 +1,5 @@
 """
-Copyright (c) 2014-2017 Wind River Systems, Inc.
+Copyright (c) 2014-2019 Wind River Systems, Inc.
 
 SPDX-License-Identifier: Apache-2.0
 
@@ -28,7 +28,7 @@ import cgcs_patch.utils as utils
 import cgcs_patch.messages as messages
 import cgcs_patch.constants as constants
 
-from tsconfig.tsconfig import (SW_VERSION, subfunctions, install_uuid)
+from tsconfig.tsconfig import (SW_VERSION, subfunctions, install_uuid, http_port)
 
 pidfile_path = "/var/run/patch_agent.pid"
 node_is_patched_file = "/var/run/node_is_patched"
@@ -77,7 +77,7 @@ def clearflag(fname):
 
 
 def check_install_uuid():
-    controller_install_uuid_url = "http://controller/feed/rel-%s/install_uuid" % SW_VERSION
+    controller_install_uuid_url = "http://controller:%s/feed/rel-%s/install_uuid" % (http_port, SW_VERSION)
     try:
         req = requests.get(controller_install_uuid_url)
         if req.status_code != 200:
@@ -353,11 +353,11 @@ class PatchAgent(PatchService):
                     {'channel': 'base',
                      'type': 'rpm-md',
                      'name': 'Base',
-                     'baseurl': "http://controller/feed/rel-%s" % SW_VERSION},
+                     'baseurl': "http://controller:%s/feed/rel-%s" % (http_port, SW_VERSION)},
                     {'channel': 'updates',
                      'type': 'rpm-md',
                      'name': 'Patches',
-                     'baseurl': "http://controller/updates/rel-%s" % SW_VERSION}]
+                     'baseurl': "http://controller:%s/updates/rel-%s" % (http_port, SW_VERSION)}]
 
         updated = False
 
@@ -580,7 +580,7 @@ class PatchAgent(PatchService):
         self.missing_pkgs = []
         installed_pkgs = []
 
-        groups_url = "http://controller/updates/rel-%s/comps.xml" % SW_VERSION
+        groups_url = "http://controller:%s/updates/rel-%s/comps.xml" % (http_port, SW_VERSION)
         try:
             req = requests.get(groups_url)
             if req.status_code != 200:
