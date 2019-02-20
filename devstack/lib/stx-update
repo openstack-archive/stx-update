@@ -1,12 +1,6 @@
 #!/bin/bash
 #
 # lib/stx-update
-# Functions to control the configuration and operation of stx-update
-
-# Dependencies:
-#
-# - ``functions`` file
-# - ``DEST``, ``DATA_DIR``, ``STACK_USER`` must be defined
 
 # ``stack.sh`` calls the entry points in this order:
 #
@@ -25,20 +19,27 @@ set -o xtrace
 # --------
 
 STXUPDATE_REPO=${STXUPDATE_REPO:-${GIT_BASE}/openstack/stx-update.git}
-STXUPDATE_DIR=$DEST/stx-update
+STXUPDATE_DIR=${GITDIR[$STX_UPDATE_NAME]}
 
 STX_PATCH_DIR=$STXUPDATE_DIR/cgcs-patch/
 TSCONFIG_DIR=$STXUPDATE_DIR/tsconfig/
 
-STX_BIN_DIR=$(get_python_exec_prefix)
+# STX_INST_DIR should be a non-root-writable place to install build artifacts
+STX_INST_DIR=${STX_INST_DIR:-$DEST/usr}
+STX_BIN_DIR=$STX_INST_DIR/bin
 PYTHON_SITE_DIR=$(python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())")
 
 function install_sw_patch {
     pushd $STX_PATCH_DIR/cgcs-patch
-    sudo python setup.py install --root=/ --install-lib=$PYTHON_SITE_DIR --prefix=/usr --install-data=/usr/share --single-version-externally-managed
+    sudo python setup.py install \
+        --root=/ \
+        --install-lib=$PYTHON_SITE_DIR \
+        --prefix=/usr \
+        --install-data=/usr/share \
+        --single-version-externally-managed
     popd
 
-    local stx_patch_sbindir=/usr/local/sbin/
+    local stx_patch_sbindir=$STX_INST_DIR/sbin
     local stx_patch_sysconfdir=/etc/
     sudo install -m 755 -d ${stx_patch_sbindir}
     sudo install -m 755 -d ${stx_patch_sysconfdir}/bash_completion.d
@@ -55,7 +56,12 @@ function install_tsconfig {
     # no setup.cfg in tsconfig, so we can not use pip install -e
     # setup_dev_lib "tsconfig"
     pushd $TSCONFIG_DIR/tsconfig
-    sudo python setup.py install --root=/ --install-lib=$PYTHON_SITE_DIR --prefix=/usr --install-data=/usr/share --single-version-externally-managed
+    sudo python setup.py install \
+        --root=/ \
+        --install-lib=$PYTHON_SITE_DIR \
+        --prefix=/usr \
+        --install-data=/usr/share \
+        --single-version-externally-managed
     popd
     sudo install -d -m 755 $STX_BIN_DIR
     sudo install -p -D -m 700 $TSCONFIG_DIR/scripts/tsconfig $STX_BIN_DIR/tsconfig
@@ -69,4 +75,5 @@ function install_update {
         install_tsconfig
     fi
 }
+
 $_XTRACE_STX_UPDATE

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # devstack/plugin.sh
-# Triggers stx_update specific functions to install and configure stx_update
+# Triggers specific functions to install and configure stx-update
 
 echo_summary "stx-update devstack plugin.sh called: $1/$2"
 
@@ -14,6 +14,7 @@ if is_service_enabled stx-update; then
     elif [[ "$1" == "stack" && "$2" == "post-config" ]]; then
         # Configure after the other layer 1 and 2 services have been configured
         echo_summary "Configure stx-update"
+        # configure_update
     elif [[ "$1" == "stack" && "$2" == "extra" ]]; then
         # Initialize and start the service
         echo_summary "Initialize and start stx-update"
