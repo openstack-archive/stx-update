@@ -106,7 +106,7 @@ class PatchAlarmDaemon():
                     if ENABLE_DEV_CERTIFICATE_PATCH_IDENTIFIER in patch_id:
                         raise_cert_alarm = True
 
-        pip_alarm = self.fm_api.get_fault(fm_constants.FM_ALARM_ID_PATCH_IN_PROGRESS,
+        resp, pip_alarm = self.fm_api.get_fault(fm_constants.FM_ALARM_ID_PATCH_IN_PROGRESS,
                                           entity_instance_id)
         if raise_pip_alarm and pip_alarm is None:
             logging.info("Raising patch-in-progress alarm")
@@ -127,7 +127,7 @@ class PatchAlarmDaemon():
             self.fm_api.clear_fault(fm_constants.FM_ALARM_ID_PATCH_IN_PROGRESS,
                                     entity_instance_id)
 
-        obs_alarm = self.fm_api.get_fault(fm_constants.FM_ALARM_ID_PATCH_OBS_IN_SYSTEM,
+        resp, obs_alarm = self.fm_api.get_fault(fm_constants.FM_ALARM_ID_PATCH_OBS_IN_SYSTEM,
                                           entity_instance_id)
         if raise_obs_alarm and obs_alarm is None:
             logging.info("Raising obsolete-patch-in-system alarm")
@@ -148,7 +148,7 @@ class PatchAlarmDaemon():
             self.fm_api.clear_fault(fm_constants.FM_ALARM_ID_PATCH_OBS_IN_SYSTEM,
                                     entity_instance_id)
 
-        cert_alarm = self.fm_api.get_fault(fm_constants.FM_ALARM_ID_NONSTANDARD_CERT_PATCH,
+        resp, cert_alarm = self.fm_api.get_fault(fm_constants.FM_ALARM_ID_NONSTANDARD_CERT_PATCH,
                                            entity_instance_id)
         if raise_cert_alarm and cert_alarm is None:
             logging.info("Raising developer-certificate-enabled alarm")
@@ -186,7 +186,7 @@ class PatchAlarmDaemon():
                         failed_hosts.append(host['hostname'])
 
         # Query existing alarms
-        patch_failed_alarm = self.fm_api.get_fault(fm_constants.FM_ALARM_ID_PATCH_HOST_INSTALL_FAILED,
+        resp, patch_failed_alarm = self.fm_api.get_fault(fm_constants.FM_ALARM_ID_PATCH_HOST_INSTALL_FAILED,
                                                    entity_instance_id)
 
         if len(failed_hosts) > 0:
