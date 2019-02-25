@@ -8,6 +8,8 @@
         - build-openstack-releasenotes
         - openstack-tox-linters
         - openstack-tox-pep8
+        - openstack-tox-py27
+        - openstack-tox-py35
         - stx-updates-pylint
         - stx-devstack-update:
             voting: false
@@ -17,6 +19,8 @@
         - build-openstack-releasenotes
         - openstack-tox-linters
         - openstack-tox-pep8
+        - openstack-tox-py27
+        - openstack-tox-py35
         - stx-updates-pylint
     post:
       jobs:
