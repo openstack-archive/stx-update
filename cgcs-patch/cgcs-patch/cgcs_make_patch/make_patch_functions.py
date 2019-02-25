@@ -472,7 +472,7 @@ class PatchList:
                 if fix and (rc2 > MINOR_DIFF):
                     new_status = self.get_status()
                     old_status = prd.get_status()
-                    # TODO should we update status
+                    # TODO(slittle) should we update status
                     prd.set_status(new_status)
                     rc2 = prd.compare(self.patch_data[prd.patch_id])
                     if rc2 > MINOR_DIFF:
@@ -481,8 +481,8 @@ class PatchList:
                         print(msg)
                         raise PatchRequirementFail(msg)
                         sys.exit(2)
-                    # TODO write revised xml to local/remote ?
-                # patch is already knwon and has same content
+                    # TODO(slittle) write revised xml to local/remote ?
+                # patch is already known and has same content
                 # nothing more to do since rebuild is not requested
                 return
 
@@ -1908,9 +1908,10 @@ def make_patch():
     if formal_flag:
         os.environ["FORMAL_BUILD"] = "1"
         print("formal_flag = %s" % str(formal_flag))
-        # TODO if branch is not None or workdir is not None or srcdir is not None:
-        # TODO     print "If --formal is specified, then srcdir, workdir and branch are automatci and must not be specified"
-        # TODO     make_patch_usage()
+        # TODO(slittle) determine if this next commented out block is needed.
+        # if branch is not None or workdir is not None or srcdir is not None:
+        #     print "If --formal is specified, then srcdir, workdir and branch are automatic and must not be specified"
+        #     make_patch_usage()
 
     if pre_compiled_flag and formal_flag:
         print("invalid options: --formal and --pre-compiled can't be used together.")
