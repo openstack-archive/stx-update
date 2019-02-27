@@ -6,8 +6,3 @@ stx-update Release Notes
    :maxdepth: 2
 
    unreleased
-
-Search
-------
-
-:ref:`search`
