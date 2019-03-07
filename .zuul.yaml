@@ -11,8 +11,7 @@
         - openstack-tox-py27
         - openstack-tox-py35
         - stx-updates-pylint
-        - stx-devstack-update:
-            voting: false
+        - stx-devstack-update
     gate:
       jobs:
         - build-openstack-api-ref
