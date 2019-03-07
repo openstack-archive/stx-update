@@ -1,6 +1,6 @@
 [Unit]
 Description=TIS Patching Controller Daemon
-After=syslog.target network.target sw-patch.service sw-patch-controller.service
+After=syslog.target network-online.target sw-patch.service sw-patch-controller.service
 Before=pmon.service
 
 [Service]
