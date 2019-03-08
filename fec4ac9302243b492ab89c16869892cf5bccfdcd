@@ -1,0 +1,9 @@
+Code-Review+2: Don Penney <don.penney@windriver.com>
+Code-Review+2: Al Bailey <al.bailey@windriver.com>
+Workflow+1: Al Bailey <al.bailey@windriver.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Fri, 08 Mar 2019 23:48:03 +0000
+Reviewed-on: https://review.openstack.org/641783
+Project: openstack/stx-update
+Branch: refs/heads/master
