@@ -1,6 +1,6 @@
 [Unit]
 Description=TIS Patching Agent
-After=syslog.target network.target sw-patch.service
+After=syslog.target network-online.target sw-patch.service
 Before=pmon.service
 
 [Service]
