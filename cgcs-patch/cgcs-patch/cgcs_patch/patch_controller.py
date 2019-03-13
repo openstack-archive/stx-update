@@ -1,5 +1,5 @@
 """
-Copyright (c) 2014-2017 Wind River Systems, Inc.
+Copyright (c) 2014-2019 Wind River Systems, Inc.
 
 SPDX-License-Identifier: Apache-2.0
 
@@ -14,6 +14,7 @@ import subprocess
 from six.moves import configparser
 import rpm
 import os
+import gc
 
 from rpmUtils.miscutils import stringToVersion  # pylint: disable=import-error
 
@@ -2179,6 +2180,11 @@ class PatchControllerApiThread(threading.Thread):
             global keep_running
             while keep_running:
                 self.wsgi.handle_request()
+
+                # Call garbage collect after wsgi request is handled,
+                # to ensure any open file handles are closed in the case
+                # of an upload.
+                gc.collect()
         except Exception:
             # Log all exceptions
             LOG.exception("Error occurred during request processing")
@@ -2230,6 +2236,11 @@ class PatchControllerAuthApiThread(threading.Thread):
             global keep_running
             while keep_running:
                 self.wsgi.handle_request()
+
+                # Call garbage collect after wsgi request is handled,
+                # to ensure any open file handles are closed in the case
+                # of an upload.
+                gc.collect()
         except Exception:
             # Log all exceptions
             LOG.exception("Authorized API failure: Error occurred during request processing")
