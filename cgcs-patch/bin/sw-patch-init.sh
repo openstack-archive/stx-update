@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2014-2015 Wind River Systems, Inc.
+# Copyright (c) 2014-2019 Wind River Systems, Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -14,6 +14,7 @@ NAME=$(basename $0)
 . /etc/platform/platform.conf
 
 logfile=/var/log/patching.log
+patch_failed_file=/var/run/patch_install_failed
 
 function LOG_TO_FILE {
     echo "`date "+%FT%T.%3N"`: $NAME: $*" >> $logfile
@@ -89,6 +90,7 @@ if [ ${FOUND} -eq 0 ]; then
     exit 1
 fi
 
+RC=0
 case "$1" in
     start)
         if [ "${system_mode}" = "simplex" ]; then
@@ -99,6 +101,10 @@ case "$1" in
 
             LOG_TO_FILE "***** Starting patch operation *****"
             /usr/sbin/sw-patch-agent --install 2>>$logfile
+            if [ -f ${patch_failed_file} ]; then
+                RC=1
+                LOG_TO_FILE "***** Patch operation failed *****"
+            fi
             LOG_TO_FILE "***** Finished patch operation *****"
 
             LOG_TO_FILE "***** Shutting down lighttpd *****"
@@ -112,6 +118,10 @@ case "$1" in
 
             LOG_TO_FILE "***** Starting patch operation *****"
             /usr/sbin/sw-patch-agent --install 2>>$logfile
+            if [ -f ${patch_failed_file} ]; then
+                RC=1
+                LOG_TO_FILE "***** Patch operation failed *****"
+            fi
             LOG_TO_FILE "***** Finished patch operation *****"
         fi
 
@@ -123,6 +133,10 @@ case "$1" in
     restart)
         LOG_TO_FILE "***** Starting patch operation *****"
         /usr/sbin/sw-patch-agent --install 2>>$logfile
+        if [ -f ${patch_failed_file} ]; then
+            RC=1
+            LOG_TO_FILE "***** Patch operation failed *****"
+        fi
         LOG_TO_FILE "***** Finished patch operation *****"
         ;;
     *)
@@ -130,5 +144,5 @@ case "$1" in
         exit 1
 esac
 
-exit 0
+exit $RC
 
