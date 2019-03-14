@@ -763,6 +763,9 @@ class PatchFile:
         if self.meta.sw_version is None or self.meta.sw_version == '':
             raise MetadataFail("The release version must be specified in the sw_version field")
 
+        if not self.rpmlist:
+            raise MetadataFail("Cannot generate empty patch")
+
         patchfile = "%s/%s.patch" % (outdir, self.meta.id)
 
         # Create a temporary working directory
