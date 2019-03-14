@@ -9,7 +9,7 @@
         - openstack-tox-linters
         - openstack-tox-pep8
         - openstack-tox-py27
-        - openstack-tox-py35
+        - openstack-tox-py37
         - stx-updates-pylint
         - stx-devstack-update
     gate:
@@ -19,7 +19,7 @@
         - openstack-tox-linters
         - openstack-tox-pep8
         - openstack-tox-py27
-        - openstack-tox-py35
+        - openstack-tox-py37
         - stx-updates-pylint
     post:
       jobs:
