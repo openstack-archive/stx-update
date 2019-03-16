@@ -44,7 +44,7 @@ bash -x /usr/local/sbin/patch-restart-mtce \
     mtcalarmd mtclogd \
     hbsAgent hbsClient \
     mtcAgent mtcClient \
-    pmond rmond fsmond hwmond hostwd \
+    pmond fsmond hwmond hostwd \
     guestServer guestAgent
 if [ $? -ne 0 ] ; then
     loginfo "Mtce patching restart failed"
