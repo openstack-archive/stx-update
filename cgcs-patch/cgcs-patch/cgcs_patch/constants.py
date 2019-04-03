@@ -1,5 +1,5 @@
 """
-Copyright (c) 2015-2017 Wind River Systems, Inc.
+Copyright (c) 2015-2019 Wind River Systems, Inc.
 
 SPDX-License-Identifier: Apache-2.0
 
@@ -19,6 +19,8 @@ PATCH_AGENT_STATE_IDLE = "idle"
 PATCH_AGENT_STATE_INSTALLING = "installing"
 PATCH_AGENT_STATE_INSTALL_FAILED = "install-failed"
 PATCH_AGENT_STATE_INSTALL_REJECTED = "install-rejected"
+
+PATCH_STORAGE_DIR = "/opt/patching"
 
 ADDRESS_VERSION_IPV4 = 4
 ADDRESS_VERSION_IPV6 = 6

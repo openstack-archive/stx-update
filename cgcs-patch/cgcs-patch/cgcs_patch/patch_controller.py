@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 
 """
 import shutil
+import tempfile
 import threading
 import time
 import socket
@@ -36,6 +37,7 @@ from cgcs_patch.exceptions import MetadataFail
 from cgcs_patch.exceptions import RpmFail
 from cgcs_patch.exceptions import PatchError
 from cgcs_patch.exceptions import PatchFail
+from cgcs_patch.exceptions import PatchInvalidRequest
 from cgcs_patch.exceptions import PatchValidationFailure
 from cgcs_patch.exceptions import PatchMismatchFailure
 from cgcs_patch.patch_functions import LOG
@@ -58,7 +60,9 @@ CONF = oslo_cfg.CONF
 pidfile_path = "/var/run/patch_controller.pid"
 
 pc = None
-state_file = "/opt/patching/.controller.state"
+state_file = "%s/.controller.state" % constants.PATCH_STORAGE_DIR
+app_dependency_basename = "app_dependencies.json"
+app_dependency_filename = "%s/%s" % (constants.PATCH_STORAGE_DIR, app_dependency_basename)
 
 insvc_patch_restart_controller = "/run/patching/.restart.patch-controller"
 
@@ -581,6 +585,15 @@ class PatchController(PatchService):
 
         self.allow_insvc_patching = True
 
+        if os.path.exists(app_dependency_filename):
+            try:
+                with open(app_dependency_filename, 'r') as f:
+                    self.app_dependencies = json.loads(f.read())
+            except Exception:
+                LOG.exception("Failed to read app dependencies: %s" % app_dependency_filename)
+        else:
+            self.app_dependencies = {}
+
         if os.path.isfile(state_file):
             self.read_state_file()
         else:
@@ -669,6 +682,16 @@ class PatchController(PatchService):
         self.patch_data.load_all()
         self.check_patch_states()
         self.hosts_lock.release()
+
+        if os.path.exists(app_dependency_filename):
+            try:
+                with open(app_dependency_filename, 'r') as f:
+                    self.app_dependencies = json.loads(f.read())
+            except Exception:
+                LOG.exception("Failed to read app dependencies: %s" % app_dependency_filename)
+        else:
+            self.app_dependencies = {}
+
         self.patch_data_lock.release()
 
         return True
@@ -1220,6 +1243,24 @@ class PatchController(PatchService):
                 LOG.info(msg)
 
             return dict(info=msg_info, warning=msg_warning, error=msg_error)
+
+        if kwargs.get("skipappcheck") != "yes":
+            # Check application dependencies before removing
+            required_patches = {}
+            for patch_id in patch_list:
+                for appname, iter_patch_list in self.app_dependencies.items():
+                    if patch_id in iter_patch_list:
+                        if patch_id not in required_patches:
+                            required_patches[patch_id] = []
+                        required_patches[patch_id].append(appname)
+
+            if len(required_patches) > 0:
+                for req_patch, app_list in required_patches.items():
+                    msg = "%s is required by application(s): %s" % (req_patch, ", ".join(sorted(app_list)))
+                    msg_error += msg + "\n"
+                    LOG.info(msg)
+
+                return dict(info=msg_info, warning=msg_warning, error=msg_error)
 
         for patch_id in patch_list:
             msg = "Removing patch: %s" % patch_id
@@ -2102,6 +2143,71 @@ class PatchController(PatchService):
             self.socket_lock.release()
 
         return dict(info=msg_info, warning=msg_warning, error=msg_error)
+
+    def is_applied(self, patch_ids):
+        all_applied = True
+
+        self.patch_data_lock.acquire()
+
+        for patch_id in patch_ids:
+            if patch_id not in self.patch_data.metadata:
+                all_applied = False
+                break
+
+            if self.patch_data.metadata[patch_id]["patchstate"] != constants.APPLIED:
+                all_applied = False
+                break
+
+        self.patch_data_lock.release()
+
+        return all_applied
+
+    def report_app_dependencies(self, patch_ids, **kwargs):
+        """
+        Handle report of application dependencies
+        """
+        if "app" not in kwargs:
+            raise PatchInvalidRequest
+
+        appname = kwargs.get("app")
+
+        LOG.info("Handling app dependencies report: app=%s, patch_ids=%s" %
+                 (appname, ','.join(patch_ids)))
+
+        self.patch_data_lock.acquire()
+
+        if len(patch_ids) == 0:
+            if appname in self.app_dependencies:
+                del self.app_dependencies[appname]
+        else:
+            self.app_dependencies[appname] = patch_ids
+
+        try:
+            tmpfile, tmpfname = tempfile.mkstemp(
+                prefix=app_dependency_basename,
+                dir=constants.PATCH_STORAGE_DIR)
+
+            os.write(tmpfile, json.dumps(self.app_dependencies))
+            os.close(tmpfile)
+
+            os.rename(tmpfname, app_dependency_filename)
+        except Exception:
+            LOG.exception("Failed in report_app_dependencies")
+            raise PatchFail("Internal failure")
+        finally:
+            self.patch_data_lock.release()
+
+    def query_app_dependencies(self):
+        """
+        Query application dependencies
+        """
+        self.patch_data_lock.acquire()
+
+        data = self.app_dependencies
+
+        self.patch_data_lock.release()
+
+        return dict(data)
 
 
 # The wsgiref.simple_server module has an error handler that catches
