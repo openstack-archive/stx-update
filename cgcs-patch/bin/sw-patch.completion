@@ -31,6 +31,9 @@ function _swpatch()
         upload-dir
         what-requires
         drop-host
+        is-applied
+        report-app-dependencies
+        query-app-dependencies
     "
     if [ -f /etc/platform/.initial_config_complete ]; then
         # Post-config, so the host-install commands are accessible
@@ -48,10 +51,16 @@ function _swpatch()
         #  Complete the arguments to the subcommands.
         #
         case "$subcommand" in
-            apply|remove|delete|show|what-requires)
+            apply|delete|show|what-requires|is-applied)
                 # Query the list of known patches
                 local patches=$(sw-patch completion patches 2>/dev/null)
                 COMPREPLY=( $(compgen -W "${patches}" -- ${cur}) )
+                return 0
+                ;;
+            remove)
+                # Query the list of known patches
+                local patches=$(sw-patch completion patches 2>/dev/null)
+                COMPREPLY=( $(compgen -W "--skipappcheck ${patches}" -- ${cur}) )
                 return 0
                 ;;
             host-install|host-install-async|drop-host)
@@ -107,6 +116,20 @@ function _swpatch()
                     local patches=$(sw-patch completion patches 2>/dev/null)
                     COMPREPLY=( $(compgen -W "--all --dry-run --release ${patches}" -- ${cur}) )
                 fi
+                return 0
+                ;;
+            report-app-dependencies)
+                if [ "${prev}" = "${subcommand}" ]; then
+                    COMPREPLY=( $(compgen -W "--app" -- ${cur}) )
+                elif [ "${prev}" = "--app" ]; then
+                    COMPREPLY=
+                else
+                    local patches=$(sw-patch completion patches 2>/dev/null)
+                    COMPREPLY=( $(compgen -W "${patches}" -- ${cur}) )
+                fi
+                return 0
+                ;;
+            query-app-dependencies)
                 return 0
                 ;;
             *)

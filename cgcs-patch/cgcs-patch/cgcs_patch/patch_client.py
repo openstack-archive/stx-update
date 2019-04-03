@@ -60,6 +60,13 @@ help_install_local = "Trigger patch install/remove on the local host. " + \
 help_drop_host = "Drop specified host from table."
 help_query_dependencies = "List dependencies for specified patch. Use " + \
     constants.CLI_OPT_RECURSIVE + " for recursive query."
+help_is_applied = "Query Applied state for list of patches. " + \
+    "Returns True if all are Applied, False otherwise."
+help_report_app_dependencies = "Report application patch dependencies, " + \
+    "specifying application name with --app option, plus a list of patches. " + \
+    "Reported dependencies can be dropped by specifying app with no patch list."
+help_query_app_dependencies = "Display set of reported application patch " + \
+    "dependencies."
 help_commit = "Commit patches to free disk space. WARNING: This action " + \
     "is irreversible!"
 help_region_name = "Send the request to a specified region"
@@ -130,6 +137,15 @@ def print_help():
                         width=TERM_WIDTH, subsequent_indent=' ' * 20))
     print("")
     print(textwrap.fill("    {0:<15} ".format("query-dependencies:") + help_query_dependencies,
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
+    print("")
+    print(textwrap.fill("    {0:<15} ".format("is-applied:") + help_is_applied,
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
+    print("")
+    print(textwrap.fill("    {0:<15} ".format("report-app-dependencies:") + help_report_app_dependencies,
+                        width=TERM_WIDTH, subsequent_indent=' ' * 20))
+    print("")
+    print(textwrap.fill("    {0:<15} ".format("query-app-dependencies:") + help_query_app_dependencies,
                         width=TERM_WIDTH, subsequent_indent=' ' * 20))
     print("")
     print(textwrap.fill("    {0:<15} ".format("commit:") + help_commit,
@@ -433,13 +449,13 @@ def patch_apply_req(debug, args):
 
 
 def patch_remove_req(debug, args):
-    extra_opts = ""
-
     if len(args) == 0:
         print_help()
 
     # Ignore interrupts during this function
     signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+    extra_opts = []
 
     # The removeunremovable option is hidden and should not be added to help
     # text or customer documentation. It is for emergency use only - under
@@ -450,12 +466,25 @@ def patch_remove_req(debug, args):
         # Get rid of the --removeunremovable
         args.pop(idx)
 
-        # Format the extra opts
-        extra_opts = "?removeunremovable=yes"
+        # Append the extra opts
+        extra_opts.append('removeunremovable=yes')
+
+    if "--skipappcheck" in args:
+        idx = args.index("--skipappcheck")
+
+        # Get rid of the --skipappcheck
+        args.pop(idx)
+
+        # Append the extra opts
+        extra_opts.append("skipappcheck=yes")
+
+    if len(extra_opts) == 0:
+        extra_opts_str = ''
+    else:
+        extra_opts_str = '?%s' % '&'.join(extra_opts)
 
     patches = "/".join(args)
-
-    url = "http://%s/patch/remove/%s%s" % (api_addr, patches, extra_opts)
+    url = "http://%s/patch/remove/%s%s" % (api_addr, patches, extra_opts_str)
 
     headers = {}
     append_auth_token_if_required(headers)
@@ -1097,6 +1126,103 @@ def patch_del_release(debug, args):
     return check_rc(req)
 
 
+def patch_is_applied_req(args):
+    if len(args) == 0:
+        print_help()
+
+    patches = "/".join(args)
+    url = "http://%s/patch/is_applied/%s" % (api_addr, patches)
+
+    headers = {}
+    append_auth_token_if_required(headers)
+    req = requests.post(url, headers=headers)
+
+    rc = 1
+
+    if req.status_code == 200:
+        result = json.loads(req.text)
+        print(result)
+        if result is True:
+            rc = 0
+    elif req.status_code == 500:
+        print("An internal error has occurred. Please check /var/log/patching.log for details")
+
+    return rc
+
+
+def patch_report_app_dependencies_req(debug, args):
+    if len(args) < 2:
+        print_help()
+
+    extra_opts = []
+
+    if "--app" in args:
+        idx = args.index("--app")
+
+        # Get rid of the --app and get the app name
+        args.pop(idx)
+        app = args.pop(idx)
+
+        # Append the extra opts
+        extra_opts.append("app=%s" % app)
+    else:
+        print("Application name must be specified with --app argument.")
+        return False
+
+    extra_opts_str = '?%s' % '&'.join(extra_opts)
+
+    patches = "/".join(args)
+    url = "http://%s/patch/report_app_dependencies/%s%s" % (api_addr, patches, extra_opts_str)
+
+    headers = {}
+    append_auth_token_if_required(headers)
+    req = requests.post(url, headers=headers)
+
+    if req.status_code == 200:
+        return 0
+    else:
+        return 1
+
+
+def patch_query_app_dependencies_req():
+    url = "http://%s/patch/query_app_dependencies" % api_addr
+
+    headers = {}
+    append_auth_token_if_required(headers)
+    req = requests.post(url, headers=headers)
+
+    if req.status_code == 200:
+        data = json.loads(req.text)
+        if len(data) == 0:
+            print("There are no application dependencies.")
+        else:
+            hdr_app = "Application"
+            hdr_list = "Required Patches"
+            width_app = len(hdr_app)
+            width_list = len(hdr_list)
+
+            for app, patch_list in data.items():
+                width_app = max(width_app, len(app))
+                width_list = max(width_list, len(', '.join(patch_list)))
+
+            print("{0:<{width_app}}  {1:<{width_list}}".format(
+                hdr_app, hdr_list,
+                width_app=width_app, width_list=width_list))
+
+            print("{0}  {1}".format(
+                '=' * width_app, '=' * width_list))
+
+            for app, patch_list in sorted(data.items()):
+                print("{0:<{width_app}}  {1:<{width_list}}".format(
+                    app, ', '.join(patch_list),
+                    width_app=width_app, width_list=width_list))
+
+        return 0
+    else:
+        print("An internal error has occurred. Please check /var/log/patching.log for details")
+        return 1
+
+
 def completion_opts(args):
     if len(args) != 1:
         return 1
@@ -1306,6 +1432,12 @@ def main():
             rc = patch_init_release(debug, sys.argv[2:])
         elif action == "del-release":
             rc = patch_del_release(debug, sys.argv[2:])
+        elif action == "is-applied":
+            rc = patch_is_applied_req(sys.argv[2:])
+        elif action == "report-app-dependencies":
+            rc = patch_report_app_dependencies_req(debug, sys.argv[2:])
+        elif action == "query-app-dependencies":
+            rc = patch_query_app_dependencies_req()
         elif action == "completion":
             rc = completion_opts(sys.argv[2:])
         else:
