@@ -6,7 +6,7 @@
 #
 
 #
-# This script provides an example in-service patching restart for all neutron processes
+# This script provides an example in-service patching restart for Horizon and Sysinv processes
 #
 
 #
@@ -30,14 +30,6 @@ declare -i GLOBAL_RC=$PATCH_STATUS_OK
 # This would be the preferred method, in fact, to ensure the patch-scripts
 # themselves are simple and clean.
 #
-
-# NOVA
-bash -x /bin/nova-restart
-if [ $? -ne 0 ]
-then
-    loginfo "Nova patching restart failed"
-    GLOBAL_RC=$PATCH_STATUS_FAILED
-fi
 
 # HORIZON
 if is_controller

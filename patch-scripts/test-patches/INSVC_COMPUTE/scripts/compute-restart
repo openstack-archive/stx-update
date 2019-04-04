@@ -25,7 +25,7 @@
 #
 declare -i GLOBAL_RC=$PATCH_STATUS_OK
 
-# TODO: Add restart of nova-compute?
+# Add restart commands here...
 
 #
 # Exit the script with the overall return code
