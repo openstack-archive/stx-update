@@ -45,3 +45,8 @@ class PatchValidationFailure(PatchError):
 class PatchMismatchFailure(PatchError):
     """Patch validation error."""
     pass
+
+
+class PatchInvalidRequest(PatchError):
+    """Invalid API request."""
+    pass

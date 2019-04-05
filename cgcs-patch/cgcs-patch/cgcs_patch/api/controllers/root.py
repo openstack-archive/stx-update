@@ -1,5 +1,5 @@
 """
-Copyright (c) 2014-2017 Wind River Systems, Inc.
+Copyright (c) 2014-2019 Wind River Systems, Inc.
 
 SPDX-License-Identifier: Apache-2.0
 
@@ -257,6 +257,25 @@ class PatchAPIController(object):
             return dict(error=e.message)
 
         return result
+
+    @expose('json')
+    def is_applied(self, *args):
+        return pc.is_applied(list(args))
+
+    @expose('json')
+    def report_app_dependencies(self, *args, **kwargs):
+        try:
+            result = pc.report_app_dependencies(list(args), **kwargs)
+        except PatchError as e:
+            return dict(status=500, error=e.message)
+
+        pc.patch_sync()
+
+        return result
+
+    @expose('json')
+    def query_app_dependencies(self):
+        return pc.query_app_dependencies()
 
 
 class RootController(object):

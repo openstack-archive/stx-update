@@ -1,5 +1,5 @@
 """
-Copyright (c) 2014-2018 Wind River Systems, Inc.
+Copyright (c) 2014-2019 Wind River Systems, Inc.
 
 SPDX-License-Identifier: Apache-2.0
 
@@ -38,7 +38,7 @@ except Exception:
     SW_VERSION = "unknown"
 
 # Constants
-patch_dir = "/opt/patching"
+patch_dir = constants.PATCH_STORAGE_DIR
 avail_dir = "%s/metadata/available" % patch_dir
 applied_dir = "%s/metadata/applied" % patch_dir
 committed_dir = "%s/metadata/committed" % patch_dir
