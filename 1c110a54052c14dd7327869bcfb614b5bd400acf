@@ -1,0 +1,9 @@
+Code-Review+1: Brent Rowsell <brent.rowsell@windriver.com>
+Code-Review+2: Al Bailey <al.bailey@windriver.com>
+Workflow+1: Al Bailey <al.bailey@windriver.com>
+Verified+2: Zuul
+Submitted-by: Zuul
+Submitted-at: Sat, 06 Apr 2019 19:29:14 +0000
+Reviewed-on: https://review.openstack.org/650478
+Project: openstack/stx-update
+Branch: refs/heads/master
